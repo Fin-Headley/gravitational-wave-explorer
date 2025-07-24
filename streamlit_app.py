@@ -1,13 +1,12 @@
 import streamlit as st
 
+st.set_page_config(
+    page_title="Starter Page",
+    page_icon="",
+)
 
-pg = st.navigation([st.Page("testpage1.py")])
+pg = st.navigation([st.Page("testpage1.py"),st.Page("testpage2.py")])
 pg.run()
-
-#st.set_page_config(
-#    page_title="Hello",
-#    page_icon="",
-#)
 
 
 st.title("Analysis of GW190521")
