@@ -42,7 +42,7 @@ data = {}
 ifos = ['L1', 'V1', 'H1']
 
 for ifo in ifos:
-    filename = f"/GW190521_data/{ifo}_data_32s.hdf5"
+    filename = f"GW190521_data/{ifo}_data_32s.hdf5"
     data[ifo] = TimeSeries.read(filename)
 
 
@@ -60,13 +60,13 @@ ldata = data['L1']
 hdata = data['H1']
 vdata = data['V1']
 
-st.write("Data type:       ", type(ldata))
-st.write("Data duration:   ",ldata.duration)
-st.write("Data Sample Rate:",ldata.sample_rate)
-st.write("Data delta t:    ",ldata.dt)
-st.write("Data start time: ",ldata.x0)
+st.write("Data type:       ",str(type(ldata)))
+st.write("Data duration:   ",str(ldata.duration))
+st.write("Data Sample Rate:",str(ldata.sample_rate))
+st.write("Data delta t:    ",str(ldata.dt))
+st.write("Data start time: ",str(ldata.x0))
 
-plot = GWPlot(figsize=(12, 4.8))
+plot = GWPlot(figsize=(12, 4.8),dpi = 200)
 ax = plot.add_subplot(xscale='auto-gps')
 
 for ifo in ifos:
@@ -77,4 +77,5 @@ ax.set_epoch(time_center) # type: ignore
 ax.set_title('GW Strain data from our three Detectors')
 ax.set_ylabel('Strain noise')
 ax.legend(loc="best")
-plt.show()
+
+st.pyplot(plot)
