@@ -23,7 +23,7 @@ import plotly
 from plotly_resampler import FigureResampler
 
 
-st.set_page_config(page_title="Testpage2", page_icon="📈")
+st.set_page_config(page_title="Testpage2", page_icon="📈",layout="wide")
 
 st.title("testpage2")
 st.write(
@@ -66,46 +66,83 @@ st.write("Data duration:   ",str(data['L1'].duration))
 st.write("Data Sample Rate:",str(data['L1'].sample_rate))
 st.write("Data delta t:    ",str(data['L1'].dt))
 st.write("Data start time: ",str(data['L1'].x0))
-
-#plot = GWPlot(figsize=(12, 4.8),dpi = 200)
-#ax = plot.add_subplot(xscale='auto-gps')
-
-#for ifo in ifos:
-#   ax.plot(data[ifo],label=labels[ifo],color=colours[ifo])
-
-#ax.set_epoch(time_center) # type: ignore
-
-#ax.set_title('GW Strain data from our three Detectors')
-#ax.set_ylabel('Strain noise')
-#ax.legend(loc="best")
-
-#st.pyplot(plot)
+st.write("Data start time: ",str(Time(data['L1'].x0, format='gps').utc.datetime))
 
 st.write("new plot test")
 
 #st.write(data[ifo].times)
 #st.write(data[ifo].times.value)
 #st.write(time_center)
+
 #st.write(data[ifo].times.value - time_center)
 
-fig = go.Figure() #FigureResampler
+#fig = go.Figure() #FigureResampler
 
-#fig = FigureResampler(default_n_shown_samples=3_000)
 
+
+stacked = st.radio(
+    "Plot Strain side by side or stack plots on each other",
+    ["Offset", "Stacked"],
+    #captions=[],
+    index=0,
+    horizontal= True
+)
+
+if stacked == "Offset":
+    offset = dict(L1 = 0, H1 = +1.2e-18, V1 = -1.2e-18)
+    st.write("Each detector can be turned on and off by clicking the legend.")
+else:
+    st.write("Each detector can be turned on and off by clicking the legend.")
+    offset = dict(L1 = 0, H1 = 0, V1 = 0)
+
+fig = FigureResampler()
 
 for ifo in ifos:
+
+    times = data[ifo].times.value          # array of GPS seconds
+    t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
+    x_datetime = t.utc.datetime            # numpy array of Python datetimes in UTC     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
+                                    #lets do things in numbers and put calculate date in after
     fig.add_trace(go.Scatter(
-        x = data[ifo].times.value - time_center,
-        y = data[ifo].value,
         mode='lines',
         line_color=colours[ifo],
         showlegend=True,
         name=labels[ifo],
+    ),
+    hf_x = x_datetime,
+    hf_y = data[ifo].value+offset[ifo],
+    limit_to_view=True,
+    max_n_samples = 30000
+    )
 
-    ))
-
+fig.add_vline(Time(time_center, format='gps').utc.datetime)
 
 fig.update_layout(
+
+    updatemenus=[dict(
+            type="buttons",
+            direction="right",
+            x=0.1, y=1.15, xanchor="center", yanchor="bottom",
+            buttons=[
+                dict(label="±0.1 s", method="relayout",
+                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center+-.1, format='gps').utc.datetime, 
+                                                                     Time(time_center+.1, format='gps').utc.datetime]}]),
+                dict(label="±0.2 s", method="relayout",
+                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-.2, format='gps').utc.datetime, 
+                                                                     Time(time_center+.2, format='gps').utc.datetime]}]),
+                dict(label="±.5 s", method="relayout",
+                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-.5, format='gps').utc.datetime, 
+                                                                     Time(time_center+.5, format='gps').utc.datetime]}]),
+                dict(label="±1 s", method="relayout",
+                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-1, format='gps').utc.datetime, 
+                                                                     Time(time_center+1, format='gps').utc.datetime]}]),
+                dict(label="All (±16 s)", method="relayout",
+                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-16, format='gps').utc.datetime, 
+                                                                     Time(time_center+16, format='gps').utc.datetime]}]),
+            ]
+        )],
+
+
     title={
         'text':'GW Strain data from our {} Detectors'.format(str(len(ifos))),
         'y':0.9,
@@ -114,39 +151,24 @@ fig.update_layout(
         'yanchor': 'top',
         'automargin' : True},
     
-    #xaxis_range=[data[ifo].xspan[0],data[ifo].xspan[1]]  )
-
-    #xaxis = dict(
-    #    tickmode = 'linear',
-    #    tick0 = -32,
-    #    dtick = 1
-    #),
-    #xaxis_range=[data[ifo].xspan[0],data[ifo].xspan[1]],
-    
-
-    xaxis=dict(
-            title = "Time (s) relative to Time Center",
-            rangeslider=dict(visible=False),
-            type="linear"  #can do date too
-        ),
-
 
     yaxis=dict(title="Strain"),
-    margin=dict(l=60, r=20, t=60, b=60),
 
-    #rangeslider_visible=True,
-    #    rangeselector=dict(
-    #        buttons=list([
-                #dict(count=1, label="1m", step="month", stepmode="backward"),
-                #dict(count=6, label="6m", step="month", stepmode="backward"),
-                #dict(count=1, label="YTD", step="year", stepmode="todate"),
-                #dict(count=1, label="1y", step="year", stepmode="backward"),
-              #  dict(step="all")
-    #        ])
-    #    )
+    #xaxis=dict(
+    #        title = "Time (s) relative to Time Center",
+    #        rangeslider=dict(visible=False),
+    #        type="linear",  #can do date too
+    #        ),
 
-                )
 
-#fig.show_dash(mode='inline')
 
+
+    xaxis=go.layout.XAxis(
+        rangeslider=dict(visible=True),
+        title = "Time (seconds) since "+str(Time(data["L1"].t0, format='gps').utc.datetime).format("fits"),
+        type="date",
+        #range = [Time(time_center-3, format='gps').utc.datetime, Time(time_center+3, format='gps').utc.datetime]
+        tickformat="%S.%f",
+    )
+)
 st.plotly_chart(fig, theme="streamlit",on_select="rerun",use_container_width=True)
