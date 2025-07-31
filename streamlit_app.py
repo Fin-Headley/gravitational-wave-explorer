@@ -5,5 +5,10 @@ st.set_page_config(
     page_icon="",
 )
 
-pg = st.navigation([st.Page("1-Welcome_page.py"),st.Page("2-data_test.py"),st.Page("testpage3.py")])
+pg = st.navigation([st.Page("1-Welcome_page.py"),
+                    st.Page("2-data_test.py"),
+                    st.Page("3-updated_page_test.py"),
+                    st.Page("4-graph_template_test.py"),
+                    st.Page("testpage3.py")])
+
 pg.run()

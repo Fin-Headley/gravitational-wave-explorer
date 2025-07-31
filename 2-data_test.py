@@ -61,6 +61,7 @@ labels['H1'] = 'LIGO-Hanford'
 labels['L1'] = 'LIGO-Livingston'
 labels['V1'] = 'Virgo'
 
+
 st.write("Data type:       ",str(type(data['L1'])))
 st.write("Data duration:   ",str(data['L1'].duration))
 st.write("Data Sample Rate:",str(data['L1'].sample_rate))
@@ -144,7 +145,7 @@ fig.update_layout(
 
 
     title={
-        'text':'GW Strain data from our {} Detectors'.format(str(len(ifos))),
+        'text':'Observed GW Strain Data',
         'y':0.9,
         'x':.5,
         'xanchor': 'center',
@@ -161,8 +162,6 @@ fig.update_layout(
     #        ),
 
 
-
-
     xaxis=go.layout.XAxis(
         rangeslider=dict(visible=True),
         title = "Time (seconds) since "+str(Time(data["L1"].t0, format='gps').utc.datetime).format("fits"),
@@ -171,4 +170,6 @@ fig.update_layout(
         tickformat="%S.%f",
     )
 )
+
+
 st.plotly_chart(fig, theme="streamlit",on_select="rerun",use_container_width=True)
