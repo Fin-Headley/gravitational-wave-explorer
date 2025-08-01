@@ -45,6 +45,7 @@ time_center = gps
 
 data = {}
 
+
 ifos = ['L1', 'V1', 'H1']
 
 for ifo in ifos:
@@ -258,8 +259,8 @@ for ifo in ifos:
 
 
 fig2.add_vrect(
-    x0 = datetime_center, 
-    x1 = datetime_center+timedelta(microseconds=1), 
+    x0 = datetime_center-timedelta(seconds = 1), 
+    x1 = datetime_center-timedelta(seconds = 1,microseconds=1), 
     line_color="green",
     line_width=4,
     annotation= dict(
@@ -316,7 +317,7 @@ fig2.update_layout(
 
 
     title={
-        'text':'Observed GW Strain Data',
+        'text':'Bandpassed GW Strain Data',
         'y':0.9,
         'x':.5,
         'xanchor': 'center',
@@ -386,9 +387,9 @@ for ifo in ifos:
 
 
 fig3.add_vrect(
-    x0 = datetime_center, 
-    x1 = datetime_center+timedelta(microseconds=1), 
-    line_color="green",
+    x0 = datetime_center+timedelta(seconds = 1), 
+    x1 = datetime_center+timedelta(seconds = 1,microseconds=1), 
+    line_color="orange",
     line_width=4,
     annotation= dict(
                     text=" Time of Event",
@@ -444,7 +445,7 @@ fig3.update_layout(
 
 
     title={
-        'text':'Observed GW Strain Data',
+        'text':'Whitened GW Strain Data',
         'y':0.9,
         'x':.5,
         'xanchor': 'center',
