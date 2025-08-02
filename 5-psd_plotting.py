@@ -71,8 +71,8 @@ apply_gw_freq_layout(ASD_fig,title = "Amplitude Spectral Density(ASD)", yrange =
 add_freq_event_marker(ASD_fig,80)
 add_freq_event_marker(ASD_fig,30)
 
-add_freq_event_marker(ASD_fig,25,"gray")
-add_freq_event_marker(ASD_fig,90,"gray")
+add_freq_event_marker(ASD_fig,25,"black")
+add_freq_event_marker(ASD_fig,90,"black")
 
 st.plotly_chart(ASD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
@@ -87,8 +87,126 @@ apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-4
 add_freq_event_marker(PSD_fig,80)
 add_freq_event_marker(PSD_fig,30)
 
-add_freq_event_marker(PSD_fig,25,"gray")
-add_freq_event_marker(PSD_fig,90,"gray")
+add_freq_event_marker(PSD_fig,25,"black")
+add_freq_event_marker(PSD_fig,90,"black")
 
 st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+
+
+
+
+
+
+
+
+
+
+
+PSD_data = import_PSD_data()
+tukey_Pxx = import_tukey_PSD_data()
+nowin_Pxx = import_nowindow_PSD_data()
+
+tab1_window_fig = create_new_figure()
+tab2_window_fig = create_new_figure()
+tab3_window_fig = create_new_figure()
+
+
+tab1, tab2, tab3 = st.tabs(["Livingston", "Hanford", "Virgo"])
+with tab1:
+    st.header("LIGO Livingston PSD comparison")
+    ifo = "L1"
+    plot_window_psd_trace(tab1_window_fig,nowin_Pxx,ifo =ifo,color="purple",name="No Window")
+    plot_window_psd_trace(tab1_window_fig,tukey_Pxx,ifo =ifo,color="green",name="Tukey Window")
+    plot_window_psd_trace(tab1_window_fig,PSD_data,ifo =ifo,color="black",name='Welch Average')
+
+    add_freq_event_marker(tab1_window_fig,80)
+    add_freq_event_marker(tab1_window_fig,30)
+    add_freq_event_marker(tab1_window_fig,25,"black")
+    add_freq_event_marker(tab1_window_fig,90,"black")
+
+    temp = nowin_Pxx[ifo]
+    scale = (temp.value_at(168).value)*(168**2)
+    tab1_window_fig.add_trace(go.Scatter(
+        mode='lines',
+        line_color="red",
+        showlegend=True,
+        name="1 / frequency<sup>2<sup>",
+        opacity=.7
+    ),
+
+    hf_x = nowin_Pxx[ifo].frequencies[1:],
+    hf_y = scale/nowin_Pxx[ifo].frequencies[1:]**2,
+    limit_to_view=True,
+    max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+    )
+
+    apply_gw_freq_layout(tab1_window_fig,title = "LIGO Livingston PSD Windows", yrange = [-50,-38],xrange=[1.3,2.72],ytitle="? [HZ]")
+
+    st.plotly_chart(tab1_window_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+
+
+
+with tab2:
+    st.header("LIGO Hanford PSD comparison")
+    ifo = "H1"
+    plot_window_psd_trace(tab2_window_fig,nowin_Pxx,ifo =ifo,color="purple",name="No Window")
+    plot_window_psd_trace(tab2_window_fig,tukey_Pxx,ifo =ifo,color="green",name="Tukey Window")
+    plot_window_psd_trace(tab2_window_fig,PSD_data,ifo =ifo,color="black",name='Welch Average')
+
+    add_freq_event_marker(tab2_window_fig,80)
+    add_freq_event_marker(tab2_window_fig,30)
+    add_freq_event_marker(tab2_window_fig,25,"black")
+    add_freq_event_marker(tab2_window_fig,90,"black")
+
+
+    temp = nowin_Pxx[ifo]
+    scale = (temp.value_at(168).value)*(168**2)
+    tab2_window_fig.add_trace(go.Scatter(
+        mode='lines',
+        line_color="red",
+        showlegend=True,
+        name="1 / frequency<sup>2<sup>",
+        opacity=.7
+    ),
+
+    hf_x = nowin_Pxx[ifo].frequencies[1:],
+    hf_y = scale/nowin_Pxx[ifo].frequencies[1:]**2,
+    limit_to_view=True,
+    max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+    )
+    apply_gw_freq_layout(tab2_window_fig,title = "LIGO Hanford PSD Windows", yrange = [-50,-38],xrange=[1.3,2.72],ytitle="? [HZ]")
+
+    st.plotly_chart(tab2_window_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+
+
+with tab3:
+    st.header("Virgo PSD comparison")
+    ifo = "V1"
+    plot_window_psd_trace(tab3_window_fig,nowin_Pxx,ifo =ifo,color="purple",name="No Window")
+    plot_window_psd_trace(tab3_window_fig,tukey_Pxx,ifo =ifo,color="green",name="Tukey Window")
+    plot_window_psd_trace(tab3_window_fig,PSD_data,ifo =ifo,color="black",name='Welch Average')
+
+    add_freq_event_marker(tab3_window_fig,80)
+    add_freq_event_marker(tab3_window_fig,30)
+    add_freq_event_marker(tab3_window_fig,25,"black")
+    add_freq_event_marker(tab3_window_fig,90,"black")
+
+    temp = nowin_Pxx[ifo]
+    scale = (temp.value_at(168).value)*(168**2)
+    tab3_window_fig.add_trace(go.Scatter(
+        mode='lines',
+        line_color="red",
+        showlegend=True,
+        name="1 / frequency<sup>2<sup>",
+        opacity=.7
+    ),
+
+    hf_x = nowin_Pxx[ifo].frequencies[1:],
+    hf_y = scale/nowin_Pxx[ifo].frequencies[1:]**2,
+    limit_to_view=True,
+    max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+    )
+    apply_gw_freq_layout(tab3_window_fig,title = "LIGO Virgo PSD Windows", yrange = [-50,-38],xrange=[1.3,2.72],ytitle="? [HZ]")
+
+    st.plotly_chart(tab3_window_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 

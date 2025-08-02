@@ -162,6 +162,47 @@ def import_PSD_data():
 #--------------------------------------------
 
 
+#--------------------------------------------
+@st.cache_data
+def create_tukey_PSD_data():
+
+    tukey_Pxx = {}
+    ifos = ['L1', 'V1', 'H1']
+    raw_data = import_raw_data()
+
+    for ifo in ifos:
+        tukey_Pxx[ifo] = raw_data[ifo].psd(fftlength=4.,window=('tukey',1./4.))
+
+    return tukey_Pxx
+
+def import_tukey_PSD_data():
+    key = "tukey_PSD_data"
+    if key not in st.session_state:
+        st.session_state[key] = create_tukey_PSD_data()
+    return st.session_state[key]
+#--------------------------------------------
+
+#--------------------------------------------
+@st.cache_data
+def create_nowindow_PSD_data():
+
+    nowin_Pxx = {}
+    ifos = ['L1', 'V1', 'H1']
+    raw_data = import_raw_data()
+
+    for ifo in ifos:
+        nowin_Pxx[ifo] = raw_data[ifo].psd(fftlength=4.,window='boxcar')
+
+    return nowin_Pxx
+
+def import_nowindow_PSD_data():
+    key = "nowin_Pxx_PSD_data"
+    if key not in st.session_state:
+        st.session_state[key] = create_nowindow_PSD_data()
+    return st.session_state[key]
+#--------------------------------------------
+
+
 
 @st.cache_data
 def create_colours_dict():

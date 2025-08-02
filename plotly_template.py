@@ -251,8 +251,7 @@ def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
         )
 
 
-
-def apply_gw_freq_layout(fig, title = "needs a title", yrange = list, theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/&#8730;HZ]"):
+def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/&#8730;HZ]"):
     """
     Apply a standardized frequency layout template for gravitational wave strain data plots.
     
@@ -300,7 +299,7 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list, theme_text
             buttons=[dict(label="Bandpass", method="relayout",
                     args=[{"yaxis.autorange": False,"xaxis.autorange": False, "xaxis.range": [1.398,1.954], "yaxis.range":yrange}]),
                 dict(label="Zoomed", method="relayout",
-                    args=[{"yaxis.autorange": False,"xaxis.autorange": False, "xaxis.range": [1,3], "yaxis.range":yrange}]),
+                    args=[{"yaxis.autorange": False,"xaxis.autorange": False, "xaxis.range": xrange, "yaxis.range":yrange}]),
                 dict(label="Full", method="relayout",
                     args=[{"yaxis.autorange": True,"xaxis.autorange": True}])
             ],
@@ -330,7 +329,7 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list, theme_text
             #nticks=15,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
-            range =  [1,3],
+            range =  xrange,
             linewidth=1, linecolor='black', mirror=True, showline=True
         ),
 
@@ -344,4 +343,18 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list, theme_text
             bordercolor = "black",
             borderwidth =1
         )
+    )
+
+def plot_window_psd_trace(fig,data_dictionary,ifo ='L1',color="black",name="Window"):
+
+    fig.add_trace(go.Scatter(
+        mode='lines',
+        line_color=color,
+        showlegend=True,
+        name=name,
+    ),
+    hf_x = data_dictionary[ifo].frequencies,
+    hf_y = data_dictionary[ifo].value,
+    limit_to_view=True,
+    max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
     )
