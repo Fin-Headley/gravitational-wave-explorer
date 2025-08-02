@@ -74,7 +74,7 @@ add_freq_event_marker(ASD_fig,30)
 add_freq_event_marker(ASD_fig,25,"gray")
 add_freq_event_marker(ASD_fig,90,"gray")
 
-st.plotly_chart(ASD_fig, theme="streamlit",on_select="rerun",use_container_width=False)
+st.plotly_chart(ASD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
 
 
@@ -90,5 +90,5 @@ add_freq_event_marker(PSD_fig,30)
 add_freq_event_marker(PSD_fig,25,"gray")
 add_freq_event_marker(PSD_fig,90,"gray")
 
-st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=False)
+st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 

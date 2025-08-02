@@ -43,7 +43,9 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
         # Hover settings
         hovermode='x unified',
         #hoversubplots="axis",
-        
+        width=700,
+        height=600,
+
         # X range dropdown menu
         updatemenus=[dict(
             type="dropdown",
@@ -87,7 +89,7 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
             fixedrange=False,
             showexponent="all",
             exponentformat="power",
-            nticks=5,
+            #nticks=5,
             hoverformat=".3e"
         ),
         
@@ -96,9 +98,10 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
             rangeslider=dict(visible=True),
             title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
             type="date",
-            nticks=15,
+            nticks=8,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0, 30, 45]
         ),
         
         # Legend settings
@@ -271,7 +274,7 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list, theme_text
         # Hover settings
         hovermode='x unified',
         autosize=False,
-        width=600,
+        width=700,
         height=600,
 
         # Title settings
