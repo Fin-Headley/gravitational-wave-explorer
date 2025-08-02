@@ -44,7 +44,7 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
         hovermode='x unified',
         #hoversubplots="axis",
         
-        # Time range dropdown menu
+        # X range dropdown menu
         updatemenus=[dict(
             type="dropdown",
             direction="up",
@@ -225,3 +225,120 @@ def plot_traces(fig,data_dictionary,ifos):
         limit_to_view=True,
         max_n_samples = 60000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
         )
+
+
+
+def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
+
+    colours = import_colours_dict()
+    short_labels = import_short_labels_dict()
+
+    for ifo in ifos:
+        fig.add_trace(go.Scatter(
+            mode='lines',
+            line_color=colours[ifo],
+            showlegend=True,
+            name=short_labels[ifo],
+        
+        ),
+        hf_x = data_dictionary[ifo].frequencies,
+        hf_y = data_dictionary[ifo].value,
+        limit_to_view=True,
+        max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+        )
+
+
+
+def apply_gw_freq_layout(fig, title = "needs a title", yrange = list, theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/&#8730;HZ]"):
+    """
+    Apply a standardized frequency layout template for gravitational wave strain data plots.
+    
+    Parameters:
+    -----------
+    
+    Returns:
+    --------
+    None (modifies fig in place)
+    """
+
+    # Get theme colors if not provided
+    if theme_text_color is None:
+        theme_text_color = st.get_option('theme.textColor')
+    if theme_bc_color is None:
+        theme_bc_color = st.get_option('theme.backgroundColor')
+    
+    fig.update_layout( #change to fig.update_layout and put in function
+        # Hover settings
+        hovermode='x unified',
+        autosize=False,
+        width=600,
+        height=600,
+
+        # Title settings
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': .5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'automargin': True
+        },
+
+        # X range dropdown menu
+        updatemenus=[dict(
+            type="dropdown",
+            direction="up",
+            x=0, y=0, 
+            xanchor="left", 
+            yanchor="bottom", 
+            pad={"r": -10, "t": 0, "b": 0, "l": 0},  # padding around outside of button
+            font={"size": 12},
+            showactive=True,
+            buttons=[dict(label="Bandpass", method="relayout",
+                    args=[{"yaxis.autorange": False,"xaxis.autorange": False, "xaxis.range": [1.398,1.954], "yaxis.range":yrange}]),
+                dict(label="Zoomed", method="relayout",
+                    args=[{"yaxis.autorange": False,"xaxis.autorange": False, "xaxis.range": [1,3], "yaxis.range":yrange}]),
+                dict(label="Full", method="relayout",
+                    args=[{"yaxis.autorange": True,"xaxis.autorange": True}])
+            ],
+            active=1,
+        )],
+        
+        # Title settings
+
+        # Y-axis settings
+        yaxis=dict(
+            title=ytitle,
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            hoverformat=".3e",
+            type="log",
+            range =  yrange,
+            linewidth=1, linecolor='black', mirror=True, showline=True
+        ),
+        
+        # X-axis settings
+        xaxis=dict(
+            rangeslider=dict(visible=True, borderwidth=1),
+            title=f"Frequency [Hz]",
+            type="log",
+            #nticks=15,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            range =  [1,3],
+            linewidth=1, linecolor='black', mirror=True, showline=True
+        ),
+
+        # Legend settings
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=1.0,
+            xanchor="right",
+            x=1,
+            bordercolor = "black",
+            borderwidth =1
+        )
+    )

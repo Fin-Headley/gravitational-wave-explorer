@@ -36,8 +36,8 @@ st.write(
 #del st.session_state["bandpass_data"]
 pure_data = import_pure_data()
 raw_data = import_raw_data()
-bandpass_data = create_bandpass_data()
-whitend_data = create_whitend_data()
+bandpass_data = import_bandpass_data()
+whitend_data = import_whitend_data()
 GW_data = import_GW_data()
 
 
@@ -47,8 +47,6 @@ gps = event_gps('GW190521')
 time_center = gps
 
 ifos = ['L1', 'V1', 'H1']
-
-
 
 st.write("Data type:       ",str(type(GW_data['L1'])))
 st.write("Data duration:   ",str(GW_data['L1'].duration))

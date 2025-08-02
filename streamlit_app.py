@@ -8,7 +8,10 @@ st.set_page_config(
 pg = st.navigation([st.Page("1-Welcome_page.py"),
                     st.Page("2-data_test.py"),
                     st.Page("3-updated_page_test.py"),
-                    st.Page("4-graph_template_test.py"),
-                    st.Page("testpage3.py")])
+                    st.Page("4-working_graphs.py"),
+                    st.Page("5-psd_plotting.py"),
+                    
+                    
+                    ])
 
 pg.run()

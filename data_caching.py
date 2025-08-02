@@ -13,15 +13,15 @@ import plotly.graph_objects as go
 #--------------------------------------------
 @st.cache_data
 def create_pure_data():
-    pure_data1 = {}
+    pure_data = {}
     ifos = ['L1', 'V1', 'H1']
     gps =1242442967.4
 
     for ifo in ifos:
         filename = f"GW190521_data/{ifo}_data_32s.hdf5"
-        pure_data1[ifo] = TimeSeries.read(filename)
+        pure_data[ifo] = TimeSeries.read(filename)
 
-    return pure_data1
+    return pure_data
 
 def import_pure_data():
     key = "pure_data"
@@ -34,15 +34,15 @@ def import_pure_data():
 @st.cache_data
 def create_raw_data():
 
-    raw_data1 = {}
+    raw_data = {}
     ifos = ['L1', 'V1', 'H1']
-    pure_data2 = import_pure_data()
+    pure_data = import_pure_data()
     gps =1242442967.4
 
     for ifo in ifos:
-        raw_data1[ifo] = pure_data2[ifo].crop(gps-2,gps+2)
+        raw_data[ifo] = pure_data[ifo].crop(gps-2,gps+2)
 
-    return raw_data1
+    return raw_data
 
 def import_raw_data():
     key = "raw_data"
@@ -53,17 +53,17 @@ def import_raw_data():
 
 #--------------------------------------------
 @st.cache_data
-def create_bandpass_data():
+def create_bandpass_data(): #could change this to allow me putting my own bandpass range in
 
-    bandpass_data1 = {}
+    bandpass_data = {}
     ifos = ['L1', 'V1', 'H1']
-    pure_data3 = import_pure_data()
+    pure_data = import_pure_data()
     gps =1242442967.4
 
     for ifo in ifos:
-        bandpass_data1[ifo] = pure_data3[ifo].bandpass(25,90).crop(gps-2,gps+2)
+        bandpass_data[ifo] = pure_data[ifo].bandpass(25,90).crop(gps-2,gps+2)
 
-    return bandpass_data1
+    return bandpass_data
 
 def import_bandpass_data():
     key = "bandpass_data"
@@ -76,15 +76,15 @@ def import_bandpass_data():
 @st.cache_data
 def create_whitend_data():
 
-    whitend_data1 = {}
+    whitend_data = {}
     ifos = ['L1', 'V1', 'H1']
-    pure_data4 = import_pure_data()
+    pure_data = import_pure_data()
     gps =1242442967.4
 
     for ifo in ifos:
-        whitend_data1[ifo] = pure_data4[ifo].whiten(fftlength=4,overlap=2,window=('tukey',1./4.)).crop(gps-2,gps+2)
+        whitend_data[ifo] = pure_data[ifo].whiten(fftlength=4,overlap=2,window=('tukey',1./4.)).crop(gps-2,gps+2)
 
-    return whitend_data1
+    return whitend_data
 
 def import_whitend_data():
     key = "whitend_data"
@@ -98,17 +98,17 @@ def import_whitend_data():
 @st.cache_data
 def create_GW_data():
 
-    whitend_data2 = {}
-    bandpass_data2 = {}
+    whitend_data = {}
+    bandpass_data = {}
     GW_data = {}
     ifos = ['L1', 'V1', 'H1']
-    pure_data5 = import_pure_data()
+    pure_data = import_pure_data()
     gps =1242442967.4
 
     for ifo in ifos:
-        whitend_data2[ifo] = pure_data5[ifo].whiten(fftlength=4,overlap=2,window=('tukey',1./4.))
-        bandpass_data2[ifo] = whitend_data2[ifo].bandpass(25,90)
-        GW_data[ifo] = bandpass_data2[ifo].crop(gps-2,gps+2)
+        whitend_data[ifo] = pure_data[ifo].whiten(fftlength=4,overlap=2,window=('tukey',1./4.))
+        bandpass_data[ifo] = whitend_data[ifo].bandpass(25,90)
+        GW_data[ifo] = bandpass_data[ifo].crop(gps-2,gps+2)
 
     return GW_data
 
@@ -118,6 +118,50 @@ def import_GW_data():
         st.session_state[key] = create_GW_data()
     return st.session_state[key]
 #--------------------------------------------
+
+#--------------------------------------------
+@st.cache_data
+def create_ASD_data():
+
+    ASD_data = {}
+    ifos = ['L1', 'V1', 'H1']
+    pure_data = import_pure_data()
+
+    for ifo in ifos:
+        ASD_data[ifo] = pure_data[ifo].asd(fftlength=4.,window=('tukey',1./4.),method='welch',overlap=2.)
+
+    return ASD_data
+
+def import_ASD_data():
+    key = "ASD_data"
+    if key not in st.session_state:
+        st.session_state[key] = create_ASD_data()
+    return st.session_state[key]
+#--------------------------------------------
+
+
+#--------------------------------------------
+@st.cache_data
+def create_PSD_data():
+
+    PSD_data = {}
+    ifos = ['L1', 'V1', 'H1']
+    pure_data = import_pure_data()
+    gps =1242442967.4
+
+    for ifo in ifos:
+        PSD_data[ifo] = pure_data[ifo].psd(fftlength=4.,window=('tukey',1./4.),method='welch',overlap=2.)
+
+    return PSD_data
+
+def import_PSD_data():
+    key = "PSD_data"
+    if key not in st.session_state:
+        st.session_state[key] = create_PSD_data()
+    return st.session_state[key]
+#--------------------------------------------
+
+
 
 @st.cache_data
 def create_colours_dict():
