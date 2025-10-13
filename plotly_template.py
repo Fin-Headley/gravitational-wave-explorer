@@ -185,7 +185,7 @@ def add_freq_event_shading(fig, freq_start, freq_end, fillcolor="chartreuse",opa
     """
     fig.add_vrect(x0=freq_start
                   ,x1=freq_end
-                  ,fillcolor="chartreuse"
+                  ,fillcolor=fillcolor
                   ,opacity=opacity
                   ,line_width=line_width)
 
