@@ -179,7 +179,15 @@ def add_freq_event_marker(fig, marker_freq, line_color="green"):
         line_width=3,
     )
 
-
+def add_freq_event_shading(fig, freq_start, freq_end, fillcolor="chartreuse",opacity=0.25,line_width=0):
+    """
+    Add a shading box to to a frequency plot.
+    """
+    fig.add_vrect(x0=freq_start
+                  ,x1=freq_end
+                  ,fillcolor="chartreuse"
+                  ,opacity=opacity
+                  ,line_width=line_width)
 
 
 

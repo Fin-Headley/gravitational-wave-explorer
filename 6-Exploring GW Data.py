@@ -61,47 +61,32 @@ st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width
 
 
 
-# ASD plot
-
-ASD_data = import_ASD_data()
-ASD_fig = create_new_figure()
-plot_freq_traces(ASD_fig,ASD_data,ifos=ifos)
-apply_gw_freq_layout(ASD_fig,title = "Amplitude Spectral Density(ASD)", yrange = [-23.7,-19])
-
-#add_freq_event_marker(ASD_fig,80,"green")
-#add_freq_event_marker(ASD_fig,30,"green")
-#add_freq_event_marker(ASD_fig,25,"black")
-#add_freq_event_marker(ASD_fig,90,"black")
-
-#ASD_fig.add_vrect(x0=30,
-#                x1=80, 
-#                fillcolor="green", 
-#                opacity=0.5, 
-#                line_width=0)
+# PSD plot
 
 
-
-ASD_fig.add_vrect(x0=30
-                  ,x1=80
+def add_freq_event_shading(fig, freq_start, freq_end, fillcolor="chartreuse",opacity=0.25,line_width=0):
+    """
+    Add a shading box to to a frequency plot.
+    """
+    fig.add_vrect(x0=freq_start
+                  ,x1=freq_end
                   ,fillcolor="chartreuse"
-                  ,opacity=0.25
-                  ,line_width=0)
+                  ,opacity=opacity
+                  ,line_width=line_width)
 
-ASD_fig.add_vrect(x0=25
-                  ,x1=30
-                  ,fillcolor="yellow"
-                  ,opacity=0.25
-                  ,line_width=0)
 
-ASD_fig.add_vrect(x0=80
-                  ,x1=90
-                  ,fillcolor="yellow"
-                  ,opacity=0.25
-                  ,line_width=0)
+PSD_data = import_PSD_data()
+PSD_fig = create_new_figure()
 
-add_freq_event_marker(ASD_fig,25,"black")
-add_freq_event_marker(ASD_fig,90,"black")
+add_freq_event_shading(PSD_fig, 30, 80, fillcolor="chartreuse",opacity=0.25,line_width=0)
+add_freq_event_shading(PSD_fig, 25, 30, fillcolor="yellow",opacity=0.25,line_width=0)
+add_freq_event_shading(PSD_fig, 80, 90, fillcolor="yellow",opacity=0.25,line_width=0)
+add_freq_event_marker(PSD_fig,25,"black")
+add_freq_event_marker(PSD_fig,90,"black")
 
-st.plotly_chart(ASD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
+apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle="? [HZ]")
+
+st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
 
