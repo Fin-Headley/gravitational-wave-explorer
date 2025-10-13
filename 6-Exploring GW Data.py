@@ -101,8 +101,8 @@ ASD_fig.add_vrect(x0=80
 
 ASD_fig.add_vrect(x0=90
                   ,x1=2046.5
-                  ,fillcolor="purple"
-                  ,opacity=0.2
+                  ,fillcolor="black"
+                  ,opacity=0.1
                   ,line_width=0)
 
 ASD_fig.add_vrect(x0=.25
