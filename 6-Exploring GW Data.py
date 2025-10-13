@@ -73,10 +73,11 @@ apply_gw_freq_layout(ASD_fig,title = "Amplitude Spectral Density(ASD)", yrange =
 #add_freq_event_marker(ASD_fig,25,"black")
 #add_freq_event_marker(ASD_fig,90,"black")
 
-ASD_fig.add_vrect(x0=30, x1=80,
-              annotation_text="Signal!", annotation_position="top left",
-              annotation=dict(font_size=20, font_family="Times New Roman"),
-              fillcolor="green", opacity=0.25, line_width=0)
+ASD_fig.add_vrect(x0=30, 
+                x1=80, 
+                fillcolor="green", 
+                opacity=0.25, 
+                line_width=0)
 
 st.plotly_chart(ASD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
