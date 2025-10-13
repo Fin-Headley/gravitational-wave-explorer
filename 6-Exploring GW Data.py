@@ -55,4 +55,28 @@ add_event_marker(fig=raw_fig, marker_time = datetime_center, marker_name=" Time 
 apply_gw_strain_layout(raw_fig,title='Raw Observed GW Strain Data')
 st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
+def add_freq_event_marker(fig, marker_freq, line_color="green"):
+    """
+    Add a vertical event marker to a frequency plot.
+    did have text too but that was taken out
+    """
+    fig.add_vline(
+        x=marker_freq, 
+        line_color=line_color,
+        line_width=3,
+    )
+
+
+ASD_data = import_ASD_data()
+ASD_fig = create_new_figure()
+plot_freq_traces(ASD_fig,ASD_data,ifos=ifos)
+apply_gw_freq_layout(ASD_fig,title = "Amplitude Spectral Density(ASD)", yrange = [-23.7,-19])
+
+add_freq_event_marker(ASD_fig,80,"green")
+add_freq_event_marker(ASD_fig,30,"green")
+add_freq_event_marker(ASD_fig,25,"black")
+add_freq_event_marker(ASD_fig,90,"black")
+
+st.plotly_chart(ASD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+
 
