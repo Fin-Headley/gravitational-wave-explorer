@@ -168,6 +168,18 @@ def add_event_marker(fig, marker_time, marker_name, line_color="green",
     )
 
 
+def add_freq_event_marker(fig, marker_freq, line_color="green"):
+    """
+    Add a vertical event marker to a frequency plot.
+    did have text too but that was taken out
+    """
+    fig.add_vline(
+        x=marker_freq, 
+        line_color=line_color,
+        line_width=3,
+    )
+
+
 # Convenience function that combines both layout and event marker
 def setup_gw_plot(fig, title, datetime_center, event_marker_color="green", 
                  event_offset_seconds=0, theme_text_color=None, theme_bc_color=None):
