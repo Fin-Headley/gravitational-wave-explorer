@@ -64,22 +64,33 @@ st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width
 # PSD plot
 
 
-st.write("Show Signal area?")
-agree = st.checkbox('Show')
+st.header("Show or hide Bandpass filter")
 
-PSD_data = import_PSD_data()
-PSD_fig = create_new_figure()
+tab1, tab2 = st.tabs(["Without Bandpass Shading", "With Sandpass Shading"])
 
-if agree:
+with tab1:
+
+    PSD_data = import_PSD_data()
+    PSD_fig = create_new_figure()
+
+    plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
+    apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle="? [HZ]")
+
+    st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+
+
+with tab2:
+
+    PSD_data = import_PSD_data()
+    PSD_fig = create_new_figure()
+    
     add_freq_event_shading(PSD_fig, 30, 80, "chartreuse")
     add_freq_event_shading(PSD_fig, 25, 30, "yellow")
     add_freq_event_shading(PSD_fig, 80, 90, "yellow")
     add_freq_event_marker(PSD_fig,25,"black")
     add_freq_event_marker(PSD_fig,90,"black")
 
-plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
-apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle="? [HZ]")
+    plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
+    apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle="? [HZ]")
 
-st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
-
-
+    st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
