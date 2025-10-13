@@ -99,17 +99,8 @@ ASD_fig.add_vrect(x0=80
                   ,opacity=0.25
                   ,line_width=0)
 
-ASD_fig.add_vrect(x0=90
-                  ,x1=2046.5
-                  ,fillcolor="black"
-                  ,opacity=0.1
-                  ,line_width=0)
-
-ASD_fig.add_vrect(x0=.25
-                  ,x1=25
-                  ,fillcolor="black"
-                  ,opacity=0.2
-                  ,line_width=0)
+add_freq_event_marker(ASD_fig,25,"black")
+add_freq_event_marker(ASD_fig,90,"black")
 
 st.plotly_chart(ASD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
