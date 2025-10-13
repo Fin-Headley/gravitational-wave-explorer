@@ -79,22 +79,24 @@ apply_gw_freq_layout(ASD_fig,title = "Amplitude Spectral Density(ASD)", yrange =
 #                opacity=0.5, 
 #                line_width=0)
 
-ASD_fig.add_vrect(x0=30, 
-                x1=40, 
-                fillcolor="chartreuse", 
-                opacity=0.3, 
-                line_width=0)
 
-ASD_fig.add_vrect(x0=40, 
-                x1=50, 
-                fillcolor="chartreuse", 
-                opacity=0.25, 
-                line_width=0)
 
-ASD_fig.add_vrect(x0=50
-                  ,x1=60
+ASD_fig.add_vrect(x0=30
+                  ,x1=80
                   ,fillcolor="chartreuse"
-                  ,opacity=0.20
+                  ,opacity=0.25
+                  ,line_width=0)
+
+ASD_fig.add_vrect(x0=25
+                  ,x1=30
+                  ,fillcolor="yellow"
+                  ,opacity=0.25
+                  ,line_width=0)
+
+ASD_fig.add_vrect(x0=80
+                  ,x1=90
+                  ,fillcolor="yellow"
+                  ,opacity=0.25
                   ,line_width=0)
 
 st.plotly_chart(ASD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
