@@ -4,7 +4,7 @@ Plotly layout template for GW strain data plots
 import streamlit as st
 from datetime import timedelta
 from astropy.time import Time
-from plotly_resampler import FigureResampler
+from plotly_resampler import FigureResampler # type: ignore
 from data_caching import *
 import plotly.graph_objects as go
 

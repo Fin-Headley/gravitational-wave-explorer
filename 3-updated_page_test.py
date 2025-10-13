@@ -20,7 +20,7 @@ from astropy.time import Time
 import plotly.graph_objects as go
 import datetime
 import plotly
-from plotly_resampler import FigureResampler
+from plotly_resampler import FigureResampler # type: ignore
 from datetime import timedelta
 
 

@@ -20,8 +20,7 @@ from astropy.time import Time
 import plotly.graph_objects as go
 import datetime
 import plotly
-from plotly_resampler import FigureResampler
-
+from plotly_resampler import FigureResampler # type: ignore
 
 st.set_page_config(page_title="Testpage2", page_icon="📈",layout="wide")
 
