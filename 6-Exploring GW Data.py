@@ -47,6 +47,12 @@ gps = event_gps('GW190521')
 time_center = gps
 ifos = ['V1', 'H1','L1']
 
+datetime_center = Time(time_center, format='gps').utc.datetime
 
+raw_fig = create_new_figure()
+plot_traces(raw_fig,raw_data,ifos)
+add_event_marker(fig=raw_fig, marker_time = datetime_center, marker_name=" Time of Event", line_color="green")
+apply_gw_strain_layout(raw_fig,title='Raw Observed GW Strain Data')
+st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
 
