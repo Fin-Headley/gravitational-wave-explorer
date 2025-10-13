@@ -180,6 +180,9 @@ def add_freq_event_marker(fig, marker_freq, line_color="green"):
     )
 
 
+
+
+
 # Convenience function that combines both layout and event marker
 def setup_gw_plot(fig, title, datetime_center, event_marker_color="green", 
                  event_offset_seconds=0, theme_text_color=None, theme_bc_color=None):
