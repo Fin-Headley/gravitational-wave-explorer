@@ -81,19 +81,19 @@ apply_gw_freq_layout(ASD_fig,title = "Amplitude Spectral Density(ASD)", yrange =
 
 ASD_fig.add_vrect(x0=30, 
                 x1=40, 
-                fillcolor="green", 
+                fillcolor="chartreuse", 
                 opacity=0.25, 
                 line_width=0)
 
 ASD_fig.add_vrect(x0=40, 
                 x1=50, 
-                fillcolor="green", 
+                fillcolor="chartreuse", 
                 opacity=0.5, 
                 line_width=0)
 
 ASD_fig.add_vrect(x0=50
                   ,x1=60
-                  ,fillcolor="green"
+                  ,fillcolor="chartreuse"
                   ,opacity=0.75
                   ,line_width=0)
 
