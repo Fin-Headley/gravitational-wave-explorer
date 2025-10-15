@@ -66,8 +66,6 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
                     args=[{"xaxis.autorange": False, "xaxis.range": [datetime_center-timedelta(seconds=.5), datetime_center+timedelta(seconds=.5)]}]),
                 dict(label="±1 s", method="relayout",
                     args=[{"xaxis.autorange": False, "xaxis.range": [datetime_center-timedelta(seconds=1), datetime_center+timedelta(seconds=1)]}]),
-                #dict(label="±2 s", method="relayout",
-                #    args=[{"xaxis.autorange": False, "xaxis.range": [datetime_center-timedelta(seconds=2), datetime_center+timedelta(seconds=2)]}]),
                 dict(label="Full", method="relayout",
                     args=[{"yaxis.autorange": True, "xaxis.autorange": True}])
             ]
@@ -95,13 +93,13 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
         
         # X-axis settings
         xaxis=dict(
-            rangeslider=dict(visible=True),
+            #rangeslider=dict(visible=True),
             title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
             type="date",
             nticks=8,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
-            autotickangles = [0, 30, 45]
+            autotickangles = [0, 30, 45],
         ),
         
         # Legend settings
