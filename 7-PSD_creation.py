@@ -259,4 +259,20 @@ st.header("Fourier phases")
 #raw_data
 
 
+#apply_gw_fourier_layout
 
+
+Fourier_phase_fig = create_new_figure()
+
+
+
+
+plot_both_fourier_freq_traces(Fourier_phase_fig,"L1")
+
+
+apply_gw_fourier_layout(Fourier_phase_fig,title = "Fourier Phase",yrange = [-np.pi,np.pi],xrange=[15,400],ytitle="Phase")
+
+#apply_gw_freq_layout(, yrange = [-50,-38],xrange=[1.3,2.72],ytitle="? [HZ]")
+
+
+st.plotly_chart(Fourier_phase_fig, theme="streamlit",on_select="rerun",use_container_width=True)

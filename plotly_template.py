@@ -369,6 +369,115 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,
     )
 
 
+def apply_gw_fourier_layout(fig, title = "needs a title", yrange = list,xrange =[50,400], theme_text_color=None, theme_bc_color=None,ytitle="Phase"):
+    """
+    Apply a standardized frequency layout template for gravitational wave strain data plots.
+    
+    Parameters:
+    -----------
+    
+    Returns:
+    --------
+    None (modifies fig in place)
+    """
+
+    # Get theme colors if not provided
+    if theme_text_color is None:
+        theme_text_color = st.get_option('theme.textColor')
+    if theme_bc_color is None:
+        theme_bc_color = st.get_option('theme.backgroundColor')
+    
+    fig.update_layout( #change to fig.update_layout and put in function
+        # Hover settings
+        hovermode='x unified',
+        autosize=False,
+        width=700,
+        height=600,
+
+        # Title settings
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': .5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'automargin': True
+        },
+
+        
+        # Title settings
+
+        # Y-axis settings
+        yaxis=dict(
+            #rangeslider=dict(visible=True, borderwidth=1),
+            title=ytitle,
+            #fixedrange=False,
+            #showexponent="all",
+            #exponentformat="power",
+            #nticks=5,
+            hoverformat=".3e",
+            type="linear",
+            range =  yrange,
+            linewidth=1, linecolor='black', mirror=True, showline=True
+        ),
+        
+        # X-axis settings
+        xaxis=dict(
+            #rangeslider=dict(visible=True, borderwidth=1),
+            title=f"Frequency [Hz]",
+            type="linear",
+            #nticks=15,
+            showgrid=True,
+            hoverformat=".3",#"Time: %H:%M:%S.%3f",
+            range =  xrange,
+            linewidth=1, linecolor='black', mirror=True, showline=True
+        ),
+
+        # Legend settings
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=1.0,
+            xanchor="right",
+            x=1,
+            bordercolor = "black",
+            borderwidth =1
+        )
+    )
+
+def plot_both_fourier_freq_traces(fig,ifo = 'L1'):
+
+    raw_data = import_raw_data()
+
+    strain_fft = raw_data[ifo].average_fft()
+    strain_fft_win = raw_data[ifo].average_fft(window=('tukey',1./4.))
+
+    fig.add_trace(go.Scatter( #add in windowed points
+        mode='markers',
+        name="Tukey window",
+        showlegend=True,
+        ),
+        hf_x = strain_fft_win.frequencies,
+        hf_y = np.angle(strain_fft_win),
+        limit_to_view=True,
+        hf_marker_color="red",
+        hf_marker_size = 3,
+        max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+        )
+
+    fig.add_trace(go.Scatter( #add in un-windowed points
+        mode='markers',
+        name="no window",
+        showlegend=True,
+        ),
+        hf_x = strain_fft.frequencies,
+        hf_y = np.angle(strain_fft),
+        limit_to_view=True,
+        hf_marker_color="blue",
+        hf_marker_size = 3,
+        max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+        )
+
 
 
 def plot_window_psd_trace(fig,data_dictionary,ifo ='L1',color="black",name="Window"):
