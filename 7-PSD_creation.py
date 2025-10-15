@@ -53,34 +53,210 @@ datetime_center = Time(time_center, format='gps').utc.datetime
 
 
 
-
-st.header("Show or hide Bandpass filter")
-
-tab1, tab2 = st.tabs(["Without Bandpass Shading", "With Bandpass Shading"])
-
-with tab1:
-
-    PSD_data = import_PSD_data()
-    PSD_fig = create_new_figure()
-
-    plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
-    apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle="? [HZ]")
-
-    st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+#################################################
 
 
-with tab2:
+if 'show_bandpass1' not in st.session_state:
+    st.session_state.show_bandpass = False
 
-    PSD_data = import_PSD_data()
-    PSD_fig = create_new_figure()
 
+
+# Create a button to toggle the line visibility
+if st.checkbox("Toggle Bandpass Visability this graph"):
+    st.session_state.show_bandpass = True
+else:
+    st.session_state.show_bandpass = False
+
+#plot the data
+
+PSD_data = import_PSD_data()
+PSD_fig = create_new_figure()
+
+plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
+apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle="? [HZ]")
+
+
+if st.session_state.show_bandpass:
     add_freq_event_shading(PSD_fig, 30, 80, "chartreuse")
     add_freq_event_shading(PSD_fig, 25, 30, "yellow")
     add_freq_event_shading(PSD_fig, 80, 90, "yellow")
     add_freq_event_marker(PSD_fig,25,"black")
     add_freq_event_marker(PSD_fig,90,"black")
 
-    plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
-    apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle="? [HZ]")
+st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
-    st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+if st.session_state.show_bandpass:
+    st.write("showing bandpass filter")
+else:
+    st.write("hiding bandpass filter")
+
+
+
+
+#################################################
+
+
+
+
+
+
+
+PSD_data = import_PSD_data()
+tukey_Pxx = import_tukey_PSD_data()
+nowin_Pxx = import_nowindow_PSD_data()
+
+tab1_window_fig = create_new_figure()
+tab2_window_fig = create_new_figure()
+tab3_window_fig = create_new_figure()
+
+if 'show_bandpass_tab1' not in st.session_state:
+    st.session_state.show_bandpass_tab1 = False
+
+if 'show_bandpass_tab2' not in st.session_state:
+    st.session_state.show_bandpass_tab2 = False
+
+if 'show_bandpass_tab3' not in st.session_state:
+    st.session_state.show_bandpass_tab3 = False
+
+
+tab1, tab2, tab3 = st.tabs(["Livingston", "Hanford", "Virgo"])
+with tab1:
+    st.header("LIGO Livingston PSD comparison")
+
+    # Create a button to toggle the bandpass visibility
+    if st.checkbox("Toggle Livingston Bandpass Visability"):
+        st.session_state.show_bandpass_tab1 = True
+    else:
+        st.session_state.show_bandpass_tab1 = False
+
+    ifo = "L1"
+    plot_window_psd_trace(tab1_window_fig,nowin_Pxx,ifo =ifo,color="purple",name="No Window")
+    plot_window_psd_trace(tab1_window_fig,tukey_Pxx,ifo =ifo,color="green",name="Tukey Window")
+    plot_window_psd_trace(tab1_window_fig,PSD_data,ifo =ifo,color="black",name='Welch Average')
+
+
+    temp = nowin_Pxx[ifo]
+    scale = (temp.value_at(168).value)*(168**2)
+    tab1_window_fig.add_trace(go.Scatter(
+        mode='lines',
+        line_color="red",
+        showlegend=True,
+        name="1 / frequency<sup>2<sup>",
+        opacity=.7
+    ),
+
+    hf_x = nowin_Pxx[ifo].frequencies[1:],
+    hf_y = scale/nowin_Pxx[ifo].frequencies[1:]**2,
+    limit_to_view=True,
+    max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+    )
+
+    apply_gw_freq_layout(tab1_window_fig,title = "LIGO Livingston PSD Windows", yrange = [-50,-38],xrange=[1.3,2.72],ytitle="? [HZ]")
+
+
+    if st.session_state.show_bandpass_tab1:
+        add_freq_event_shading(tab1_window_fig, 30, 80, "chartreuse")
+        add_freq_event_shading(tab1_window_fig, 25, 30, "yellow")
+        add_freq_event_shading(tab1_window_fig, 80, 90, "yellow")
+        add_freq_event_marker(tab1_window_fig,25,"black")
+        add_freq_event_marker(tab1_window_fig,90,"black")
+
+    st.plotly_chart(tab1_window_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+
+with tab2:
+    st.header("LIGO Hanford PSD comparison")
+
+    # Create a button to toggle the bandpass visibility
+    if st.checkbox("Toggle Hanford Bandpass Visability"):
+        st.session_state.show_bandpass_tab2 = True
+    else:
+        st.session_state.show_bandpass_tab2 = False
+
+
+
+    ifo = "H1"
+    plot_window_psd_trace(tab2_window_fig,nowin_Pxx,ifo =ifo,color="purple",name="No Window")
+    plot_window_psd_trace(tab2_window_fig,tukey_Pxx,ifo =ifo,color="green",name="Tukey Window")
+    plot_window_psd_trace(tab2_window_fig,PSD_data,ifo =ifo,color="black",name='Welch Average')
+
+
+    temp = nowin_Pxx[ifo]
+    scale = (temp.value_at(168).value)*(168**2)
+    tab2_window_fig.add_trace(go.Scatter(
+        mode='lines',
+        line_color="red",
+        showlegend=True,
+        name="1 / frequency<sup>2<sup>",
+        opacity=.7
+    ),
+
+    hf_x = nowin_Pxx[ifo].frequencies[1:],
+    hf_y = scale/nowin_Pxx[ifo].frequencies[1:]**2,
+    limit_to_view=True,
+    max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+    )
+    apply_gw_freq_layout(tab2_window_fig,title = "LIGO Hanford PSD Windows", yrange = [-50,-38],xrange=[1.3,2.72],ytitle="? [HZ]")
+
+    if st.session_state.show_bandpass_tab2:
+        add_freq_event_shading(tab2_window_fig, 30, 80, "chartreuse")
+        add_freq_event_shading(tab2_window_fig, 25, 30, "yellow")
+        add_freq_event_shading(tab2_window_fig, 80, 90, "yellow")
+        add_freq_event_marker(tab2_window_fig,25,"black")
+        add_freq_event_marker(tab2_window_fig,90,"black")
+
+
+    st.plotly_chart(tab2_window_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+
+with tab3:
+    st.header("Virgo PSD comparison")
+
+    # Create a button to toggle the bandpass visibility
+    if st.checkbox("Toggle Virgo Bandpass Visability"):
+        st.session_state.show_bandpass_tab3 = True
+    else:
+        st.session_state.show_bandpass_tab3 = False
+
+
+    ifo = "V1"
+    plot_window_psd_trace(tab3_window_fig,nowin_Pxx,ifo =ifo,color="purple",name="No Window")
+    plot_window_psd_trace(tab3_window_fig,tukey_Pxx,ifo =ifo,color="green",name="Tukey Window")
+    plot_window_psd_trace(tab3_window_fig,PSD_data,ifo =ifo,color="black",name='Welch Average')
+
+    temp = nowin_Pxx[ifo]
+    scale = (temp.value_at(168).value)*(168**2)
+    tab3_window_fig.add_trace(go.Scatter(
+        mode='lines',
+        line_color="red",
+        showlegend=True,
+        name="1 / frequency<sup>2<sup>",
+        opacity=.7
+    ),
+
+    hf_x = nowin_Pxx[ifo].frequencies[1:],
+    hf_y = scale/nowin_Pxx[ifo].frequencies[1:]**2,
+    limit_to_view=True,
+    max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+    )
+    apply_gw_freq_layout(tab3_window_fig,title = "LIGO Virgo PSD Windows", yrange = [-50,-38],xrange=[1.3,2.72],ytitle="? [HZ]")
+
+    if st.session_state.show_bandpass_tab3:
+        add_freq_event_shading(tab3_window_fig, 30, 80, "chartreuse")
+        add_freq_event_shading(tab3_window_fig, 25, 30, "yellow")
+        add_freq_event_shading(tab3_window_fig, 80, 90, "yellow")
+        add_freq_event_marker(tab3_window_fig,25,"black")
+        add_freq_event_marker(tab3_window_fig,90,"black")
+
+    st.plotly_chart(tab3_window_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+
+
+
+#################################################
+
+
+
+st.header("Fourier phases")
+
+#raw_data
+
+
+

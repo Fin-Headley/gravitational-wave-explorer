@@ -351,7 +351,7 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,
             type="log",
             #nticks=15,
             showgrid=True,
-            hoverformat="Time: %H:%M:%S.%3f",
+            hoverformat=".3",#"Time: %H:%M:%S.%3f",
             range =  xrange,
             linewidth=1, linecolor='black', mirror=True, showline=True
         ),
@@ -367,6 +367,9 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,
             borderwidth =1
         )
     )
+
+
+
 
 def plot_window_psd_trace(fig,data_dictionary,ifo ='L1',color="black",name="Window"):
 
