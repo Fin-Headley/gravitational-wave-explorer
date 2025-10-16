@@ -41,8 +41,10 @@ time_center = gps
 datetime_center = Time(time_center, format='gps').utc.datetime
 
 ifos = ['L1', 'V1','H1']
-
-
+########################################################################
+det={}
+for ifo in ifos:
+    det[ifo]=Detector(ifo)
 
 def gen_template(param,
                  gps_time = time_center, #added by me
@@ -86,4 +88,5 @@ def gen_template(param,
         template[ifo]=TimeSeries.from_pycbc(ht[ifo])
 
     return template
+
 

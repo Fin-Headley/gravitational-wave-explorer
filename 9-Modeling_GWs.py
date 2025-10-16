@@ -52,10 +52,6 @@ datetime_center = Time(time_center, format='gps').utc.datetime
 
 ifos = ['L1', 'V1','H1']
 ########################################################################
-det={}
-for ifo in ifos:
-    det[ifo]=Detector(ifo)
-
 col1, col2, col3, col4,col5 = st.columns(5)
 
 
