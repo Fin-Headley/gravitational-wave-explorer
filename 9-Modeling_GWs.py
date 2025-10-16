@@ -26,7 +26,7 @@ from datetime import timedelta
 from plotly_template import *
 import time
 from data_caching import *
-
+from matched_filtering_functions import *
 
 st.set_page_config(page_title="Modeling Gravitational Waves", page_icon="📈",layout="wide")
 
@@ -132,75 +132,23 @@ user_params = [mass, mass_ratio, distance, time_shift, phase, right_ascension, d
 
 
 
-
-
-
-def gen_template(param,
-                 gps_time = time_center, #added by me
-                 delta_t =  raw_data['H1'].dt.value, # Assuming all IFOs have the same dt ! (I checked this to be true)
-                 duration=  raw_data['H1'].duration.value, # Assuming all IFOs have the same duration ! (I checked this to be true)
-                 start_time=raw_data['H1'].x0.value,# Assuming all IFOs have the same start time ! (I checked this to be true)
-                 f_lower=10.): ###changed from 20 (it is 10 in the CU version)
-    
-    m1, q, distance, time_shift, phase, right_ascension, declination, inclination, polarization = param
-    time = gps_time + time_shift
-    m2 = m1 * q
-
-    hp, hc = get_td_waveform(approximant="SEOBNRv4_opt",
-                             mass1=m1,
-                             mass2=m2,
-                             distance=distance,
-                             inclination=inclination,
-                             coa_phase=phase,
-                             delta_t=delta_t,
-                             f_lower=f_lower) 
-    
-    hp = hp*get_window(('tukey',1/4),hp.shape[0]) #### i added this in here
-    hc = hc*get_window(('tukey',1/4),hc.shape[0]) #### i added this in here
-
-    # Resize the signal buffer
-    hp.resize(int(duration/delta_t))
-    hc.resize(int(duration/delta_t))
-    
-    ht={}
-    template={}
-    # compute the detectors responses and shift to the requested time
-    for ifo in ifos:
-        fp, fc = det[ifo].antenna_pattern(right_ascension, declination, polarization, time)
-        ht[ifo] = fp * hp.copy() + fc * hc.copy()
-        
-        time_delay = det[ifo].time_delay_from_earth_center(right_ascension, declination, time)
-        
-        ht[ifo] = ht[ifo].cyclic_time_shift(ht[ifo].start_time + time - start_time + time_delay)
-        ht[ifo].start_time=start_time
-    
-        template[ifo]=TimeSeries.from_pycbc(ht[ifo])
-
-    return template
-
-
-
 param0=[160,.72,2400,.027,0.1, 2.2, -1.2, 0.5, 0.01] 
 #m1, q, distance, time_shift, phase, right_ascension, declination, inclination, polarization = param
 
 #template0 = gen_template(param0)
 
 
-template0 = gen_template(user_params)
+user_model = gen_template(user_params)
 
 fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.05,shared_yaxes=True)
 fig_resampler = FigureResampler(fig)
 
 ########################################################################
 
-L1_modeling_fig = create_new_figure()
-H1_modeling_fig = create_new_figure()
-V1_modeling_fig = create_new_figure()
 
-
-L1_white_template = template0["L1"].whiten(asd=np.sqrt(PSD_data["L1"]),highpass=25.,lowpass = 90.)
-H1_white_template = template0["H1"].whiten(asd=np.sqrt(PSD_data["H1"]),highpass=25.,lowpass = 90.)
-V1_white_template = template0["V1"].whiten(asd=np.sqrt(PSD_data["V1"]),highpass=25.,lowpass = 90.)
+L1_white_template = user_model["L1"].whiten(asd=np.sqrt(PSD_data["L1"]),highpass=25.,lowpass = 90.)
+H1_white_template = user_model["H1"].whiten(asd=np.sqrt(PSD_data["H1"]),highpass=25.,lowpass = 90.)
+V1_white_template = user_model["V1"].whiten(asd=np.sqrt(PSD_data["V1"]),highpass=25.,lowpass = 90.)
 
 
 colors = import_colours_dict()
