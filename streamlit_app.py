@@ -14,6 +14,7 @@ pg = st.navigation([st.Page("1-Welcome_page.py"),
                     st.Page("6-Exploring_GW_Data.py"),
                     st.Page("7-PSD_creation.py"),
                     st.Page("8-Processing_Data.py"),
+                    st.Page("9-Modeling_GWs.py"),
                     ])
 
 pg.run()

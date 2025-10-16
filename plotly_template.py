@@ -7,6 +7,7 @@ from astropy.time import Time
 from plotly_resampler import FigureResampler # type: ignore
 from data_caching import *
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
     """
@@ -44,7 +45,7 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
         hovermode='x unified',
         #hoversubplots="axis",
         width=700,
-        height=600,
+        height=700,
 
         # X range dropdown menu
         updatemenus=[dict(
@@ -490,4 +491,255 @@ def plot_window_psd_trace(fig,data_dictionary,ifo ='L1',color="black",name="Wind
     hf_y = data_dictionary[ifo].value,
     limit_to_view=True,
     max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+    )
+
+
+
+
+def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
+
+    fig.update_layout(
+        # Hover settings
+        hovermode='x unified',
+        hoversubplots="axis",
+        width=700,
+        height=600,
+        
+        # Title settings
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': .5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'automargin': True
+        },
+        
+        # Y-axis settings
+        yaxis=
+        dict(title="Strain",
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            hoverformat=".3e"
+        ),
+        
+        # X-axis settings
+        xaxis=dict(
+            #rangeslider=dict(visible=True),
+            title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0, 30, 45],
+            autorange= False,
+            range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
+        ),
+        
+        # Legend settings
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.0,
+            xanchor="right",
+            x=1
+        )
+    )
+
+
+
+def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
+
+    fig.update_layout(
+        # Hover settings
+        hovermode='x unified',
+        #hoversubplots="axis",
+        width=700,
+        height=600,
+        
+        # Title settings
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': .5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'automargin': True
+        },
+        
+        # Y-axis settings
+        yaxis=
+        dict(title="Strain",
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            hoverformat=".3e"
+        ),
+        yaxis2=dict(
+            title="Strain",
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            hoverformat=".3e"
+        ),
+        yaxis3=dict(
+            title="Strain",
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            hoverformat=".3e"
+        ),
+        
+        # X-axis settings
+        xaxis=dict(
+            #rangeslider=dict(visible=True),
+            #title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0, 30, 45],
+            autorange= False,
+            range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
+        ),
+        xaxis2=dict(
+            #rangeslider=dict(visible=True),
+            title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0, 30, 45],
+            autorange= False,
+            range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
+        ),
+        
+        
+        # Legend settings
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.0,
+            xanchor="right",
+            x=1
+        )
+    )
+
+
+def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
+
+    fig.update_layout(
+        # Hover settings
+        hovermode='x unified',
+        #hoversubplots="axis",
+        width=700,
+        height=600,
+        
+        # Title settings
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': .5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'automargin': True
+        },
+        
+        # Y-axis settings
+        yaxis=
+        dict(title="Strain",
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            hoverformat=".3e"
+        ),
+        yaxis2=dict(
+            title="Strain",
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            hoverformat=".3e"
+        ),
+        yaxis3=dict(
+            title="Strain",
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            hoverformat=".3e"
+        ),
+        
+        # X-axis settings
+        xaxis=dict(
+            #rangeslider=dict(visible=True),
+            #title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0, 30, 45],
+            autorange= False,
+            range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
+        ),
+        xaxis2=dict(
+            #rangeslider=dict(visible=True),
+            #title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0, 30, 45],
+            autorange= False,
+            range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
+        ),
+        xaxis3=dict(
+            #rangeslider=dict(visible=True),
+            title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0, 30, 45],
+            autorange= False,
+            range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
+        ),
+        
+        # Legend settings
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.0,
+            xanchor="right",
+            x=1
+        )
+    )
+
+
+
+
+def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1):
+
+    times = x       #data_dictionary[ifo].times.value          # array of GPS seconds
+    t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
+    x_datetime = t.utc.datetime            # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
+                                    #lets do things in numbers and put calculate date in after
+    fig.add_trace(go.Scatter(
+        mode='lines',
+        line_color=color,
+        showlegend=True,
+        name=name,
+    ),
+    hf_x = x_datetime,
+    hf_y = y,        #data_dictionary[ifo].value,
+    limit_to_view=True,
+    row=row,
+    col=col,
+    max_n_samples = 60000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
     )

@@ -46,9 +46,8 @@ GW_data = import_GW_data()
 #gets the time of the event and prints it
 gps = event_gps('GW190521')
 time_center = gps
-ifos = ['V1', 'H1','L1']
 
-ifos = ['L1', 'V1', 'H1']
+ifos = ['L1', 'V1','H1']
 
 st.write("Data type:       ",str(type(GW_data['L1'])))
 st.write("Data duration:   ",str(GW_data['L1'].duration))
