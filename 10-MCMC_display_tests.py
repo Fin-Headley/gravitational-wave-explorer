@@ -58,4 +58,3 @@ ifos = ['L1','H1']
 reduced_data = az.from_netcdf("MCMC_processed_data.nc")
 
 az.plot_trace(reduced_data,var_names=["Incl"],circ_var_names=["Incl"],combined=True,show=True,backend = "plotly")
-
