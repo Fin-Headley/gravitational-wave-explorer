@@ -120,4 +120,4 @@ arviz == 0.22.0
 h5netcdf==1.7.3 
 xarray==2025.6.1 
 xarray-einstats==0.8.0
-arviz-plots[matplotlib, plotly] @ git+https://github.com/arviz-devs/arviz-plots@v0.6.0
+arviz-plots[plotly] @ git+https://github.com/arviz-devs/arviz-plots
