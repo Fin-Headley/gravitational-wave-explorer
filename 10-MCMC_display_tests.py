@@ -27,6 +27,7 @@ from plotly_template import *
 import time
 from data_caching import *
 from matched_filtering_functions import *
+import arviz as az
 
 st.set_page_config(page_title="MCMC result display testing", page_icon="📈",layout="wide")
 
@@ -52,3 +53,9 @@ datetime_center = Time(time_center, format='gps').utc.datetime
 
 ifos = ['L1','H1']
 ########################################################################
+
+#burnin = 35426 #thin = 2
+reduced_data = az.from_netcdf("MCMC_processed_data.nc")
+
+az.plot_trace(reduced_data,var_names=["Incl"],circ_var_names=["Incl"],combined=True,show=True,backend = "plotly")
+
