@@ -57,4 +57,11 @@ ifos = ['L1','H1']
 #burnin = 35426 #thin = 2
 reduced_data = az.from_netcdf("MCMC_processed_data.nc")
 
-az.plot_trace(reduced_data,var_names=["Incl"],circ_var_names=["Incl"],combined=True,show=True,backend = "plotly")
+
+
+trace_test = az.plot_trace(reduced_data,var_names=["Incl"],circ_var_names=["Incl"],combined=True,show=True,backend = "plotly")
+
+st.plotly_chart(trace_test)
+
+
+
