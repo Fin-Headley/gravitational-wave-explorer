@@ -28,6 +28,8 @@ import time
 from data_caching import *
 from matched_filtering_functions import *
 import arviz as az
+import pandas as pd
+import corner
 
 st.set_page_config(page_title="MCMC result display testing", page_icon="📈",layout="wide")
 
@@ -57,5 +59,35 @@ ifos = ['L1','H1']
 #burnin = 35426 #thin = 2
 reduced_data = az.from_netcdf("MCMC_processed_data.nc")
 
+stacked = reduced_data.stack(sample=["chain", "draw"], inplace=False)
+
+#Mass = stacked.posterior.Mass.values
+#Ratio = stacked.posterior.Ratio.values
+#Distance = stacked.posterior.Distance.values
+#TimeShift = stacked.posterior.TimeShift.values
+#Phase = stacked.posterior.Phase.values
+#RA = stacked.posterior.RA.values
+#Dec = stacked.posterior.Dec.values
+#Incl = stacked.posterior.Incl.values
+#Pol = stacked.posterior.Pol.values
+
+#test_array = {}
+#test_array["Mass"] = Mass
+#test_array["Ratio"] = Ratio
+#est_array["Distance"] = Distance
+#test_array
+
+
+
+#corner_test = corner.corner(test_array)
+
+#st.pyplot(corner_test)
+
+
 #from arviz_plots import plot_dist, plot_forest, plot_trace_dist, style # pyright: ignore[reportMissingImports]
 #import arviz_plots as azp
+
+#mcmc_df = pd.read_parquet("reduced_mcmc_results.parquet")
+
+
+trace_test = az.plot_trace(reduced_data,var_names=["Incl"],circ_var_names=["Incl"],combined=True,show=True,backend = "bokeh")
