@@ -120,5 +120,5 @@ arviz == 0.22.0
 h5netcdf==1.7.3 
 xarray==2025.6.1 
 xarray-einstats==0.8.0
-bokeh==3.8.0
+bokeh==3.3.0
 arviz-plots[bokeh] @ git+https://github.com/arviz-devs/arviz-plots
