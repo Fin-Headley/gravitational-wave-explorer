@@ -63,7 +63,7 @@ with col1:
                     ,value=160.0
                     )
 
-    right_ascension = st.slider("Right Ascension:",
+    right_ascension = st.slider("Right Ascension (Radians):",
                     min_value=0.0          
                     ,max_value= 2* np.pi
                     ,value=2.2
@@ -72,13 +72,13 @@ with col1:
 
 with col2:
 
-    mass_ratio = st.slider("The ratio of mass between the two objects:",
+    mass_ratio = st.slider("The ratio of mass between the two objects (Unitless):",
                     min_value=0.01
                     ,max_value=1.0
                     ,value=.72
                     )
 
-    declination = st.slider("Declination:",
+    declination = st.slider("Declination (Radians):",
                     min_value= -np.pi/2 
                     ,max_value= np.pi/2
                     ,value= -1.2
@@ -93,7 +93,7 @@ with col3:
                         )
 
 
-    inclination = st.slider("inclination:",
+    inclination = st.slider("Inclination angle (radians):",
                     min_value=0.0
                     ,max_value= np.pi
                     ,value=.5
@@ -110,14 +110,14 @@ with col4:
                 )
 
 
-    polarization = st.slider("Polarization:",
+    polarization = st.slider("Polarization (Strain):",
                     min_value=0.0 
                     ,max_value= 2*np.pi
                     ,value=.01
                     )
 
 with col5:
-    phase = st.slider("The Coalesce Phase (Radians):",
+    phase = st.slider("Coalesence phase of the binary (radians):",
                     min_value=0.0            
                     ,max_value= 2* np.pi
                     ,value=.01

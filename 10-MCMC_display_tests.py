@@ -81,10 +81,10 @@ Pol = stacked.posterior.Pol.values
 #fig_resampler = FigureResampler(fig)
 
 
-mcmc_df = pd.read_parquet("reduced_mcmc_results.parquet")
+mcmc_df = pd.read_parquet("mcmc_df_with_log_post.parquet")
 
 def plot_hist(fig,x_data,plot_title,x_axis_title,nbins=50):
-    fig.add_trace(go.Histogram(x=x_data,nbinsx=nbins,histnorm='probability density'),limit_to_view=True,max_n_samples = 60000)
+    fig.add_trace(go.Histogram(x=x_data,nbinsx=nbins),limit_to_view=True,max_n_samples = 60000)
 
     fig.update_layout(
         # Hover settings
@@ -102,23 +102,22 @@ def plot_hist(fig,x_data,plot_title,x_axis_title,nbins=50):
                 },
 
         yaxis=dict(
-                title="Probability Density"),
+                title="Counts"),    #"Probability Density"),
 
         xaxis=dict(
             title=x_axis_title)
 
     )
 
-test_hist = create_new_figure()
-plot_hist(test_hist,mcmc_df["Mass"],"Mass","Mass (Solar Mass)")
+#test_hist = create_new_figure()
+#plot_hist(test_hist,mcmc_df["Mass"],"Mass","Mass (Solar Mass)")
 
-st.plotly_chart(test_hist, theme="streamlit",on_select="rerun",use_container_width=True)
+#st.plotly_chart(test_hist, theme="streamlit",on_select="rerun",use_container_width=True)
 
 import nbformat
 #st.write(nbformat.__version__)
 import plotly.express as px
 
-Mass_Ratio = mcmc_df[["Mass", "Ratio","Pol"]]
 
 #st.write(mcmc_df)
 
@@ -127,35 +126,120 @@ Mass_Ratio = mcmc_df[["Mass", "Ratio","Pol"]]
 
 #st.plotly_chart(fig2)
 
+columns = np.array(["Mass","Ratio","Distance","TimeShift","Phase","RA","Dec","Incl","Pol"])#"lp","chain","draw"])
+
+columns_labels = np.array(["The Mass of the heavier object (Solar Masses)",
+                           "Ratio of binary masses (Unitless)",
+                           "The Luminosity distance to the GW event (Mega-Parsecs)",
+                           "The detected time of the GW event",
+                           "Coalesence phase of the binary (radians)",
+                           "Right Ascension (Radians)",
+                           "Declination (Radians)",
+                           "Inclination angle (radians)",
+                           "Polarization (Strain)"])#"lp","chain","draw"])
 
 
+hist_df = mcmc_df[[columns[0], columns[1]]]
 
-df = Mass_Ratio
 
+x_data = np.array(hist_df["Mass"])
+y_data = np.array(hist_df["Ratio"])
+
+hist_data,xedges,yedges  = np.histogram2d(x_data,y_data,bins=[50,50])
+hist_data = hist_data.T
+#hist_data = np.flip(hist_data,0)
+
+x_axis = hist_df[columns[0]]
+y_axis = hist_df[columns[1]]
+x_axis_label = columns_labels[0]
+y_axis_label = columns_labels[1]
+
+x_bin_list = list(xedges)
+y_bin_list = list(yedges)
+
+x_hist_data, trash = np.histogram(x_data,bins=x_bin_list)
+y_hist_data, trash = np.histogram(y_data,bins=y_bin_list)
+
+def colorbar(zmin, zmax, n = 6):
+    return dict(
+        title = "Log color scale",
+        tickmode = "array",
+        tickvals = np.linspace(np.log10(zmin), np.log10(zmax), n),
+        ticktext = np.round(10 ** np.linspace(np.log10(zmin), np.log10(zmax), n), 1)
+    )
+
+zmin = 1
+zmax = 12000
+
+import math
+#math.log(number, base)
 
 # Create 2D histogram for density heatmap
-heatmap = go.Histogram2d(
-    x=df["Mass"],
-    y=df["Pol"],
-    colorscale=px.colors.sequential.Purples,#Purples,gray_r
-    colorbar=dict(title="Density"),
-    nbinsx=50,
-    nbinsy=50,
+heatmap = go.Heatmap(
+    #x=x_axis,
+    #y=y_axis,
+    #z = np.log(hist_data+.1),
+    #np.log2(hist_data+.1),
+    z = hist_data,
+    colorscale=px.colors.sequential.Purples,    #Purples,gray_r
+    colorbar=dict(title = "colorbar"),
+    #nbinsx=50,
+    #nbinsy=50,
+    #zauto = True,
+    #zmid = 10,
+    zmin = 0,
+    #zmax = 7000,
 )
 
-# Create marginal histograms
-x_hist = go.Histogram(
-    x=df["Mass"],
+
+"""heatmap = go.Histogram2d(
+    x=x_axis,
+    y=y_axis,
+    colorscale=px.colors.sequential.Purples,    #Purples,gray_r
+    colorbar=dict(title = "colorbar"),
     nbinsx=50,
+    nbinsy=50,
+    #zauto = True,
+    #zmid = 4000,
+    #zmin = 0,
+    #zmax = 10000,
+)"""
+"""
+Scatter_test = (go.Scatter(
+        x = x_axis,
+        y = y_axis,
+        xaxis = 'x',
+        yaxis = 'y',
+        mode = 'markers',
+        marker = dict(
+            color = 'rgba(0,0,0,0.3)',
+            size = 3
+        )
+    ))
+"""
+
+# Create marginal histograms
+"""x_hist = go.Histogram(
+    x=x_axis,
+    nbinsx=50,
+    marker_color=px.colors.sequential.Purples[-1],
+    showlegend=False,
+    yaxis='y2',
+    #ybins=50,
+)"""
+
+x_hist = go.Bar(
+    x=np.arange(0,50,1),
+    y = x_hist_data,
     marker_color=px.colors.sequential.Purples[-1],
     showlegend=False,
     yaxis='y2',
     #ybins=50,
 )
 
-y_hist = go.Histogram(
-    y=df["Pol"],
-    nbinsy=50,
+y_hist = go.Bar(
+    y = np.arange(0,50,1),
+    x = y_hist_data,
     marker_color=px.colors.sequential.Purples[-1],
     showlegend=False,
     xaxis='x2',
@@ -163,12 +247,19 @@ y_hist = go.Histogram(
     orientation='h'
 )
 
+
 # Build the figure layout
-fig = go.Figure()
+fig=go.Figure()
+
+# Add traces
+#fig.add_trace(Scatter_test)
+fig.add_trace(heatmap)
+fig.add_trace(x_hist)
+fig.add_trace(y_hist)
 
 fig.update_layout(
-    xaxis=dict(domain=[0, 0.85], title="Mass"),
-    yaxis=dict(domain=[0, 0.85], title="Pol"),
+    xaxis=dict(domain=[0, 0.85], title=x_axis_label),
+    yaxis=dict(domain=[0, 0.85], title=y_axis_label),
     xaxis2=dict(domain=[0.86, 1], showticklabels=False),
     yaxis2=dict(domain=[0.86, 1], showticklabels=False),
     bargap=0.05,
@@ -176,10 +267,8 @@ fig.update_layout(
     height=700,
 )
 
-# Add traces
-fig.add_trace(heatmap)
-fig.add_trace(x_hist)
-fig.add_trace(y_hist)
+
+#fig_resampler = FigureResampler(fig)
 
 # Set up layout with subplots manually
 
@@ -201,8 +290,8 @@ fig.add_trace(y_hist)
     #ybins=dict(size=(df["Ratio"].max() - df["Ratio"].min()) / 30)
 #)
 
-st.plotly_chart(fig)
 
+st.plotly_chart(fig)
 
 #corner_test = corner.corner(test_array)
 
