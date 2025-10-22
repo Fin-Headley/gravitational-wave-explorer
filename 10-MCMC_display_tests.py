@@ -114,14 +114,94 @@ plot_hist(test_hist,mcmc_df["Mass"],"Mass","Mass (Solar Mass)")
 
 st.plotly_chart(test_hist, theme="streamlit",on_select="rerun",use_container_width=True)
 
-
+import nbformat
+#st.write(nbformat.__version__)
 import plotly.express as px
-df = px.data.tips()
 
-Mass_Ratio = mcmc_df[["Mass", "Ratio"]]
+Mass_Ratio = mcmc_df[["Mass", "Ratio","Pol"]]
 
-fig = px.density_heatmap(Mass_Ratio, x="Mass", y="Ratio", marginal_x="histogram", marginal_y="histogram")
-fig.show()
+#st.write(mcmc_df)
+
+#fig2 = px.density_heatmap(Mass_Ratio, x="Mass", y="Ratio", marginal_x="histogram", marginal_y="histogram",color_continuous_scale=px.colors.sequential.Viridis)
+#fig.update_layout(marker=dict(opacity=0.1))
+
+#st.plotly_chart(fig2)
+
+
+
+
+df = Mass_Ratio
+
+
+# Create 2D histogram for density heatmap
+heatmap = go.Histogram2d(
+    x=df["Mass"],
+    y=df["Pol"],
+    colorscale=px.colors.sequential.Purples,#Purples,gray_r
+    colorbar=dict(title="Density"),
+    nbinsx=50,
+    nbinsy=50,
+)
+
+# Create marginal histograms
+x_hist = go.Histogram(
+    x=df["Mass"],
+    nbinsx=50,
+    marker_color=px.colors.sequential.Purples[-1],
+    showlegend=False,
+    yaxis='y2',
+    #ybins=50,
+)
+
+y_hist = go.Histogram(
+    y=df["Pol"],
+    nbinsy=50,
+    marker_color=px.colors.sequential.Purples[-1],
+    showlegend=False,
+    xaxis='x2',
+    #xbins=50,
+    orientation='h'
+)
+
+# Build the figure layout
+fig = go.Figure()
+
+fig.update_layout(
+    xaxis=dict(domain=[0, 0.85], title="Mass"),
+    yaxis=dict(domain=[0, 0.85], title="Pol"),
+    xaxis2=dict(domain=[0.86, 1], showticklabels=False),
+    yaxis2=dict(domain=[0.86, 1], showticklabels=False),
+    bargap=0.05,
+    width=700,
+    height=700,
+)
+
+# Add traces
+fig.add_trace(heatmap)
+fig.add_trace(x_hist)
+fig.add_trace(y_hist)
+
+# Set up layout with subplots manually
+
+
+# Make the marginal histograms align properly
+#fig.update_traces(
+#    selector=dict(type='histogram'),
+#    opacity=0.6
+#)
+
+# Adjust specific histograms’ orientation and axes
+#fig.update_traces(
+    #selector=dict(yaxis='y2'),
+    #xbins=dict(size=(df["Mass"].max() - df["Mass"].min()) / 30)
+#)
+#fig.update_traces(
+    #selector=dict(xaxis='x2'),
+    #orientation='h',
+    #ybins=dict(size=(df["Ratio"].max() - df["Ratio"].min()) / 30)
+#)
+
+st.plotly_chart(fig)
 
 
 #corner_test = corner.corner(test_array)
