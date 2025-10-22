@@ -77,17 +77,13 @@ stacked = reduced_data.stack(sample=["chain", "draw"], inplace=False)
 #est_array["Distance"] = Distance
 #test_array
 
-
-
 #corner_test = corner.corner(test_array)
 
 #st.pyplot(corner_test)
-
 
 #from arviz_plots import plot_dist, plot_forest, plot_trace_dist, style # pyright: ignore[reportMissingImports]
 #import arviz_plots as azp
 
 #mcmc_df = pd.read_parquet("reduced_mcmc_results.parquet")
 
-
-trace_test = az.plot_trace(reduced_data,var_names=["Incl"],circ_var_names=["Incl"],combined=True,show=True,backend = "bokeh")
+#trace_test = az.plot_trace(reduced_data,var_names=["Incl"],circ_var_names=["Incl"],combined=True,show=True,backend = "bokeh")
