@@ -17,7 +17,7 @@ from astropy import units as u
 from gwpy.plot import Plot as GWPlot
 import os
 from astropy.time import Time
-#import plotly.express as px
+import plotly.express as px
 import plotly.graph_objects as go
 import datetime
 import plotly
