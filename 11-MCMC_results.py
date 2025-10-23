@@ -212,15 +212,6 @@ with tab3:
     st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
 
 
-
-
-pure_data = import_pure_data()
-raw_data = import_raw_data()
-bandpass_data = create_bandpass_data()
-whitend_data = create_whitend_data()
-GW_data = import_GW_data()
-PSD_data = import_PSD_data()
-
 SNRs = {}
 ifos = ['L1','H1','V1']
 colours = import_colours_dict()
