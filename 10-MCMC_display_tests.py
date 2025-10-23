@@ -57,29 +57,19 @@ ifos = ['L1','H1']
 ########################################################################
 
 #burnin = 35426 #thin = 2
-reduced_data = az.from_netcdf("MCMC_processed_data.nc")
+#reduced_data = az.from_netcdf("MCMC_processed_data.nc")
 
-stacked = reduced_data.stack(sample=["chain", "draw"], inplace=False)
+#stacked = reduced_data.stack(sample=["chain", "draw"], inplace=False)
 
-Mass = stacked.posterior.Mass.values
-Ratio = stacked.posterior.Ratio.values
-Distance = stacked.posterior.Distance.values
-TimeShift = stacked.posterior.TimeShift.values
-Phase = stacked.posterior.Phase.values
-RA = stacked.posterior.RA.values
-Dec = stacked.posterior.Dec.values
-Incl = stacked.posterior.Incl.values
-Pol = stacked.posterior.Pol.values
-
-#test_array = {}
-#test_array["Mass"] = Mass
-#test_array["Ratio"] = Ratio
-#est_array["Distance"] = Distance
-#test_array
-
-#fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.05,shared_yaxes=True)
-#fig_resampler = FigureResampler(fig)
-
+#Mass = stacked.posterior.Mass.values
+#Ratio = stacked.posterior.Ratio.values
+#Distance = stacked.posterior.Distance.values
+#TimeShift = stacked.posterior.TimeShift.values
+#Phase = stacked.posterior.Phase.values
+#RA = stacked.posterior.RA.values
+#Dec = stacked.posterior.Dec.values
+#Incl = stacked.posterior.Incl.values
+#Pol = stacked.posterior.Pol.values
 
 mcmc_df = pd.read_parquet("mcmc_df_with_log_post.parquet")
 
@@ -109,22 +99,6 @@ def plot_hist(fig,x_data,plot_title,x_axis_title,nbins=50):
 
     )
 
-#test_hist = create_new_figure()
-#plot_hist(test_hist,mcmc_df["Mass"],"Mass","Mass (Solar Mass)")
-
-#st.plotly_chart(test_hist, theme="streamlit",on_select="rerun",use_container_width=True)
-
-import nbformat
-#st.write(nbformat.__version__)
-import plotly.express as px
-
-
-#st.write(mcmc_df)
-
-#fig2 = px.density_heatmap(Mass_Ratio, x="Mass", y="Ratio", marginal_x="histogram", marginal_y="histogram",color_continuous_scale=px.colors.sequential.Viridis)
-#fig.update_layout(marker=dict(opacity=0.1))
-
-#st.plotly_chart(fig2)
 
 columns = np.array(["Mass","Ratio","Distance","TimeShift","Phase","RA","Dec","Incl","Pol"])#"lp","chain","draw"])
 
@@ -142,7 +116,6 @@ columns_labels = np.array(["The Mass of the heavier object (Solar Masses)",
 column_titles = np.array(["Mass","Ratio","Distance","TimeShift","Phase","Right Ascension","Declination","Inclination","Polarization"])
 
 word_to_num_dict = {"Mass":0,"Ratio":1,"Distance":2,"TimeShift":3,"Phase":4,"Right Ascension":5,"Declination":6,"Inclination":7,"Polarization":8}
-
 
 
 options = column_titles
@@ -349,7 +322,6 @@ fig.update_layout(
     #orientation='h',
     #ybins=dict(size=(df["Ratio"].max() - df["Ratio"].min()) / 30)
 #)
-
 
 st.plotly_chart(fig,use_container_width=False)
 
