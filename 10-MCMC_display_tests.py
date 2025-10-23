@@ -38,14 +38,13 @@ st.write(
     "Lets look at how we can model GWs!"
 )
 
-pure_data = import_pure_data()
-raw_data = import_raw_data()
-bandpass_data = create_bandpass_data()
-whitend_data = create_whitend_data()
-GW_data = import_GW_data()
+#pure_data = import_pure_data()
+#raw_data = import_raw_data()
+#bandpass_data = create_bandpass_data()
+#whitend_data = create_whitend_data()
+#GW_data = import_GW_data()
 
-
-PSD_data = import_PSD_data()
+#PSD_data = import_PSD_data()
 
 #code
 #gets the time of the event and prints it
@@ -73,135 +72,85 @@ ifos = ['L1','H1']
 
 mcmc_df = pd.read_parquet("mcmc_df_with_log_post.parquet")
 
-def plot_hist(fig,x_data,plot_title,x_axis_title,nbins=50):
-    fig.add_trace(go.Histogram(x=x_data,nbinsx=nbins),limit_to_view=True,max_n_samples = 60000)
-
-    fig.update_layout(
-        # Hover settings
-        hovermode='x unified',
-        #hoversubplots="axis",
-        width=500,
-        height=500,
-        title={
-                    'text': plot_title,
-                    'y': 0.9,
-                    'x': .5,
-                    'xanchor': 'center',
-                    'yanchor': 'top',
-                    'automargin': True
-                },
-
-        yaxis=dict(
-                title="Counts"),    #"Probability Density"),
-
-        xaxis=dict(
-            title=x_axis_title)
-
-    )
+mcmc_df.rename(inplace=True,columns={"TimeShift":"Time Shift","RA":"Right Ascension","Dec":"Declination","Incl":"Inclination","Pol":"Polarization","lp":"Log Posterior","chain":"Chain","draw":"Draw"})
 
 
-columns = np.array(["Mass","Ratio","Distance","TimeShift","Phase","RA","Dec","Incl","Pol"])#"lp","chain","draw"])
-
-columns_labels = np.array(["The Mass of the heavier object (Solar Masses)",
-                           "Ratio of binary masses (Unitless)",
-                           "The Luminosity distance to the GW event (Mega-Parsecs)",
-                           "The detected time of the GW event",
-                           "Coalesence phase of the binary (radians)",
-                           "Right Ascension (Radians)",
-                           "Declination (Radians)",
-                           "Inclination angle (radians)",
-                           "Polarization (Strain)"])#"lp","chain","draw"])
-
-
-column_titles = np.array(["Mass","Ratio","Distance","TimeShift","Phase","Right Ascension","Declination","Inclination","Polarization"])
-
-word_to_num_dict = {"Mass":0,"Ratio":1,"Distance":2,"TimeShift":3,"Phase":4,"Right Ascension":5,"Declination":6,"Inclination":7,"Polarization":8}
-
-
+column_titles = np.array(["Mass","Ratio","Distance","Time Shift","Phase","Right Ascension","Declination","Inclination","Polarization"])
 options = column_titles
 
-col1, col2 = st.columns(2)
+col1, col2 = st.columns([3,1],gap=None)
 
-with col1:
-    #st.header("Widget 1")
+with col2:
+    st.header("Parameter Selection")
     top_column_picker = st.selectbox(
-        "Select a value for Widget 1:",
+        "Select a parameter for the x axis:",
         options,
         key="widget1_selector"  # Unique key for Widget 1
     )
 
-#st.header("Widget 2")
-# Filter options for Widget 2 based on the selection in Widget 1
-# This ensures Widget 2 cannot select the same value as Widget 1
-available_options_2 = [opt for opt in options if opt != top_column_picker]
+    #st.header("Widget 2")
+    # Filter options for Widget 2 based on the selection in Widget 1
+    # This ensures Widget 2 cannot select the same value as Widget 1
+    available_options_2 = [opt for opt in options if opt != top_column_picker]
 
-# Set a default value for Widget 2 if the currently selected value in Widget 1
-# is the only remaining option for Widget 2
-if top_column_picker in options and len(available_options_2) == 0:
-    default_index_2 = 0 if available_options_2 else None
-elif top_column_picker in options and available_options_2:
-    if st.session_state.get("widget2_selector") == top_column_picker:
-        default_index_2 = available_options_2.index(available_options_2[0])
+    # Set a default value for Widget 2 if the currently selected value in Widget 1
+    # is the only remaining option for Widget 2
+    if top_column_picker in options and len(available_options_2) == 0:
+        default_index_2 = 0 if available_options_2 else None
+    elif top_column_picker in options and available_options_2:
+        if st.session_state.get("widget2_selector") == top_column_picker:
+            default_index_2 = available_options_2.index(available_options_2[0])
+        else:
+            try:
+                default_index_2 = available_options_2.index(st.session_state.get("widget2_selector", available_options_2[0]))
+            except ValueError:
+                default_index_2 = 0
     else:
-        try:
-            default_index_2 = available_options_2.index(st.session_state.get("widget2_selector", available_options_2[0]))
-        except ValueError:
-            default_index_2 = 0
-else:
-    default_index_2 = 0
+        default_index_2 = 0
 
-with col2:
     right_column_picker = st.selectbox(
-        "Select a value for Widget 2(cannot be the same as Widget 1):",
+        "Select a **different** parameter for the x axis:",
         available_options_2,
         index=default_index_2,
         key="widget2_selector"  # Unique key for Widget 2
     )
 
-#st.write(f"Value from Widget 1: {top_column_picker}")
-#st.write(f"Value from Widget 2: {right_column_picker}")
+
+columns_labels={"Mass": "The Mass of the heavier object (Solar Masses)",
+                "Ratio":    "Ratio of binary masses (Unitless)",
+                "Distance": "The Luminosity distance to the GW event (Mega-Parsecs)",
+                "Time Shift":    "The detected time of the GW event",
+                "Phase":    "Coalesence phase of the binary (radians)",
+                "Right Ascension":  "Right Ascension (Radians)",
+                "Declination":  "Declination (Radians)",
+                "Inclination":  "Inclination angle (radians)",
+                "Polarization": "Polarization (Strain)"}
+
+column_dec_value = {"Mass":0,"Ratio":2,"Distance":0,"Time Shift":5,"Phase":2,"Right Ascension":2,"Declination":3,"Inclination":2,"Polarization":2}
 
 
 
-top_column = word_to_num_dict[top_column_picker]
-right_column = word_to_num_dict[right_column_picker]
-#need to make decimals into two varibales and place them smartly
+#def make_corner_plot(df = mcmc_df,top_column_picker = top_column_picker,right_column_picker=right_column_picker,columns_labels=columns_labels,column_dec_value=column_dec_value):
 
-
-hist_df = mcmc_df[[columns[top_column], columns[right_column]]]
-
-
-x_data = np.array(hist_df[columns[top_column]])
-y_data = np.array(hist_df[columns[right_column]])
+x_data = np.array(mcmc_df[top_column_picker])
+y_data = np.array(mcmc_df[right_column_picker])
 
 hist_data,xedges,yedges  = np.histogram2d(x_data,y_data,bins=[50,50])
 hist_data = hist_data.T
 #hist_data = np.flip(hist_data,0)
 
-x_axis = hist_df[columns[top_column]]
-y_axis = hist_df[columns[right_column]]
-x_axis_label = columns_labels[top_column]
-y_axis_label = columns_labels[right_column]
-
-x_range = (np.min(x_data),np.max(x_data))
-y_range = (np.min(y_data),np.max(y_data))
-
-x_bin_list = list(xedges)
-y_bin_list = list(yedges)
-
-x_hist_data, trash = np.histogram(x_data,bins=x_bin_list)
-y_hist_data, trash = np.histogram(y_data,bins=y_bin_list)
+x_hist_data, trash = np.histogram(x_data,bins=list(xedges))
+y_hist_data, trash = np.histogram(y_data,bins=list(yedges))
+del trash
 
 
-
-
-x_bin_ticks = np.round(xedges,decimals=3)
+x_bin_ticks = np.round(xedges,decimals=column_dec_value[top_column_picker])
 x_bin_ticks = x_bin_ticks.astype(str)
 for i in range(len(x_bin_ticks)-1):
     x_bin_ticks[i] =  x_bin_ticks[i] + " - " + x_bin_ticks[i+1]
 x_bin_ticks = x_bin_ticks[0:-1]
 
-y_bin_ticks = np.round(yedges,decimals=3)
+y_bin_ticks = np.round(yedges,decimals=column_dec_value[right_column_picker])
 y_bin_ticks = y_bin_ticks.astype(str)
 for i in range(len(y_bin_ticks)-1):
     y_bin_ticks[i] =  y_bin_ticks[i] + " - " + y_bin_ticks[i+1]
@@ -209,19 +158,40 @@ y_bin_ticks = y_bin_ticks[0:-1]
 
 
 X_bin_var, Y_bin_var = np.meshgrid(x_bin_ticks,y_bin_ticks)
+coordinate_array = np.stack((X_bin_var.ravel(), Y_bin_var.ravel()), axis=-1).reshape(Y_bin_var.shape[0], X_bin_var.shape[1], 2) #coordinate array for hover labels
 
-coordinates_array = np.stack((X_bin_var.ravel(), Y_bin_var.ravel()), axis=-1).reshape(Y_bin_var.shape[0], X_bin_var.shape[1], 2)
-
-customdata = coordinates_array
-
-x_bin_ticks_half_empty = x_bin_ticks.copy()
-x_bin_ticks_half_empty[1::2] = ""
-
-x_centers = 0.5 * (xedges[:-1] + xedges[1:])
-y_centers = 0.5 * (yedges[:-1] + yedges[1:])
-
+x_centers = 0.5 * (xedges[:-1] + xedges[1:]) #x axis markers for ticks
+y_centers = 0.5 * (yedges[:-1] + yedges[1:]) #y axis markers for ticks
 
 # Create heatmap
+
+#MAP_df = pd.read_parquet("MAP_parameters.parquet")
+
+#MAP_df.rename(inplace=True,index={"TimeShift":"Time Shift","RA":"Right Ascension","Dec":"Declination","Incl":"Inclination","Pol":"Polarization","lp":"Log Posterior","chain":"Chain","draw":"Draw"})
+
+#st.write(MAP_df["MAP"].loc["Mass"])
+
+#_axis_MAP = MAP_df["MAP"].loc[top_column_picker]
+#y_axis_MAP = MAP_df["MAP"].loc[right_column_picker]
+
+#st.write(x_axis_MAP)
+
+#AP_point_graph = (x_axis_MAP,y_axis_MAP)
+
+#MAP_point = go.Scatter(
+#    x=[x_axis_MAP],
+#    y=[y_axis_MAP],
+#)
+    #colorscale=px.colors.sequential.Viridis,    #Purples,gray_r
+    #colorbar=dict(title = "colorbar"),
+    #zmin = 0,
+    #customdata = coordinate_array,
+    #hovertemplate='<b>'+top_column_picker+' Bin</b>: %{customdata[0]}</br><b>'+right_column_picker+' Bin</b>: %{customdata[1]}<br><b>Count</b>: %{z}<extra></extra>',
+#    yaxis='y',
+#    xaxis='x',)
+
+
+
 heatmap = go.Heatmap(
     x = x_centers,
     y = y_centers,
@@ -229,24 +199,18 @@ heatmap = go.Heatmap(
     colorscale=px.colors.sequential.Viridis,    #Purples,gray_r
     colorbar=dict(title = "colorbar"),
     zmin = 0,
-    #text=custom_text,
-    #hovertext = list(x_bin_ticks),
-    #hoverinfo="text",
-    customdata = coordinates_array,
-    hovertemplate='<b>'+column_titles[top_column]+' Bin</b>: %{customdata[0]}</br><b>'+column_titles[right_column]+' Bin</b>: %{customdata[1]}<br><b>Count</b>: %{z}<extra></extra>',
-    #hovertemplate = '<br> %{x}'
-    #hovertemplate= '<b>X Value</b>: %{x}<br><b>Y Value</b>: %{y:.2f}<br><i>Custom Info</i>: %{text}<extra></extra>',
+    customdata = coordinate_array,
+    hovertemplate='<b>'+top_column_picker+' Bin</b>: %{customdata[0]}</br><b>'+right_column_picker+' Bin</b>: %{customdata[1]}<br><b>Count</b>: %{z}<extra></extra>',
     yaxis='y',
     xaxis='x',
 )
-
 
 x_hist = go.Bar(
     x = x_centers,
     y = x_hist_data,
     marker_color=px.colors.sequential.Purples[-1],
     customdata = x_bin_ticks,
-    hovertemplate='<b>'+column_titles[top_column]+' Bin</b>: %{customdata}</br></br><b>Count</b>: %{y}<extra></extra>',
+    hovertemplate='<b>'+top_column_picker+' Bin</b>: %{customdata}</br></br><b>Count</b>: %{y}<extra></extra>',
     showlegend=False,
     yaxis='y2',
 )
@@ -256,82 +220,37 @@ y_hist = go.Bar(
     x = y_hist_data,
     marker_color=px.colors.sequential.Purples[-1],
     customdata = y_bin_ticks,
-    hovertemplate='<b>'+column_titles[right_column]+' Bin</b>: %{customdata}</br></br><b>Count</b>: %{x}<extra></extra>',
+    hovertemplate='<b>'+right_column_picker+' Bin</b>: %{customdata}</br></br><b>Count</b>: %{x}<extra></extra>',
     showlegend=False,
     xaxis='x2',
     orientation='h',
 )
 
-
-# Build the figure layout
 fig=go.Figure()
 
-# Add traces
-#fig.add_trace(Scatter_test)
 fig.add_trace(heatmap)
 fig.add_trace(x_hist)
 fig.add_trace(y_hist)
 
-
-xtick_vals = list(np.round(np.linspace(x_range[0],x_range[1],10),decimals=0))
-xticktext = [str(i) for i in xtick_vals]
-
-
-
 fig.update_layout(
     xaxis=dict(domain=[0, 0.85], 
-               title=x_axis_label,
-               tickmode = 'array',
-               tickvals = xtick_vals,
-               ticktext = xticktext,
-               showticklabels=True
+            title=columns_labels[top_column_picker],
+            showticklabels=True
                 ),
-    yaxis=dict(domain=[0, 0.85], title=y_axis_label),
+    yaxis=dict(domain=[0, 0.85], title=columns_labels[right_column_picker]),
     xaxis2=dict(domain=[0.86, 1], showticklabels=False),
     yaxis2=dict(domain=[0.86, 1], showticklabels=False),
-    title={'text': column_titles[top_column]+" vs "+column_titles[right_column],
+    title={'text': top_column_picker+" vs "+right_column_picker,
         'y':0.9,
         'x':0.5,
         'xanchor': 'center',
         'yanchor': 'top'},
     hovermode='closest',
     bargap=0.05,
-    width=700,
-    height=700,
+    width=600,
+    height=600,
 )
 
+with col1:
+    st.plotly_chart(fig,use_container_width=False)
 
-#fig_resampler = FigureResampler(fig)
-
-# Set up layout with subplots manually
-
-
-# Make the marginal histograms align properly
-#fig.update_traces(
-#    selector=dict(type='histogram'),
-#    opacity=0.6
-#)
-
-# Adjust specific histograms’ orientation and axes
-#fig.update_traces(
-    #selector=dict(yaxis='y2'),
-    #xbins=dict(size=(df["Mass"].max() - df["Mass"].min()) / 30)
-#)
-#fig.update_traces(
-    #selector=dict(xaxis='x2'),
-    #orientation='h',
-    #ybins=dict(size=(df["Ratio"].max() - df["Ratio"].min()) / 30)
-#)
-
-st.plotly_chart(fig,use_container_width=False)
-
-#corner_test = corner.corner(test_array)
-
-#st.pyplot(corner_test)
-
-#from arviz_plots import plot_dist, plot_forest, plot_trace_dist, style # pyright: ignore[reportMissingImports]
-#import arviz_plots as azp
-
-#mcmc_df = pd.read_parquet("reduced_mcmc_results.parquet")
-
-#trace_test = az.plot_trace(reduced_data,var_names=["Incl"],circ_var_names=["Incl"],combined=True,show=True,backend = "bokeh")
