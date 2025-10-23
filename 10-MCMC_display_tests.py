@@ -139,20 +139,79 @@ columns_labels = np.array(["The Mass of the heavier object (Solar Masses)",
                            "Polarization (Strain)"])#"lp","chain","draw"])
 
 
-hist_df = mcmc_df[[columns[0], columns[1]]]
+column_titles = np.array(["Mass","Ratio","Distance","TimeShift","Phase","Right Ascension","Declination","Inclination","Polarization"])
+
+word_to_num_dict = {"Mass":0,"Ratio":1,"Distance":2,"TimeShift":3,"Phase":4,"Right Ascension":5,"Declination":6,"Inclination":7,"Polarization":8}
 
 
-x_data = np.array(hist_df["Mass"])
-y_data = np.array(hist_df["Ratio"])
+
+options = column_titles
+
+col1, col2 = st.columns(2)
+
+with col1:
+    #st.header("Widget 1")
+    top_column_picker = st.selectbox(
+        "Select a value for Widget 1:",
+        options,
+        key="widget1_selector"  # Unique key for Widget 1
+    )
+
+#st.header("Widget 2")
+# Filter options for Widget 2 based on the selection in Widget 1
+# This ensures Widget 2 cannot select the same value as Widget 1
+available_options_2 = [opt for opt in options if opt != top_column_picker]
+
+# Set a default value for Widget 2 if the currently selected value in Widget 1
+# is the only remaining option for Widget 2
+if top_column_picker in options and len(available_options_2) == 0:
+    default_index_2 = 0 if available_options_2 else None
+elif top_column_picker in options and available_options_2:
+    if st.session_state.get("widget2_selector") == top_column_picker:
+        default_index_2 = available_options_2.index(available_options_2[0])
+    else:
+        try:
+            default_index_2 = available_options_2.index(st.session_state.get("widget2_selector", available_options_2[0]))
+        except ValueError:
+            default_index_2 = 0
+else:
+    default_index_2 = 0
+
+with col2:
+    right_column_picker = st.selectbox(
+        "Select a value for Widget 2(cannot be the same as Widget 1):",
+        available_options_2,
+        index=default_index_2,
+        key="widget2_selector"  # Unique key for Widget 2
+    )
+
+#st.write(f"Value from Widget 1: {top_column_picker}")
+#st.write(f"Value from Widget 2: {right_column_picker}")
+
+
+
+top_column = word_to_num_dict[top_column_picker]
+right_column = word_to_num_dict[right_column_picker]
+#need to make decimals into two varibales and place them smartly
+
+
+hist_df = mcmc_df[[columns[top_column], columns[right_column]]]
+
+
+x_data = np.array(hist_df[columns[top_column]])
+y_data = np.array(hist_df[columns[right_column]])
 
 hist_data,xedges,yedges  = np.histogram2d(x_data,y_data,bins=[50,50])
 hist_data = hist_data.T
 #hist_data = np.flip(hist_data,0)
 
-x_axis = hist_df[columns[0]]
-y_axis = hist_df[columns[1]]
-x_axis_label = columns_labels[0]
-y_axis_label = columns_labels[1]
+x_axis = hist_df[columns[top_column]]
+y_axis = hist_df[columns[right_column]]
+x_axis_label = columns_labels[top_column]
+y_axis_label = columns_labels[right_column]
+
+x_range = (np.min(x_data),np.max(x_data))
+y_range = (np.min(y_data),np.max(y_data))
 
 x_bin_list = list(xedges)
 y_bin_list = list(yedges)
@@ -160,91 +219,74 @@ y_bin_list = list(yedges)
 x_hist_data, trash = np.histogram(x_data,bins=x_bin_list)
 y_hist_data, trash = np.histogram(y_data,bins=y_bin_list)
 
-def colorbar(zmin, zmax, n = 6):
-    return dict(
-        title = "Log color scale",
-        tickmode = "array",
-        tickvals = np.linspace(np.log10(zmin), np.log10(zmax), n),
-        ticktext = np.round(10 ** np.linspace(np.log10(zmin), np.log10(zmax), n), 1)
-    )
 
-zmin = 1
-zmax = 12000
 
-import math
-#math.log(number, base)
 
-# Create 2D histogram for density heatmap
+x_bin_ticks = np.round(xedges,decimals=3)
+x_bin_ticks = x_bin_ticks.astype(str)
+for i in range(len(x_bin_ticks)-1):
+    x_bin_ticks[i] =  x_bin_ticks[i] + " - " + x_bin_ticks[i+1]
+x_bin_ticks = x_bin_ticks[0:-1]
+
+y_bin_ticks = np.round(yedges,decimals=3)
+y_bin_ticks = y_bin_ticks.astype(str)
+for i in range(len(y_bin_ticks)-1):
+    y_bin_ticks[i] =  y_bin_ticks[i] + " - " + y_bin_ticks[i+1]
+y_bin_ticks = y_bin_ticks[0:-1]
+
+
+X_bin_var, Y_bin_var = np.meshgrid(x_bin_ticks,y_bin_ticks)
+
+coordinates_array = np.stack((X_bin_var.ravel(), Y_bin_var.ravel()), axis=-1).reshape(Y_bin_var.shape[0], X_bin_var.shape[1], 2)
+
+customdata = coordinates_array
+
+x_bin_ticks_half_empty = x_bin_ticks.copy()
+x_bin_ticks_half_empty[1::2] = ""
+
+x_centers = 0.5 * (xedges[:-1] + xedges[1:])
+y_centers = 0.5 * (yedges[:-1] + yedges[1:])
+
+
+# Create heatmap
 heatmap = go.Heatmap(
-    #x=x_axis,
-    #y=y_axis,
-    #z = np.log(hist_data+.1),
-    #np.log2(hist_data+.1),
+    x = x_centers,
+    y = y_centers,
     z = hist_data,
-    colorscale=px.colors.sequential.Purples,    #Purples,gray_r
+    colorscale=px.colors.sequential.Viridis,    #Purples,gray_r
     colorbar=dict(title = "colorbar"),
-    #nbinsx=50,
-    #nbinsy=50,
-    #zauto = True,
-    #zmid = 10,
     zmin = 0,
-    #zmax = 7000,
+    #text=custom_text,
+    #hovertext = list(x_bin_ticks),
+    #hoverinfo="text",
+    customdata = coordinates_array,
+    hovertemplate='<b>'+column_titles[top_column]+' Bin</b>: %{customdata[0]}</br><b>'+column_titles[right_column]+' Bin</b>: %{customdata[1]}<br><b>Count</b>: %{z}<extra></extra>',
+    #hovertemplate = '<br> %{x}'
+    #hovertemplate= '<b>X Value</b>: %{x}<br><b>Y Value</b>: %{y:.2f}<br><i>Custom Info</i>: %{text}<extra></extra>',
+    yaxis='y',
+    xaxis='x',
 )
 
 
-"""heatmap = go.Histogram2d(
-    x=x_axis,
-    y=y_axis,
-    colorscale=px.colors.sequential.Purples,    #Purples,gray_r
-    colorbar=dict(title = "colorbar"),
-    nbinsx=50,
-    nbinsy=50,
-    #zauto = True,
-    #zmid = 4000,
-    #zmin = 0,
-    #zmax = 10000,
-)"""
-"""
-Scatter_test = (go.Scatter(
-        x = x_axis,
-        y = y_axis,
-        xaxis = 'x',
-        yaxis = 'y',
-        mode = 'markers',
-        marker = dict(
-            color = 'rgba(0,0,0,0.3)',
-            size = 3
-        )
-    ))
-"""
-
-# Create marginal histograms
-"""x_hist = go.Histogram(
-    x=x_axis,
-    nbinsx=50,
-    marker_color=px.colors.sequential.Purples[-1],
-    showlegend=False,
-    yaxis='y2',
-    #ybins=50,
-)"""
-
 x_hist = go.Bar(
-    x=np.arange(0,50,1),
+    x = x_centers,
     y = x_hist_data,
     marker_color=px.colors.sequential.Purples[-1],
+    customdata = x_bin_ticks,
+    hovertemplate='<b>'+column_titles[top_column]+' Bin</b>: %{customdata}</br></br><b>Count</b>: %{y}<extra></extra>',
     showlegend=False,
     yaxis='y2',
-    #ybins=50,
 )
 
 y_hist = go.Bar(
-    y = np.arange(0,50,1),
+    y = y_centers,
     x = y_hist_data,
     marker_color=px.colors.sequential.Purples[-1],
+    customdata = y_bin_ticks,
+    hovertemplate='<b>'+column_titles[right_column]+' Bin</b>: %{customdata}</br></br><b>Count</b>: %{x}<extra></extra>',
     showlegend=False,
     xaxis='x2',
-    #xbins=50,
-    orientation='h'
+    orientation='h',
 )
 
 
@@ -257,11 +299,29 @@ fig.add_trace(heatmap)
 fig.add_trace(x_hist)
 fig.add_trace(y_hist)
 
+
+xtick_vals = list(np.round(np.linspace(x_range[0],x_range[1],10),decimals=0))
+xticktext = [str(i) for i in xtick_vals]
+
+
+
 fig.update_layout(
-    xaxis=dict(domain=[0, 0.85], title=x_axis_label),
+    xaxis=dict(domain=[0, 0.85], 
+               title=x_axis_label,
+               tickmode = 'array',
+               tickvals = xtick_vals,
+               ticktext = xticktext,
+               showticklabels=True
+                ),
     yaxis=dict(domain=[0, 0.85], title=y_axis_label),
     xaxis2=dict(domain=[0.86, 1], showticklabels=False),
     yaxis2=dict(domain=[0.86, 1], showticklabels=False),
+    title={'text': column_titles[top_column]+" vs "+column_titles[right_column],
+        'y':0.9,
+        'x':0.5,
+        'xanchor': 'center',
+        'yanchor': 'top'},
+    hovermode='closest',
     bargap=0.05,
     width=700,
     height=700,
@@ -291,7 +351,7 @@ fig.update_layout(
 #)
 
 
-st.plotly_chart(fig)
+st.plotly_chart(fig,use_container_width=False)
 
 #corner_test = corner.corner(test_array)
 
