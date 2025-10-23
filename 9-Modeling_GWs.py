@@ -127,7 +127,7 @@ time_shift = float((event_time - datetime_center).total_seconds())
 user_params = [mass, mass_ratio, distance, time_shift, phase, right_ascension, declination, inclination, polarization]
 
 
-
+f
 param0=[160,.72,2400,.027,0.1, 2.2, -1.2, 0.5, 0.01] 
 #m1, q, distance, time_shift, phase, right_ascension, declination, inclination, polarization = param
 

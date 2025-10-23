@@ -171,7 +171,7 @@ y_centers = 0.5 * (yedges[:-1] + yedges[1:]) #y axis markers for ticks
 
 #st.write(MAP_df["MAP"].loc["Mass"])
 
-#_axis_MAP = MAP_df["MAP"].loc[top_column_picker]
+#x_axis_MAP = MAP_df["MAP"].loc[top_column_picker]
 #y_axis_MAP = MAP_df["MAP"].loc[right_column_picker]
 
 #st.write(x_axis_MAP)
