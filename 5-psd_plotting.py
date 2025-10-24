@@ -36,11 +36,11 @@ st.write(
 )
 
 #del st.session_state["bandpass_data"]
-pure_data = import_pure_data()
-raw_data = import_raw_data()
-bandpass_data = create_bandpass_data()
-whitend_data = create_whitend_data()
-GW_data = import_GW_data()
+pure_data = load_pure_data()
+raw_data = load_raw_data()
+bandpass_data = load_bandpass_data()
+whitend_data = load_whitend_data()
+GW_data = load_GW_data()
 
 #code
 #gets the time of the event and prints it
@@ -63,7 +63,7 @@ def add_freq_event_marker(fig, marker_freq, line_color="green"):
     )
 
 
-ASD_data = import_ASD_data()
+ASD_data = load_ASD_data()
 ASD_fig = create_new_figure()
 plot_freq_traces(ASD_fig,ASD_data,ifos=ifos)
 apply_gw_freq_layout(ASD_fig,title = "Amplitude Spectral Density(ASD)", yrange = [-23.7,-19])
@@ -79,7 +79,7 @@ st.plotly_chart(ASD_fig, theme="streamlit",on_select="rerun",use_container_width
 
 
 
-PSD_data = import_PSD_data()
+PSD_data = load_PSD_data()
 PSD_fig = create_new_figure()
 plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
 apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle="? [HZ]")
@@ -102,9 +102,9 @@ st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width
 
 
 
-PSD_data = import_PSD_data()
-tukey_Pxx = import_tukey_PSD_data()
-nowin_Pxx = import_nowindow_PSD_data()
+PSD_data = load_PSD_data()
+tukey_Pxx = load_tukey_PSD_data()
+nowin_Pxx = load_nowindow_PSD_data()
 
 tab1_window_fig = create_new_figure()
 tab2_window_fig = create_new_figure()

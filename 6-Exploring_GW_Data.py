@@ -35,11 +35,11 @@ st.write(
     "Lets import and explore some Gravitational Wave Data!"
 )
 
-pure_data = import_pure_data()
-raw_data = import_raw_data()
-bandpass_data = create_bandpass_data()
-whitend_data = create_whitend_data()
-GW_data = import_GW_data()
+pure_data = load_pure_data()
+raw_data = load_raw_data()
+bandpass_data = load_bandpass_data()
+whitend_data = load_whitend_data()
+GW_data = load_GW_data()
 
 #code
 #gets the time of the event and prints it
@@ -49,6 +49,7 @@ ifos = ['V1', 'H1','L1']
 
 datetime_center = Time(time_center, format='gps').utc.datetime
 
+st.write(st.session_state)
 
 
 # raw data
@@ -63,7 +64,7 @@ st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width
 
 # PSD plot
 
-PSD_data = import_PSD_data()
+PSD_data = load_PSD_data()
 PSD_fig = create_new_figure()
 
 plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)

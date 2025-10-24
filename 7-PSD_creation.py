@@ -37,13 +37,14 @@ st.write(
     "Lets look at what the PSD is and some important steps in making it!"
 )
 
-pure_data = import_pure_data()
-raw_data = import_raw_data()
-bandpass_data = create_bandpass_data()
-whitend_data = create_whitend_data()
-GW_data = import_GW_data()
+pure_data = load_pure_data()
+raw_data = load_raw_data()
+bandpass_data = load_bandpass_data()
+whitend_data = load_whitend_data()
+GW_data = load_GW_data()
 
-PSD_data = import_PSD_data()
+
+PSD_data = load_PSD_data()
 
 #code
 #gets the time of the event and prints it
@@ -53,7 +54,7 @@ ifos = ['V1', 'H1','L1']
 
 datetime_center = Time(time_center, format='gps').utc.datetime
 
-colors = import_colours_dict()
+colors = load_colours_dict()
 
 ##########################################################################################################################
 st.header("moving bandpass")
@@ -213,7 +214,7 @@ PSD_slider_bandpass = create_new_figure()
 
 PSD_slider_data = {}
 
-PSD_data = import_PSD_data()
+PSD_data = load_PSD_data()
 
 plot_freq_traces(PSD_slider_bandpass,PSD_data,ifos=ifos)
 
@@ -294,7 +295,7 @@ else:
 
 #plot the data
 
-PSD_data = import_PSD_data()
+PSD_data = load_PSD_data()
 PSD_fig = create_new_figure()
 
 plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
@@ -326,9 +327,9 @@ else:
 
 
 
-PSD_data = import_PSD_data()
-tukey_Pxx = import_tukey_PSD_data()
-nowin_Pxx = import_nowindow_PSD_data()
+PSD_data = load_PSD_data()
+tukey_Pxx = load_tukey_PSD_data()
+nowin_Pxx = load_nowindow_PSD_data()
 
 tab1_window_fig = create_new_figure()
 tab2_window_fig = create_new_figure()

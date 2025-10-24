@@ -35,14 +35,14 @@ st.write(
     "Lets look at how we can model GWs!"
 )
 
-pure_data = import_pure_data()
-raw_data = import_raw_data()
-bandpass_data = create_bandpass_data()
-whitend_data = create_whitend_data()
-GW_data = import_GW_data()
+pure_data = load_pure_data()
+raw_data = load_raw_data()
+bandpass_data = load_bandpass_data()
+whitend_data = load_whitend_data()
+GW_data = load_GW_data()
 
 
-PSD_data = import_PSD_data()
+PSD_data = load_PSD_data()
 
 #code
 #gets the time of the event and prints it
@@ -146,7 +146,7 @@ H1_white_template = user_model["H1"].whiten(asd=np.sqrt(PSD_data["H1"]),highpass
 V1_white_template = user_model["V1"].whiten(asd=np.sqrt(PSD_data["V1"]),highpass=25.,lowpass = 90.)
 
 
-colors = import_colours_dict()
+colors = load_colours_dict()
 
 ########################################################################
 

@@ -38,13 +38,14 @@ st.write(
     "lets take a look at my best fitting paramters!"
 )
 
-pure_data = import_pure_data()
-raw_data = import_raw_data()
-bandpass_data = import_bandpass_data()
-whitend_data = import_whitend_data()
-GW_data = import_GW_data()
+pure_data = load_pure_data()
+raw_data = load_raw_data()
+bandpass_data = load_bandpass_data()
+whitend_data = load_whitend_data()
+GW_data = load_GW_data()
 
-PSD_data = import_PSD_data()
+
+PSD_data = load_PSD_data()
 
 #code
 #gets the time of the event and prints it
@@ -68,7 +69,7 @@ for i in range(9):
     MAP_params.append(results_df["MAP"].iloc[i])
 
 best_fit_template = gen_template(MAP_params)
-data = import_raw_data()
+data = load_raw_data()
 #data = {}
 
 #for ifo in ifos:
@@ -87,7 +88,7 @@ for ifo in ifos:
 
 #st.write((data_qspecgram['L1']))
 
-data_times = import_raw_data()
+data_times = load_raw_data()
 data_times["L1"].crop(gps-.5,gps+.5)
 times = data_times["L1"].times.value
 t = Time(times, format='gps')         
@@ -112,7 +113,7 @@ heatmap = go.Heatmap(
 
 
 def add_qtransform_subplot(fig,qspecgram,ifo='L1',name="hello",row=1,col=1):
-    data_times = import_raw_data()
+    data_times = load_raw_data()
     data_times["L1"].crop(gps-.5,gps+.5)
     times = data_times["L1"].times.value
     t = Time(times, format='gps')         

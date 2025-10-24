@@ -36,11 +36,14 @@ st.write(
     "Lets take a look at the steps needed to process the data into something that can be used to preform some real analysis!"
 )
 
-pure_data = import_pure_data()
-raw_data = import_raw_data()
-bandpass_data = create_bandpass_data()
-whitend_data = create_whitend_data()
-GW_data = import_GW_data()
+pure_data = load_pure_data()
+raw_data = load_raw_data()
+bandpass_data = load_bandpass_data()
+whitend_data = load_whitend_data()
+GW_data = load_GW_data()
+
+
+PSD_data = load_PSD_data()
 
 #code
 #gets the time of the event and prints it

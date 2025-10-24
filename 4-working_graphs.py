@@ -34,11 +34,13 @@ st.write(
 )
 
 #del st.session_state["bandpass_data"]
-pure_data = import_pure_data()
-raw_data = import_raw_data()
-bandpass_data = import_bandpass_data()
-whitend_data = import_whitend_data()
-GW_data = import_GW_data()
+
+
+pure_data = load_pure_data()
+raw_data = load_raw_data()
+bandpass_data = load_bandpass_data()
+whitend_data = load_whitend_data()
+GW_data = load_GW_data()
 
 
 #code

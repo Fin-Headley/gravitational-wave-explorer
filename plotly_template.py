@@ -229,8 +229,8 @@ def create_new_figure():
 
 
 def plot_traces(fig,data_dictionary,ifos):
-    colours = import_colours_dict()
-    short_labels = import_short_labels_dict()
+    colours = load_colours_dict()
+    short_labels = load_short_labels_dict()
 
     for ifo in ifos:
 
@@ -253,8 +253,8 @@ def plot_traces(fig,data_dictionary,ifos):
 
 
 def plot_single_trace(fig,data_dictionary,ifo="L1"):
-    colours = import_colours_dict()
-    short_labels = import_short_labels_dict()
+    colours = load_colours_dict()
+    short_labels = load_short_labels_dict()
 
     times = data_dictionary.times.value          # array of GPS seconds
     t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
@@ -277,8 +277,8 @@ def plot_single_trace(fig,data_dictionary,ifo="L1"):
 
 def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
 
-    colours = import_colours_dict()
-    short_labels = import_short_labels_dict()
+    colours = load_colours_dict()
+    short_labels = load_short_labels_dict()
 
     for ifo in ifos:
         fig.add_trace(go.Scatter(
@@ -469,7 +469,7 @@ def apply_gw_fourier_layout(fig, title = "needs a title", yrange = list,xrange =
 
 def plot_both_fourier_freq_traces(fig,ifo = 'L1'):
 
-    raw_data = import_raw_data()
+    raw_data = load_raw_data()
 
     strain_fft = raw_data[ifo].average_fft()
     strain_fft_win = raw_data[ifo].average_fft(window=('tukey',1./4.))
