@@ -151,7 +151,7 @@ fig=go.Figure()
 
 #st.plotly_chart(fig,use_container_width=False)
 
-fig = make_subplots(rows=3, cols=2, shared_xaxes=True, horizontal_spacing=.03 ,vertical_spacing=0.05,shared_yaxes=True)#column_titles=[labels["L1"]+" SNR",labels["H1"]+" SNR",labels["V1"]+" SNR"])
+fig = make_subplots(rows=3, cols=2, shared_xaxes="all", horizontal_spacing=.03 ,vertical_spacing=0.05,shared_yaxes="all")#column_titles=[labels["L1"]+" SNR",labels["H1"]+" SNR",labels["V1"]+" SNR"])
 
 add_qtransform_subplot(fig,data_qspecgram,ifo='L1',name="hello",row=1,col=1)
 add_qtransform_subplot(fig,subtracted_qspecgram,ifo='L1',name="hello",row=1,col=2)

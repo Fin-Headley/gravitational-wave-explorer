@@ -80,9 +80,10 @@ def create_whitend_data():
     ifos = ['L1', 'V1', 'H1']
     pure_data = import_pure_data()
     gps =1242442967.4
-
+    PSD_data = import_PSD_data()
+    
     for ifo in ifos:
-        whitend_data[ifo] = pure_data[ifo].whiten(fftlength=4,overlap=2,window=('tukey',1./4.)).crop(gps-2,gps+2)
+        whitend_data[ifo] = pure_data[ifo].whiten(asd=np.sqrt(PSD_data[ifo]))
 
     return whitend_data
 
@@ -104,11 +105,12 @@ def create_GW_data():
     ifos = ['L1', 'V1', 'H1']
     pure_data = import_pure_data()
     gps =1242442967.4
+    PSD_data = import_PSD_data()
 
     for ifo in ifos:
-        whitend_data[ifo] = pure_data[ifo].whiten(fftlength=4,overlap=2,window=('tukey',1./4.))
-        bandpass_data[ifo] = whitend_data[ifo].bandpass(25,90)
-        GW_data[ifo] = bandpass_data[ifo].crop(gps-2,gps+2)
+        bandpass_data[ifo] = pure_data[ifo].bandpass(25,90)
+        whitend_data[ifo] = bandpass_data[ifo].whiten(asd=np.sqrt(PSD_data[ifo]))
+        GW_data[ifo] = whitend_data[ifo].crop(gps-2,gps+2)
 
     return GW_data
 

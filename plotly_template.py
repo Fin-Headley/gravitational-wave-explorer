@@ -252,6 +252,28 @@ def plot_traces(fig,data_dictionary,ifos):
         )
 
 
+def plot_single_trace(fig,data_dictionary,ifo="L1"):
+    colours = import_colours_dict()
+    short_labels = import_short_labels_dict()
+
+    times = data_dictionary.times.value          # array of GPS seconds
+    t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
+    x_datetime = t.utc.datetime            # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
+                                    #lets do things in numbers and put calculate date in after
+    fig.add_trace(go.Scatter(
+        mode='lines',
+        line_color=colours[ifo],
+        showlegend=True,
+        name=short_labels[ifo],
+    
+    ),
+    hf_x = x_datetime,
+    hf_y = data_dictionary.value,
+    limit_to_view=True,
+    max_n_samples = 60000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+    )
+
+
 
 def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
 
@@ -443,6 +465,7 @@ def apply_gw_fourier_layout(fig, title = "needs a title", yrange = list,xrange =
             borderwidth =1
         )
     )
+
 
 def plot_both_fourier_freq_traces(fig,ifo = 'L1'):
 
