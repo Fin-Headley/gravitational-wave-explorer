@@ -30,7 +30,7 @@ from data_caching import *
 
 
 
-st.set_page_config(page_title="PSD Creation", page_icon="📈")
+st.set_page_config(page_title="PSD Creation", page_icon="📈",layout="wide")
 
 st.title("How is the PSD made")
 st.write(

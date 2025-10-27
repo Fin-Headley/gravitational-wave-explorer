@@ -29,7 +29,7 @@ from data_caching import *
 
 
 
-st.set_page_config(page_title="Processing Data", page_icon="📈")
+st.set_page_config(page_title="Processing Data", page_icon="📈",layout="wide")
 
 st.title("Extracting scientifically usable data from the raw data")
 st.write(
@@ -50,7 +50,15 @@ PSD_data = load_PSD_data()
 gps = event_gps('GW190521')
 time_center = gps
 
+
 ifos = ['L1', 'V1','H1']
+
+
+for ifo in ifos:
+    bandpass_data[ifo] = bandpass_data[ifo].crop(gps-2,gps+2)
+    whitend_data[ifo]  = whitend_data[ifo].crop(gps-2,gps+2)
+
+
 
 st.write("Data type:       ",str(type(GW_data['L1'])))
 st.write("Data duration:   ",str(GW_data['L1'].duration))

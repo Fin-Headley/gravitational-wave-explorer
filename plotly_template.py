@@ -45,7 +45,7 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
         hovermode='x unified',
         #hoversubplots="axis",
         width=700,
-        height=700,
+        height=500,
 
         # X range dropdown menu
         updatemenus=[dict(
@@ -89,29 +89,40 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
             showexponent="all",
             exponentformat="power",
             #nticks=5,
-            hoverformat=".3e"
+            #tickangle = 90,
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor='black', showline=True,
+            showgrid=True,
         ),
-        
+
         # X-axis settings
         xaxis=dict(
             #rangeslider=dict(visible=True),
-            title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
             type="date",
             nticks=8,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
             autotickangles = [0, 30, 45],
+            linewidth=1, linecolor='black', mirror=True, showline=True,
+            domain=[0, 0.98]
         ),
         
+
         # Legend settings
         legend=dict(
             orientation="h",
-            yanchor="bottom",
+            yanchor="top",
             y=1.0,
             xanchor="right",
-            x=1
-        )
+            borderwidth=1, bordercolor='black',
+            x=.95
+        ),
     )
+    fig.update_yaxes(showline=True, mirror=True, linecolor="black", linewidth=1)
+
 
 
 def add_event_marker(fig, marker_time, marker_name, line_color="green", 

@@ -28,7 +28,7 @@ import time
 from data_caching import *
 
 
-st.set_page_config(page_title="Exploring GW Data", page_icon="📈")
+st.set_page_config(page_title="Exploring GW Data", page_icon="📈",layout="wide")
 
 st.title("Exploring GW Data")
 st.write(
@@ -49,8 +49,6 @@ ifos = ['V1', 'H1','L1']
 
 datetime_center = Time(time_center, format='gps').utc.datetime
 
-st.write(st.session_state)
-
 
 # raw data
 
@@ -58,7 +56,7 @@ raw_fig = create_new_figure()
 plot_traces(raw_fig,raw_data,ifos)
 add_event_marker(fig=raw_fig, marker_time = datetime_center, marker_name=" Time of Event", line_color="green")
 apply_gw_strain_layout(raw_fig,title='Raw Observed GW Strain Data')
-st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width=False)
 
 
 
@@ -67,7 +65,9 @@ st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width
 PSD_data = load_PSD_data()
 PSD_fig = create_new_figure()
 
-plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
-apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle="? [HZ]")
+st.write(PSD_data["L1"].unit)
 
-st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
+apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle="? (1/HZ)")
+
+st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=False)
