@@ -58,9 +58,10 @@ colors = load_colours_dict()
 
 
 
-st.title("My processed data")
+st.title("My processed strain data")
 st.write(
-    "Before we move on to modeling Gravitational Waves, here is my full data processing pipeline for the GW190521 event."
+    "Before we move on to modeling Gravitational Waves, here is my processed detector Strain data." \
+    " This is what later models will be comparing against."
 )
 
 
@@ -72,10 +73,10 @@ st.markdown(blurb1)
 
 
 
-graph_col1, spacer, graph_col2 = st.columns([10,1,10],gap=None)
+graph_col11, spacer, graph_col12 = st.columns([10,1,10],gap=None)
 
 
-with graph_col1:
+with graph_col11:
 
     Pure_fig = create_new_figure()
     plot_traces(Pure_fig,pure_data,ifos)
@@ -85,35 +86,7 @@ with graph_col1:
     st.caption("An interactive plot of the unprocessed 32 second segment that contains the GW190521 event.",help=graph_help())
 
 
-    st.subheader("Looking at frequency plots")
-
-    blurb2 = """I took the Strain Timeseries and used fourier transforms to convert the timeseries into frequency series.
-    I used this to find the Amplitude Spectral Density of each detector."""
-
-    st.markdown(blurb2)
-
-
-    ifos = ['H1','V1','L1']
-
-    bp_fig = create_new_figure()
-    plot_traces(bp_fig,bandpass_data,ifos)
-    #add_event_marker(fig=bp_fig, marker_time = datetime_center, marker_name="", line_color="green")
-    apply_gw_strain_layout(bp_fig,title='Bandpassed Gravitational Wave Strain Data',data_range="bandpass")
-    st.plotly_chart(bp_fig, theme="streamlit",on_select="rerun",use_container_width=True)
-    st.caption("An interactive plot of the bandpassed 4 second segment that contains the GW190521 event.",help=graph_help())
-
-    st.subheader("Using the ASD to whiten the data")
-
-    blurb4 = """I used the ASD to whiten and normalize the bandpassed strain data.
-
-    This left me with my final Strain Timeseries that I used for my model comparisions"""
-
-    st.markdown(blurb4)
-
-
-with graph_col2:
-
-
+with graph_col12:
     ASD_data = load_ASD_data()
     ASD_fig = create_new_figure()
 
@@ -124,14 +97,51 @@ with graph_col2:
     st.caption("An interactive plot of the Amplitude Spectral Density for the GW190521 timeseries.",help=graph_help())
 
 
+st.subheader("Looking at frequency plots")
+
+blurb2 = """I took the three Strain Timeseries and used fourier transforms to convert the time series data into a set of frequency series.
+I used this to find the Amplitude Spectral Density of each detector."""
+
+st.markdown(blurb2)
+
+text_col1,spacer, text_col2 = st.columns([10,1,10],gap=None)
+
+with text_col1:
     st.subheader("Using the ASD to help bandpass")
-
-    blurb3 = """I used the ASD to find a suitable bandpass for the data.
-
-    I ended up with a bandpass that kept frequencies between 25Hz and 90Hz."""
-
+    blurb3 = """
+    I used the ASD to find a suitable bandpass for the data. My final bandpass kept frequencies between 25Hz and 90Hz.
+    """
     st.markdown(blurb3)
+    st.markdown(" ")
 
+with text_col2:
+    st.subheader("Using the ASD to whiten the data")
+
+    blurb4 = """
+    I used the ASD to whiten and normalize the bandpassed strain data.
+    
+    This Bandpassed, Whitened, (and cropped) data was what I compare models against in later plots.
+    """
+
+    st.markdown(blurb4)
+
+
+graph_col21, spacer, graph_col22 = st.columns([10,1,10],gap=None)
+
+
+
+with graph_col21:
+    ifos = ['H1','V1','L1']
+
+    bp_fig = create_new_figure()
+    plot_traces(bp_fig,bandpass_data,ifos)
+    #add_event_marker(fig=bp_fig, marker_time = datetime_center, marker_name="", line_color="green")
+    apply_gw_strain_layout(bp_fig,title='Bandpassed Gravitational Wave Strain Data',data_range="bandpass")
+    st.plotly_chart(bp_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+    st.caption("An interactive plot of the bandpassed 4 second segment that contains the GW190521 event.",help=graph_help())
+
+
+with graph_col22:
 
     ifos = ['L1', 'H1','V1']
     GW_fig = create_new_figure()
@@ -142,9 +152,9 @@ with graph_col2:
     st.caption("An interactive plot of the bandpassed and whitened 4 second segment that contains the GW190521 event.",help=graph_help())
 
 
-    blurb5 = """
-    Now that we have suitable data, with much of the noise removed, we can look at modeling Gravitational Wave events.
-    """
+blurb5 = """
+Now that we have suitable data, with much of the noise removed, we can look at modeling Gravitational Wave events.
+"""
 
-    st.markdown(blurb5)
+st.markdown(blurb5)
 

@@ -31,9 +31,11 @@ from data_caching import *
 
 st.set_page_config(page_title="Processing Data", page_icon="📈",layout="wide")
 
-st.title("Your turn!")
+st.title("Give it a try!")
 st.write(
-    "Try and find the GW190521 event by applying a bandpass and whitening the data!"
+    """Try and find the GW190521 event by applying a bandpass and whitening the data!   
+    If you want to take a look at my processed data, click on the expanding tab at the bottom of this page.
+    """
 )
 
 pure_data = load_pure_data()
@@ -231,10 +233,10 @@ if st.session_state.bandpass_right_plot == True:
 with graph_col3:
     blank_tab = st.tabs([" "])
 
-    #st.markdown(" .______________________")
     st.container(border=False, height = 32)
     st.plotly_chart(ASD_slider_bandpass, theme="streamlit",on_select="rerun",use_container_width=False)
     st.caption("An interactive plot of the Amplitude Spectral Density for the GW190521 timeseries.",help=graph_help_no_buttons())
+    st.markdown("")
 with graph_col2:
     st.tabs(" ")
 
@@ -254,8 +256,8 @@ with equal_space_hint_1:
 
     if st.session_state.bandpass_hint == True:
         st.write("""
-    :blue[.Toggle whitening on and drag the upper frequency slider down until you can see a strong triple peak in Livingston and Handford.]    
-    :blue[.Then bring the lower frequency up until Livingston keeps similar shape when you toggle whitening on/off.]""")
+    :blue[Toggle whitening on and drag the upper frequency slider down until you can see a strong triple peak in Livingston and Handford.]    
+    :blue[Then bring the lower frequency up until Livingston keeps similar shape when you toggle whitening on/off.]""")
 
 with equal_space_hint_2:
     st.markdown('###')
@@ -285,4 +287,3 @@ with equal_space_answer_2:
     st.markdown('###')
     st.markdown('###')
 
-st.text("hello")

@@ -72,27 +72,44 @@ the same way, applying a "low-pass" filter to remove noise caused by high freque
 In practice, we apply a "Band-Pass" filter to the data, which can be thought of as a combination of our high-pass and low-pass filters,
  keeping a "band" of frequencies by removing both high and low frequency noise.
 
-Here is the Ligo-Livingston data with a suitable bandpass applied to it.
+Here is the Ligo-Livingston Strain data with a suitable bandpass applied to it.
 """
 st.markdown(blurb1)
+
+col1, middle ,col2= st.columns([10,1,10],gap=None)
 
 for ifo in ifos:
     bandpass_data[ifo] = bandpass_data[ifo].crop(gps-2,gps+2)
 
-bp_fig = create_new_figure()
-plot_traces(bp_fig,bandpass_data,["L1"],alpha={ "L1": 1,"H1": .8,"V1": .8 })
-#add_event_marker(fig=bp_fig, marker_time = datetime_center, marker_name="", line_color="green")
-apply_gw_strain_layout(bp_fig,title='Bandpassed (and Cropped) Gravitational Wave Strain Data from Ligo-Livingston',data_range="bandpass")
-st.plotly_chart(bp_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+with col1:
 
-st.caption("An interactive plot of the 4 second Ligo-Livingston segment that contains the GW190521 event.",help=graph_help())
+    raw_fig = create_new_figure()
+    plot_traces(raw_fig,raw_data,["L1"],alpha={ "L1": 1,"H1": .8,"V1": .8 })
+    #add_event_marker(fig=Pure_fig, marker_time = datetime_center, marker_name=" Rough Time of Event", line_color="green")
+    apply_gw_strain_layout(raw_fig,title='Unprocessed Ligo-Livingston Strain',data_range="raw")
+    st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width=True,key="noise_correction_raw")
+
+    st.caption("An interactive plot of the unprocessed 4 second Ligo-Livingston segment that contains the GW190521 event.",help=graph_help())
+
+
+
+
+with col2:
+
+    bp_fig = create_new_figure()
+    plot_traces(bp_fig,bandpass_data,["L1"],alpha={ "L1": 1,"H1": .8,"V1": .8 })
+    #add_event_marker(fig=bp_fig, marker_time = datetime_center, marker_name="", line_color="green")
+    apply_gw_strain_layout(bp_fig,title='Bandpassed Strain from Ligo-Livingston',data_range="bandpass")
+    st.plotly_chart(bp_fig, theme="streamlit",on_select="rerun",use_container_width=True)
+
+    st.caption("An interactive plot of the correctly bandpassed 4 second Ligo-Livingston segment that contains the GW190521 event.",help=graph_help())
 
 
 
 blurb2 = """After using a bandpass to remove the both the high and low frequency noise, it is now possible to see the Strain 
-waveform caused by the GW190521 event.
+peak caused by Gravitational Waves from the GW190521 event.
 
-Although it is now possible to see the effect of the GW event, there are other sources of noise that still need to be corrected for. 
+Although it is now possible to see the effect of the GW event, there is one more large bias that can be corrected.
 """
 st.markdown(blurb2)
 
@@ -131,22 +148,22 @@ for ifo in ifos:
     white_data_for_ASD[ifo]  = white_data_for_ASD[ifo].crop(gps-2,gps+2)
 
 
-col1, col2 ,col3= st.columns([5,2,6],gap=None)
+spacing1, checkbox_col ,spacing3= st.columns([5,2,6],gap=None)
 
-with col2:
+with checkbox_col:
         
     if st.checkbox("Whiten the data."):
         plot_traces(white_ASD_timeseries_fig,white_data_for_ASD,ifos=["L1"])
-        apply_gw_strain_layout(white_ASD_timeseries_fig,title='Whitened Gravitational Wave Strain Data',data_range="whiten")
+        apply_gw_strain_layout(white_ASD_timeseries_fig,title='Whitened Ligo-Livingston Strain',data_range="whiten")
 
         plot_freq_traces(white_ASD_fig,White_ASD_data,ifos=["L1"])
-        apply_gw_freq_layout(white_ASD_fig,title = "Whitened Amplitude Spectral Density(ASD)", yrange = [-2.4,-.8],ytitle="Normalized Strain/√Hz")
+        apply_gw_freq_layout(white_ASD_fig,title = "Whitened Ligo-Livingston Amplitude Spectral Density(ASD)", yrange = [-2.4,-.8],ytitle="Normalized Strain/√Hz")
     else:
         plot_traces(white_ASD_timeseries_fig,raw_data,ifos=["L1"])
-        apply_gw_strain_layout(white_ASD_timeseries_fig,title='Unprocessed Gravitational Wave Strain Data',data_range="raw")
+        apply_gw_strain_layout(white_ASD_timeseries_fig,title='Unprocessed Ligo-Livingston Strain',data_range="raw")
 
         plot_freq_traces(white_ASD_fig,ASD_data,ifos=["L1"])
-        apply_gw_freq_layout(white_ASD_fig,title = "Amplitude Spectral Density(ASD)", yrange = [-23.7,-19.9],ytitle="Strain/√Hz")
+        apply_gw_freq_layout(white_ASD_fig,title = "Ligo-Livingston Amplitude Spectral Density(ASD)", yrange = [-23.7,-19.9],ytitle="Strain/√Hz")
 
 
 whiteASD_col1, middle, whiteASD_col2 = st.columns([10,1,10],gap=None)
