@@ -42,7 +42,6 @@ bandpass_data = load_bandpass_data()
 whitend_data = load_whitend_data()
 GW_data = load_GW_data()
 
-
 PSD_data = load_PSD_data()
 
 #code
@@ -52,6 +51,8 @@ time_center = gps
 
 
 ifos = ['L1', 'V1','H1']
+
+
 
 
 for ifo in ifos:
@@ -76,47 +77,45 @@ st.write("Event time: ",datetime_center)
 st.write(datetime_center.strftime('%a %d %b %Y, %I:%M:%S.%f')[:-3]+datetime_center.strftime(' %p'))
 
 
+# raw data
+Pure_fig = create_new_figure()
+plot_traces(Pure_fig,pure_data,ifos)
+#add_event_marker(fig=Pure_fig, marker_time = datetime_center, marker_name=" Rough Time of Event", line_color="green")
+apply_gw_strain_layout(Pure_fig,title='Pure Observed GW Strain Data')
+st.plotly_chart(Pure_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
-pure_fig = create_new_figure()
-plot_traces(pure_fig,pure_data,ifos)
-add_event_marker(fig=pure_fig, marker_time = datetime_center, marker_name="Time of Event", line_color="green")
-apply_gw_strain_layout(pure_fig,title='Raw Observed GW Strain Data')
-st.plotly_chart(pure_fig, theme="streamlit",on_select="rerun",use_container_width=True)
-
-
-#st.write(fig.data[0]["x"][0].strftime('%M:%S.%f'))
-
-#st.write(len(fig.data[0]["x"]))
 
 
 raw_fig = create_new_figure()
 plot_traces(raw_fig,raw_data,ifos)
-add_event_marker(fig=raw_fig, marker_time = datetime_center, marker_name=" Time of Event", line_color="green")
-apply_gw_strain_layout(raw_fig,title='Cropped Raw Observed GW Strain Data')
+#add_event_marker(fig=raw_fig, marker_time = datetime_center, marker_name="", line_color="green")
+apply_gw_strain_layout(raw_fig,title='Cropped Raw Observed GW Strain Data',data_range="raw")
 st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
 
+ifos = ['H1','V1','L1']
 
 bp_fig = create_new_figure()
 plot_traces(bp_fig,bandpass_data,ifos)
-add_event_marker(fig=bp_fig, marker_time = datetime_center, marker_name=" Time of Event", line_color="green")
-apply_gw_strain_layout(bp_fig,title='Bandpassed Observed GW Strain Data')
+#add_event_marker(fig=bp_fig, marker_time = datetime_center, marker_name="", line_color="green")
+apply_gw_strain_layout(bp_fig,title='Bandpassed Observed GW Strain Data',data_range="bandpass")
 st.plotly_chart(bp_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
 
+ifos = ['H1','V1','L1']
 white_fig = create_new_figure()
 plot_traces(white_fig,whitend_data,ifos)
-add_event_marker(fig=white_fig, marker_time = datetime_center, marker_name=" Time of Event", line_color="green")
-apply_gw_strain_layout(white_fig,title='Whitened GW Strain Data')
+#add_event_marker(fig=white_fig, marker_time = datetime_center, marker_name="", line_color="green")
+apply_gw_strain_layout(white_fig,title='Whitened GW Strain Data',data_range="whiten")
 st.plotly_chart(white_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 
 
+ifos = ['L1', 'H1','V1']
 GW_fig = create_new_figure()
 plot_traces(GW_fig,GW_data,ifos)
-add_event_marker(fig=GW_fig, marker_time = datetime_center, marker_name=" Time of Event", line_color="green")
-apply_gw_strain_layout(GW_fig,title='Whiten and Bandpassed GW Strain Data')
+#add_event_marker(fig=GW_fig, marker_time = datetime_center, marker_name="", line_color="green")
+apply_gw_strain_layout(GW_fig,title='Whiten and Bandpassed GW Strain Data',data_range="GW_data")
 st.plotly_chart(GW_fig, theme="streamlit",on_select="rerun",use_container_width=True)
-
 
 
 

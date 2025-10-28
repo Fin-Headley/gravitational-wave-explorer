@@ -13,6 +13,19 @@ import plotly.graph_objects as go
 #--------------------------------------------
 @st.cache_data
 def load_pure_data():
+    """
+    Create a dictionary of the interferometer strain data for each of the three detectors for a 32 second time segment containing the GW190521 Event.
+    Takes data that has been presaved into "GW190521_data/{ifo}_data_32s.hdf5" files.
+
+    Parameters:
+    -----------
+    
+    Returns:
+    --------
+    pure_data : dict
+        Dictionary with keys ['L1', 'V1', 'H1'] containing 32 seconds of unprocessed strain data.
+    
+    """
     pure_data = {}
     ifos = ['L1', 'V1', 'H1']
     gps =1242442967.4
@@ -47,7 +60,7 @@ def load_bandpass_data(): #could change this to allow me putting my own bandpass
     gps =1242442967.4
 
     for ifo in ifos:
-        bandpass_data[ifo] = pure_data[ifo].bandpass(25,90).crop(gps-2,gps+2)
+        bandpass_data[ifo] = pure_data[ifo].bandpass(25,90)#.crop(gps-2,gps+2)
 
     return bandpass_data
 #--------------------------------------------
@@ -63,7 +76,7 @@ def load_whitend_data():
     PSD_data = load_PSD_data()
 
     for ifo in ifos:
-        whitend_data[ifo] = pure_data[ifo].whiten(asd=np.sqrt(PSD_data[ifo]))
+        whitend_data[ifo] = pure_data[ifo].whiten(asd=np.sqrt(PSD_data[ifo]))#.crop(gps-2,gps+2)
 
     return whitend_data
 #--------------------------------------------
@@ -101,6 +114,10 @@ def load_ASD_data():
 
     return ASD_data
 #--------------------------------------------
+
+
+
+
 
 
 #--------------------------------------------

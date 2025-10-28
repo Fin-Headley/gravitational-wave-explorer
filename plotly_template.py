@@ -9,10 +9,31 @@ from data_caching import *
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
+#def graph_help_with_slider():
+#        output_text = """Use the button in the lower right to view preset ranges.    
+#                                Use the slider at the bottom of the plot to manually adjust range.    
+#                                You can hide/show GW Observatories by clicking on their name in the legend.  
+#                                Click to pan.    
+#                                Change tools in the top right to use custom zooms.   
+#                                Double-click to reset axis to full graph."""
+#        return output_text
+
+def graph_help():
+        output_text = """Use the button in the lower right to view preset ranges.   
+                        You can hide/show GW Observatories by clicking on their name in the legend.  
+                        Click to pan.    
+                        Change tools in the top right to use custom zooms.   
+                        Double-click to reset axis to full graph."""
+        return output_text
+
+
+
+def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(1242442967.444, format='gps').utc.datetime, data_range = "pure", theme_text_color=None, theme_bc_color=None):
     """
     Apply a standardized layout template for gravitational wave strain data plots.
-    
+
+    ##i have changed this and it should be updated
+
     Parameters:
     -----------
     fig : plotly.graph_objects.Figure or FigureResampler
@@ -33,13 +54,33 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
     None (modifies fig in place)
     """
 
-
     # Get theme colors if not provided
-    if theme_text_color is None:
-        theme_text_color = st.get_option('theme.textColor')
-    if theme_bc_color is None:
-        theme_bc_color = st.get_option('theme.backgroundColor')
+    #if theme_text_color is None:
+    theme_text_color = st.get_option('theme.textColor')
+    #if theme_bc_color is None:
+    theme_bc_color = st.get_option('theme.backgroundColor')
     
+                                #±0.1 y range,  #±0.2 y range, #±0.5 y range,#±0.1 y range
+    data_range_dict = {"pure":[[-2.4e-19,2.4e-19],[-4e-19,4e-19],[-7e-19,7e-19],[-9e-19,9e-19]], 
+                        "raw":[[-2.4e-19,2.4e-19],[-4e-19,4e-19],[-7e-19,7e-19],[-9e-19,9e-19]],
+                        "bandpass":[[-8.1e-22,8.1e-22],[-8.1e-22,8.1e-22],[-8.1e-22,8.1e-22],[-8.1e-22,8.1e-22]],
+                        "whiten":[[-4,4],[-4,4],[-4,4],[-4,4]],                       
+                        "GW_data": [[-1.2,1.2],[-1.2,1.2],[-1.2,1.2],[-1.2,1.2]]
+                        }
+
+    full_button_name = "± 2 s"
+    if data_range == "pure":
+        full_button_name = "± 16 s"
+
+
+    y_title = "Strain Amplitude"
+    if data_range == ("whiten" or "GW_data"):
+        y_title = "Normalized Strain Amplitude"
+
+
+    y_range_list = data_range_dict[data_range]
+
+
     fig.update_layout(
         # Hover settings
         hovermode='x unified',
@@ -60,14 +101,39 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
             showactive=True,
             buttons=[
                 dict(label="±0.1 s", method="relayout",
-                    args=[{"xaxis.autorange": False, "xaxis.range": [datetime_center-timedelta(seconds=.1), datetime_center+timedelta(seconds=.1)]}]),
+                    args=[{
+                        "xaxis.autorange": False, 
+                        "xaxis.range": [datetime_center-timedelta(seconds=.1), datetime_center+timedelta(seconds=.1)],
+                        #"yaxis.range": [-2.4e-19,2.4e-19] #pure and raw
+                        #"yaxis.range": [-8.1e-22,8.1e-22] #bandpassed
+                        #"yaxis.range": [-4,4]   #whitened
+                        "yaxis.range": y_range_list[0]
+                        }]),
                 dict(label="±0.2 s", method="relayout",
-                    args=[{"xaxis.autorange": False, "xaxis.range": [datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.2)]}]),
+                    args=[{"xaxis.autorange": False, 
+                           "xaxis.range": [datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.2)],
+                           #"yaxis.range": [-4e-19,4e-19] #pure and raw
+                           #"yaxis.range": [-8.1e-22,8.1e-22] #bandpassed
+                           #"yaxis.range": [-4,4] #whitened
+                           "yaxis.range": y_range_list[1]
+                           }]),
                 dict(label="±.5 s", method="relayout",
-                    args=[{"xaxis.autorange": False, "xaxis.range": [datetime_center-timedelta(seconds=.5), datetime_center+timedelta(seconds=.5)]}]),
+                    args=[{"xaxis.autorange": False, 
+                           "xaxis.range": [datetime_center-timedelta(seconds=.5), datetime_center+timedelta(seconds=.5)],
+                           #"yaxis.range": [-7e-19,7e-19] #pure and raw
+                           #"yaxis.range": [-8.1e-22,8.1e-22] #bandpassed
+                           #"yaxis.range": [-4,4]  #whitened
+                           "yaxis.range": y_range_list[2]
+                           }]),
                 dict(label="±1 s", method="relayout",
-                    args=[{"xaxis.autorange": False, "xaxis.range": [datetime_center-timedelta(seconds=1), datetime_center+timedelta(seconds=1)]}]),
-                dict(label="Full", method="relayout",
+                    args=[{"xaxis.autorange": False, 
+                           "xaxis.range": [datetime_center-timedelta(seconds=1), datetime_center+timedelta(seconds=1)],
+                           #"yaxis.range": [-9e-19,9e-19] #pure and raw
+                            #"yaxis.range": [-8.1e-22,8.1e-22] #bandpassed
+                            #"yaxis.range": [-4,4]  #whitened
+                            "yaxis.range": y_range_list[3]
+                           }]),
+                dict(label=full_button_name, method="relayout",
                     args=[{"yaxis.autorange": True, "xaxis.autorange": True}])
             ]
         )],
@@ -84,7 +150,7 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
         
         # Y-axis settings
         yaxis=dict(
-            title="Strain",
+            title=y_title,
             fixedrange=False,
             showexponent="all",
             exponentformat="power",
@@ -93,7 +159,7 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
             hoverformat=".3e",
             mirror=True,
             side='left',
-            linewidth=1, linecolor='black', showline=True,
+            linewidth=1, linecolor="black", showline=True,
             showgrid=True,
         ),
 
@@ -102,26 +168,25 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
             #rangeslider=dict(visible=True),
             title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
             type="date",
-            nticks=8,
+            #nticks=8,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
-            autotickangles = [0, 30, 45],
+            autotickangles = [0],
             linewidth=1, linecolor='black', mirror=True, showline=True,
             domain=[0, 0.98]
         ),
         
-
         # Legend settings
         legend=dict(
             orientation="h",
             yanchor="top",
             y=1.0,
             xanchor="right",
+            x=.98,
             borderwidth=1, bordercolor='black',
-            x=.95
         ),
     )
-    fig.update_yaxes(showline=True, mirror=True, linecolor="black", linewidth=1)
+    fig.update_yaxes(showline=True, mirror=True, linecolor="black", linewidth=1) #backup to get outside lines to show
 
 
 
@@ -200,8 +265,7 @@ def add_freq_event_shading(fig, freq_start, freq_end, fillcolor="chartreuse",opa
                   ,line_width=line_width)
 
 
-
-# Convenience function that combines both layout and event marker
+# i think i can remove this as it is never used
 def setup_gw_plot(fig, title, datetime_center, event_marker_color="green", 
                  event_offset_seconds=0, theme_text_color=None, theme_bc_color=None):
     """
@@ -233,13 +297,11 @@ def setup_gw_plot(fig, title, datetime_center, event_marker_color="green",
                     theme_text_color, theme_bc_color)
     
 
-
-
 def create_new_figure():
     return FigureResampler(resampled_trace_prefix_suffix = ("",""), default_n_shown_samples = 1000, show_mean_aggregation_size= False, create_overview=True)
 
 
-def plot_traces(fig,data_dictionary,ifos):
+def plot_traces(fig,data_dictionary,ifos,alpha={"L1":1,"H1":1,"V1":1}):
     colours = load_colours_dict()
     short_labels = load_short_labels_dict()
 
@@ -254,6 +316,7 @@ def plot_traces(fig,data_dictionary,ifos):
             line_color=colours[ifo],
             showlegend=True,
             name=short_labels[ifo],
+            opacity= alpha[ifo]
         
         ),
         hf_x = x_datetime,
@@ -285,7 +348,6 @@ def plot_single_trace(fig,data_dictionary,ifo="L1"):
     )
 
 
-
 def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
 
     colours = load_colours_dict()
@@ -306,7 +368,7 @@ def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
         )
 
 
-def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/&#8730;HZ]"):
+def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/HZ]"):
     """
     Apply a standardized frequency layout template for gravitational wave strain data plots.
     
@@ -329,7 +391,7 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,
         hovermode='x unified',
         autosize=False,
         width=700,
-        height=600,
+        height=500,
 
         # Title settings
         title={
@@ -378,14 +440,15 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,
         
         # X-axis settings
         xaxis=dict(
-            rangeslider=dict(visible=True, borderwidth=1),
+            #rangeslider=dict(visible=True, borderwidth=1), #no rangeslider
             title=f"Frequency [Hz]",
             type="log",
             #nticks=15,
             showgrid=True,
             hoverformat=".3",#"Time: %H:%M:%S.%3f",
             range =  xrange,
-            linewidth=1, linecolor='black', mirror=True, showline=True
+            linewidth=1, linecolor='black', mirror=True, showline=True,
+            domain=[0, 0.98]
         ),
 
         # Legend settings
@@ -394,7 +457,7 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,
             yanchor="top",
             y=1.0,
             xanchor="right",
-            x=1,
+            x=.95,
             bordercolor = "black",
             borderwidth =1
         )
@@ -512,7 +575,6 @@ def plot_both_fourier_freq_traces(fig,ifo = 'L1'):
         )
 
 
-
 def plot_window_psd_trace(fig,data_dictionary,ifo ='L1',color="black",name="Window"):
 
     fig.add_trace(go.Scatter(
@@ -526,8 +588,6 @@ def plot_window_psd_trace(fig,data_dictionary,ifo ='L1',color="black",name="Wind
     limit_to_view=True,
     max_n_samples = 100000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
     )
-
-
 
 
 def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
@@ -581,7 +641,6 @@ def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_c
             x=1
         )
     )
-
 
 
 def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
@@ -754,8 +813,6 @@ def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_c
             x=1
         )
     )
-
-
 
 
 def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1):
