@@ -70,7 +70,8 @@ if 'bandpass_right_plot' not in st.session_state:
     st.session_state.bandpass_right_plot = False
 if 'bandpass_hint' not in st.session_state:
     st.session_state.bandpass_hint = False
-
+if 'bandpass_answer' not in st.session_state:
+    st.session_state.bandpass_answer = False
 
 low_bandpass, high_bandpass = st.slider("Select your bandpass frequency bounds:", .01, 500.0, (.01, 500.0))
 
@@ -125,6 +126,7 @@ with graph_col1:
     tab1, tab2, tab3 = st.tabs(["Single Detector","Two Detectors","Three Detectors"])
 
     with tab1:
+        
         fig = make_subplots(rows=1, cols=1, shared_xaxes=True, vertical_spacing=0.0,shared_yaxes=True)
         fig_resampler = FigureResampler(fig)
 
@@ -132,9 +134,9 @@ with graph_col1:
 
         multiplot1_apply_gw_strain_layout(fig_resampler,timeseries_title=timeseries_title,y_timeseries_title=y_timeseries_title)
 
+        st.container(border=False, height = 48)
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
         st.caption("A 0.4 second segment for Ligo-Livingston that contains the GW190521 event.",help=graph_help_no_buttons())
-
 
     with tab2:
         fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=.03,shared_yaxes=True)
@@ -145,7 +147,7 @@ with graph_col1:
         add_GW_trace_subplot(fig_resampler,plotting_timeseries["H1"].times.value,plotting_timeseries["H1"].value,colors["H1"],"Hanford",row=2,col=1)
 
         multiplot2_apply_gw_strain_layout(fig_resampler,timeseries_title=timeseries_title,y_timeseries_title=y_timeseries_title,legend_loc =(.98,.45))
-
+        st.container(border=False, height = 48)
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
         st.caption("A 0.4 second segment for Ligo-Livingston and Ligo-Hanford that contains the GW190521 event.",help=graph_help_no_buttons())
 
@@ -160,7 +162,7 @@ with graph_col1:
         add_GW_trace_subplot(fig_resampler,plotting_timeseries["L1"].times.value,plotting_timeseries["V1"].value,colors["V1"],"Virgo",row=3,col=1)
 
         multiplot3_apply_gw_strain_layout(fig_resampler,timeseries_title=timeseries_title,y_timeseries_title=y_timeseries_title,legend_loc =(.01,.3))
-
+        st.container(border=False, height = 48)
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
         st.caption("A 0.4 second segment for Ligo-Livingston, Ligo-Hanford, and Virgo that contains the GW190521 event.",help=graph_help_no_buttons())
 
@@ -227,8 +229,10 @@ if st.session_state.bandpass_right_plot == True:
     add_freq_event_shading(ASD_slider_bandpass, 0, low_bandpass, "red",opacity=.1)
 
 with graph_col3:
-    st.tabs([" "])
+    blank_tab = st.tabs([" "])
 
+    #st.markdown(" .______________________")
+    st.container(border=False, height = 32)
     st.plotly_chart(ASD_slider_bandpass, theme="streamlit",on_select="rerun",use_container_width=False)
     st.caption("An interactive plot of the Amplitude Spectral Density for the GW190521 timeseries.",help=graph_help_no_buttons())
 with graph_col2:
@@ -236,17 +240,49 @@ with graph_col2:
 
 ##########################################################################################################################
 
+st.divider()
+
+equal_space_hint_1,equal_space_hint_2 = st.columns([10,2],gap=None)
+
+with equal_space_hint_1:
+
+    # Create a button to toggle the line visibility
+    if st.checkbox(":blue[Hint]"):
+        st.session_state.bandpass_hint = True
+    else:
+        st.session_state.bandpass_hint = False
+
+    if st.session_state.bandpass_hint == True:
+        st.write("""
+    :blue[.Toggle whitening on and drag the upper frequency slider down until you can see a strong triple peak in Livingston and Handford.]    
+    :blue[.Then bring the lower frequency up until Livingston keeps similar shape when you toggle whitening on/off.]""")
+
+with equal_space_hint_2:
+    st.markdown('###')
+    st.markdown('###')
 
 
-# Create a button to toggle the line visibility
-if st.checkbox(":blue[Hint]"):
-    st.session_state.bandpass_hint = True
-else:
-    st.session_state.bandpass_hint = False
+equal_space_answer_1,equal_space_answer_2 = st.columns([10,1],gap=None)
 
+with equal_space_answer_1:
+    # Create a button to toggle the line visibility
+    if st.checkbox(":red[Show my Bandpass values]"):
+        st.session_state.bandpass_answer = True
+    else:
+        st.session_state.bandpass_answer = False
 
-if st.session_state.bandpass_hint == True:
-    st.write(""":blue-background[Toggle whitening on and drag the upper frequency slider down until you can see a strong triple peak in Livingston and Handford.]
-             
-:blue-background[Then bring the lower frequency up until Livingston keeps similar shape when you toggle whitening on/off.]
-""")
+    if st.session_state.bandpass_answer == True:
+        st.write("""
+    :red[I used a used a bandass with f_low = 25 and f_high = 90.   
+    This came from analyzing the ASD as well as the Power Spectral Density to try and minimize noise, as well as some prior knowlege of the GW190521 event.]""")
+    #:red-background[I was also aware of the fact that GW190521 was the most massive binary BH merger observed to date.   
+    #The masses of binary Black Holes heavily influence the frequency range of their Gravitational Wave signal, with larger 
+    #mass objects corresponding to lower freqeuency signals. With this in mind I cut out all frequencies above 90 Hz to allow for better modelling.
+    #In the case of GW190521 this is completely valid, but the majority of Black Hole mergers will contain valuable 
+    #            signal data up to much higher frequencies.]
+
+with equal_space_answer_2:
+    st.markdown('###')
+    st.markdown('###')
+
+st.text("hello")
