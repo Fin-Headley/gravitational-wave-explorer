@@ -26,7 +26,12 @@ def graph_help():
                         Double-click to reset axis to full graph."""
         return output_text
 
-
+def graph_help_no_buttons():
+        output_text = """You can hide/show GW Observatories by clicking on their name in the legend.  
+                        Click to pan.    
+                        Change tools in the top right to use custom zooms.   
+                        Double-click to reset axis to full graph."""
+        return output_text
 
 def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(1242442967.444, format='gps').utc.datetime, data_range = "pure", theme_text_color=None, theme_bc_color=None):
     """
@@ -73,10 +78,12 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
         full_button_name = "± 16 s"
 
 
-    y_title = "Strain Amplitude"
-    if data_range == ("whiten" or "GW_data"):
+    if data_range == "whiten":
         y_title = "Normalized Strain Amplitude"
-
+    elif data_range == "GW_data":
+        y_title = "Normalized Strain Amplitude"
+    else:
+        y_title = "Strain Amplitude"
 
     y_range_list = data_range_dict[data_range]
 
@@ -670,29 +677,32 @@ def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_c
         hovermode='x unified',
         hoversubplots="axis",
         width=700,
-        height=600,
+        height=650,
         
         # Title settings
         title={
             'text': title,
             'y': 0.9,
-            'x': .5,
+            'x': .25,
             'xanchor': 'center',
             'yanchor': 'top',
             'automargin': True
         },
-        
+
         # Y-axis settings
         yaxis=
-        dict(title="Strain",
+        dict(title="Normalized Strain",
             fixedrange=False,
             showexponent="all",
             exponentformat="power",
             #nticks=5,
-            hoverformat=".3e"
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
         ),
         
-        # X-axis settings
         xaxis=dict(
             #rangeslider=dict(visible=True),
             title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
@@ -700,22 +710,27 @@ def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_c
             nticks=8,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
-            autotickangles = [0, 30, 45],
+            autotickangles = [0],
+            side='bottom',
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            domain=[0, 0.98],
             autorange= False,
             range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
         ),
+
         
         # Legend settings
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.0,
+            y=1.03,
             xanchor="right",
-            x=1
-        )
+            x=.98,
+            borderwidth=1, bordercolor='black'
+        ),
     )
 
-
+########################################################################################################################
 def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
 
     fig.update_layout(
@@ -723,45 +738,44 @@ def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_c
         hovermode='x unified',
         #hoversubplots="axis",
         width=700,
-        height=600,
+        height=650,
         
         # Title settings
         title={
             'text': title,
-            'y': 0.9,
+            'y': .95,
             'x': .5,
             'xanchor': 'center',
             'yanchor': 'top',
             'automargin': True
         },
-        
+
         # Y-axis settings
         yaxis=
-        dict(title="Strain",
+        dict(title="Normalized Strain",
             fixedrange=False,
             showexponent="all",
             exponentformat="power",
             #nticks=5,
-            hoverformat=".3e"
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
         ),
         yaxis2=dict(
-            title="Strain",
+            title="Normalized Strain",
             fixedrange=False,
             showexponent="all",
             exponentformat="power",
             #nticks=5,
-            hoverformat=".3e"
-        ),
-        yaxis3=dict(
-            title="Strain",
-            fixedrange=False,
-            showexponent="all",
-            exponentformat="power",
-            #nticks=5,
-            hoverformat=".3e"
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
         ),
         
-        # X-axis settings
         xaxis=dict(
             #rangeslider=dict(visible=True),
             #title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
@@ -769,10 +783,14 @@ def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_c
             nticks=8,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
-            autotickangles = [0, 30, 45],
+            autotickangles = [0],
+            side='top',
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            domain=[0, 0.98],
             autorange= False,
             range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
         ),
+
         xaxis2=dict(
             #rangeslider=dict(visible=True),
             title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
@@ -780,36 +798,38 @@ def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_c
             nticks=8,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
-            autotickangles = [0, 30, 45],
+            autotickangles = [0],
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            domain=[0, 0.98],
             autorange= False,
             range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
         ),
-        
         
         # Legend settings
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.0,
-            xanchor="right",
-            x=1
-        )
+            y=1.03,
+            xanchor="center",
+            x=.5,
+            borderwidth=1, bordercolor='black'
+        ),
     )
 
 
-def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
+def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime):
 
     fig.update_layout(
         # Hover settings
         hovermode='x unified',
         #hoversubplots="axis",
         width=700,
-        height=600,
+        height=650,
         
         # Title settings
         title={
             'text': title,
-            'y': 0.9,
+            'y': 1.0,
             'x': .5,
             'xanchor': 'center',
             'yanchor': 'top',
@@ -818,28 +838,40 @@ def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_c
         
         # Y-axis settings
         yaxis=
-        dict(title="Strain",
+        dict(title="Normalized Strain",
             fixedrange=False,
             showexponent="all",
             exponentformat="power",
             #nticks=5,
-            hoverformat=".3e"
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
         ),
         yaxis2=dict(
-            title="Strain",
+            title="Normalized Strain",
             fixedrange=False,
             showexponent="all",
             exponentformat="power",
             #nticks=5,
-            hoverformat=".3e"
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
         ),
         yaxis3=dict(
-            title="Strain",
+            title="Normalized Strain",
             fixedrange=False,
             showexponent="all",
             exponentformat="power",
             #nticks=5,
-            hoverformat=".3e"
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
         ),
         
         # X-axis settings
@@ -850,7 +882,10 @@ def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_c
             nticks=8,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
-            autotickangles = [0, 30, 45],
+            autotickangles = [0],
+            side='top',
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            domain=[0, 0.98],
             autorange= False,
             range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
         ),
@@ -861,8 +896,10 @@ def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_c
             nticks=8,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
-            autotickangles = [0, 30, 45],
+            autotickangles = [0],
+            linewidth=1, linecolor='black', showline=True,mirror=True,
             autorange= False,
+            domain=[0, 0.98],
             range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
         ),
         xaxis3=dict(
@@ -872,7 +909,9 @@ def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_c
             nticks=8,
             showgrid=True,
             hoverformat="Time: %H:%M:%S.%3f",
-            autotickangles = [0, 30, 45],
+            autotickangles = [0],
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            domain=[0, 0.98],
             autorange= False,
             range=[datetime_center-timedelta(seconds=.2), datetime_center+timedelta(seconds=.3)]
         ),
@@ -881,11 +920,13 @@ def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_c
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.0,
-            xanchor="right",
-            x=1
-        )
+            y=1.03,
+            xanchor="center",
+            x=.5,
+            borderwidth=1, bordercolor='black'
+        ),
     )
+
 
 
 def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1):
@@ -1132,4 +1173,3 @@ def multiplot3_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
             
         )
     #fig.update_yaxes(title=y_timeseries_title,showline=True, mirror=True, linecolor="black", linewidth=1) #backup to get outside lines to show
-

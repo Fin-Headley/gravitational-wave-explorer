@@ -72,20 +72,6 @@ if 'bandpass_hint' not in st.session_state:
     st.session_state.bandpass_hint = False
 
 
-
-# Create a button to toggle the line visibility
-if st.checkbox(":blue[Hint]"):
-    st.session_state.bandpass_hint = True
-else:
-    st.session_state.bandpass_hint = False
-
-
-if st.session_state.bandpass_hint == True:
-    st.write(""":blue-background[Toggle whitening on and drag the upper frequency slider down until you can see a strong triple peak in Livingston and Handford.]
-             
-:blue-background[Then bring the lower frequency up until Livingston keeps similar shape when you toggle whitening on/off.]
-""")
-
 low_bandpass, high_bandpass = st.slider("Select your bandpass frequency bounds:", .01, 500.0, (.01, 500.0))
 
 slider_bandpass = {}
@@ -147,6 +133,8 @@ with graph_col1:
         multiplot1_apply_gw_strain_layout(fig_resampler,timeseries_title=timeseries_title,y_timeseries_title=y_timeseries_title)
 
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
+        st.caption("A 0.4 second segment for Ligo-Livingston that contains the GW190521 event.",help=graph_help_no_buttons())
+
 
     with tab2:
         fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=.03,shared_yaxes=True)
@@ -159,6 +147,7 @@ with graph_col1:
         multiplot2_apply_gw_strain_layout(fig_resampler,timeseries_title=timeseries_title,y_timeseries_title=y_timeseries_title,legend_loc =(.98,.45))
 
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
+        st.caption("A 0.4 second segment for Ligo-Livingston and Ligo-Hanford that contains the GW190521 event.",help=graph_help_no_buttons())
 
     with tab3:
         fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.01,shared_yaxes=True)
@@ -173,6 +162,7 @@ with graph_col1:
         multiplot3_apply_gw_strain_layout(fig_resampler,timeseries_title=timeseries_title,y_timeseries_title=y_timeseries_title,legend_loc =(.01,.3))
 
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
+        st.caption("A 0.4 second segment for Ligo-Livingston, Ligo-Hanford, and Virgo that contains the GW190521 event.",help=graph_help_no_buttons())
 
 
 
@@ -240,10 +230,23 @@ with graph_col3:
     st.tabs([" "])
 
     st.plotly_chart(ASD_slider_bandpass, theme="streamlit",on_select="rerun",use_container_width=False)
-
+    st.caption("An interactive plot of the Amplitude Spectral Density for the GW190521 timeseries.",help=graph_help_no_buttons())
 with graph_col2:
     st.tabs(" ")
 
 ##########################################################################################################################
 
 
+
+# Create a button to toggle the line visibility
+if st.checkbox(":blue[Hint]"):
+    st.session_state.bandpass_hint = True
+else:
+    st.session_state.bandpass_hint = False
+
+
+if st.session_state.bandpass_hint == True:
+    st.write(""":blue-background[Toggle whitening on and drag the upper frequency slider down until you can see a strong triple peak in Livingston and Handford.]
+             
+:blue-background[Then bring the lower frequency up until Livingston keeps similar shape when you toggle whitening on/off.]
+""")

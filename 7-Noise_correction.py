@@ -103,7 +103,7 @@ st.header("Whitening the data")
 
 blurb3 = """White noise refers to noise that has the same amplitude across the entire frequency range. 
 
-We can whiten our data, by re-weighting it so that all frequency bins have a nearly equal amount of noise.
+We can whiten our data using the ASD, re-weighting it so that all frequency bins have a nearly equal amount of noise.
 
 A whitening tranformation removes correlated features while leaving variation in the data.
 
