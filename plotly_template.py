@@ -464,6 +464,79 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,
     )
 
 
+def apply_gw_freq_layout_no_buttons(fig, title = "needs a title", yrange = list,xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/HZ]"):
+    """
+    Apply a standardized frequency layout template for gravitational wave strain data plots.
+    
+    Parameters:
+    -----------
+    
+    Returns:
+    --------
+    None (modifies fig in place)
+    """
+
+    # Get theme colors if not provided
+    if theme_text_color is None:
+        theme_text_color = st.get_option('theme.textColor')
+    if theme_bc_color is None:
+        theme_bc_color = st.get_option('theme.backgroundColor')
+    
+    fig.update_layout( #change to fig.update_layout and put in function
+        # Hover settings
+        hovermode='x unified',
+        autosize=False,
+        width=700,
+        height=500,
+
+        # Title settings
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': .5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'automargin': True
+        },
+
+        # Y-axis settings
+        yaxis=dict(
+            title=ytitle,
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            hoverformat=".3e",
+            type="log",
+            range =  yrange,
+            linewidth=1, linecolor='black', mirror=True, showline=True
+        ),
+        
+        # X-axis settings
+        xaxis=dict(
+            #rangeslider=dict(visible=True, borderwidth=1), #no rangeslider
+            title=f"Frequency [Hz]",
+            type="log",
+            #nticks=15,
+            showgrid=True,
+            hoverformat=".3",#"Time: %H:%M:%S.%3f",
+            range =  xrange,
+            linewidth=1, linecolor='black', mirror=True, showline=True,
+            domain=[0, 0.98]
+        ),
+
+        # Legend settings
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=1.0,
+            xanchor="right",
+            x=.95,
+            bordercolor = "black",
+            borderwidth =1
+        )
+    )
+
 def apply_gw_fourier_layout(fig, title = "needs a title", yrange = list,xrange =[50,400], theme_text_color=None, theme_bc_color=None,ytitle="Phase"):
     """
     Apply a standardized frequency layout template for gravitational wave strain data plots.
@@ -834,3 +907,229 @@ def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1):
     col=col,
     max_n_samples = 60000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
     )
+
+
+
+def multiplot1_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.98,.9),  datetime_center = Time(1242442967.444, format='gps').utc.datetime):
+    fig.update_layout(        
+            
+            width=700,
+            height=500,
+            hovermode='x unified',
+
+                    # Title settings
+            title={
+            'text': timeseries_title,
+            'y': 0.9,
+            'x': .5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'automargin': True
+        },
+        
+            yaxis=dict(
+            title=y_timeseries_title,
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            #tickangle = 90,
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
+        ),
+
+            xaxis=dict(
+            #rangeslider=dict(visible=True),
+            title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            #nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0],
+            linewidth=1, linecolor='black', mirror=True, showline=True,
+            domain=[0, 0.98]
+        ),
+
+            legend=dict(
+                        orientation="h",
+                        yanchor="bottom",
+                        y=legend_loc[1],
+                        xanchor="right",
+                        x=legend_loc[0],borderwidth=1, bordercolor='black'
+                    )
+            
+        )
+
+
+def multiplot2_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.9,.45),  datetime_center = Time(1242442967.444, format='gps').utc.datetime):
+    fig.update_layout(        
+            
+            width=700,
+            height=500,
+            hovermode='x unified',
+
+                    # Title settings
+            title={
+            'text': timeseries_title,
+            'y': 0.9,
+            'x': .5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'automargin': True
+        },
+        
+            yaxis=dict(
+            title=y_timeseries_title,
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            #tickangle = 90,
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            #linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
+        ),
+
+            xaxis=dict(
+            #rangeslider=dict(visible=True),
+            #title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            #nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0],
+            side='top',
+            linewidth=1, linecolor='black', showline=True,#mirror=True,
+            domain=[0, 0.98]),
+
+            xaxis2 = dict(
+            #rangeslider=dict(visible=True),
+            title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            #nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0],
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            domain=[0, 0.98]),
+
+            legend=dict(
+                        orientation="h",
+                        yanchor="bottom",
+                        y=legend_loc[1],
+                        xanchor="right",
+                        x=legend_loc[0],borderwidth=1, bordercolor='black'
+                    )
+            
+        )
+    fig.update_yaxes(showline=True, mirror=True, linecolor="black", linewidth=1) #backup to get outside lines to show
+
+
+def multiplot3_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.9,.45),  datetime_center = Time(1242442967.444, format='gps').utc.datetime):
+    fig.update_layout(        
+            
+            width=700,
+            height=500,
+            hovermode='x unified',
+
+                    # Title settings
+            title={
+            'text': timeseries_title,
+            'y': 0.9,
+            'x': .5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'automargin': True
+        },
+        
+            yaxis=dict(
+            title=y_timeseries_title,
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            #tickangle = 90,
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
+        ),
+            yaxis2=dict(
+            #title=y_timeseries_title,
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            #tickangle = 90,
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
+        ),
+            yaxis3=dict(
+            #title=y_timeseries_title,
+            fixedrange=False,
+            showexponent="all",
+            exponentformat="power",
+            #nticks=5,
+            #tickangle = 90,
+            hoverformat=".3e",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
+        ),
+
+            xaxis=dict(
+            #rangeslider=dict(visible=True),
+            #title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            #nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0],
+            side='top',
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            domain=[0, 0.98]),
+
+            xaxis2 = dict(
+            #rangeslider=dict(visible=True),
+            #title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            #nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0],
+            side='bottom',
+            #linewidth=1, linecolor='black', showline=True,#mirror=True,
+            domain=[0, 0.98]),
+
+            xaxis3 = dict(
+            #rangeslider=dict(visible=True),
+            title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            #nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0],
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            domain=[0, 0.98]),
+
+            legend=dict(
+                        orientation="h",
+                        yanchor="bottom",
+                        y=legend_loc[1],
+                        xanchor="left",
+                        x=legend_loc[0],borderwidth=1, bordercolor='black'
+                    )
+            
+        )
+    #fig.update_yaxes(title=y_timeseries_title,showline=True, mirror=True, linecolor="black", linewidth=1) #backup to get outside lines to show
+
