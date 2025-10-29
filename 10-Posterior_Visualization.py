@@ -31,12 +31,9 @@ import arviz as az
 import pandas as pd
 import corner
 
-st.set_page_config(page_title="MCMC result display testing", page_icon="📈",layout="wide")
+st.set_page_config(page_title="Posterior_Visualization", page_icon="📈",layout="wide")
 
-st.title("lets plot some corners!")
-st.write(
-    "Lets look at how we can model GWs!"
-)
+st.title("Posterior Sample parameters")
 
 #pure_data = import_pure_data()
 #raw_data = import_raw_data()
@@ -88,7 +85,6 @@ with col2:
         key="widget1_selector"  # Unique key for Widget 1
     )
 
-    #st.header("Widget 2")
     # Filter options for Widget 2 based on the selection in Widget 1
     # This ensures Widget 2 cannot select the same value as Widget 1
     available_options_2 = [opt for opt in options if opt != top_column_picker]
@@ -109,7 +105,7 @@ with col2:
         default_index_2 = 0
 
     right_column_picker = st.selectbox(
-        "Select a **different** parameter for the x axis:",
+        "Select a **different** parameter for the y axis:",
         available_options_2,
         index=default_index_2,
         key="widget2_selector"  # Unique key for Widget 2
@@ -117,13 +113,13 @@ with col2:
 
 
 columns_labels={"Mass": "The Mass of the heavier object (Solar Masses)",
-                "Ratio":    "Ratio of binary masses (Unitless)",
+                "Ratio":    "Ratio of Masses (Unitless)",
                 "Distance": "The Luminosity distance to the GW event (Mega-Parsecs)",
-                "Time Shift":    "The detected time of the GW event",
-                "Phase":    "Coalesence phase of the binary (radians)",
+                "Time Shift":    "The time shift from 3:02:29.4 (Seconds)",
+                "Phase":    "Coalesence phase of the binary (Radians)",
                 "Right Ascension":  "Right Ascension (Radians)",
                 "Declination":  "Declination (Radians)",
-                "Inclination":  "Inclination angle (radians)",
+                "Inclination":  "Inclination angle (Radians)",
                 "Polarization": "Polarization (Strain)"}
 
 column_dec_value = {"Mass":0,"Ratio":2,"Distance":0,"Time Shift":5,"Phase":2,"Right Ascension":2,"Declination":3,"Inclination":2,"Polarization":2}
@@ -251,6 +247,27 @@ fig.update_layout(
     height=600,
 )
 
+
+
+heatmap_help = """
+Click on the dropdowns on the side to choose two parameters.
+Click and drag on the plot to zoom in.
+Double-click to reset axis to full graph.
+"""
+
 with col1:
     st.plotly_chart(fig,use_container_width=False)
+    st.caption("A 2D heatmap showing the relationship between parameter posterior distributions, colored by count.",help=heatmap_help)
 
+
+st.markdown(
+r"""
+Above is the MCMC sample of 774,888 parameter combinations mentioned in the :blue-background[Statistical Sampling] tab.
+
+Two parameters are plotted at at time, one on the x-axis and one on the y-axis.
+
+The histograms along the axes plot the 1D posterior distribution for the parameter, 
+while the heatmap shows the 2D parameter space.
+
+The MCMC MAP parameters, along with their uncertainties, are given in the :blue-background[MCMC results] tab.
+""")

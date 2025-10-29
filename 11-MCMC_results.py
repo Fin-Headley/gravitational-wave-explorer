@@ -89,8 +89,6 @@ for i in column_titles:
 
 #results_df
 
-results_col1, results_col2 = st.columns([1,3],gap=None)
-
 
 def get_results(index="Mass"):
 
@@ -100,33 +98,38 @@ def get_results(index="Mass"):
     return MAP,onesig_low, onesig_high, twosig_low, twosig_high
 
 
-with st.expander("Estimates for the MCMC parameters", expanded=False, icon=None, width="stretch"):
+st.write("Here are my Maximum a posteriori estimates for each of the model parameters, shown with 95% confidence values.")
 
-    st.write("Here are my Maximum a posteriori estimates for each of the model paramters.")
-    
+
+results_col1, results_col2 = st.columns([1,1],gap=None)
+
+
+with results_col1:
+        
     MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Mass")
-    st.latex(rf"""M_1={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""",help="Primary Mass")
+    st.latex(rf"""M_1={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \;""",help="Primary Mass")
 
     MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Ratio")
-    st.latex(rf"""q={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""",help="Mass Ratio")
+    st.latex(rf"""q={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; """,help="Mass Ratio")
 
     MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Distance")
-    st.latex(rf"""D_L={int(MAP)}^{{{int(twosig_high)}}}_{{{int(twosig_low)}}} \; (\text{{2$\sigma$}})""",help="Luminosity Distance")
+    st.latex(rf"""D_L={int(MAP)}^{{{int(twosig_high)}}}_{{{int(twosig_low)}}} \; """,help="Luminosity Distance")
 
     MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Phase")
-    st.latex(rf"""\phi_c={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""",help="Coalesence Phase")
+    st.latex(rf"""\phi_c={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; """,help="Coalesence Phase")
 
+with results_col2:
     MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Right Ascension")
-    st.latex(rf"""\alpha={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""",help="Right Ascension")
+    st.latex(rf"""\alpha={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; """,help="Right Ascension")
 
     MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Declination")
-    st.latex(rf"""\delta={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""",help="Declination")
+    st.latex(rf"""\delta={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; """,help="Declination")
 
     MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Inclination")
-    st.latex(rf"""i={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""",help="Inclination")
+    st.latex(rf"""i={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; """,help="Inclination")
 
     MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Polarization")
-    st.latex(rf"""P={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""",help="Polarization")
+    st.latex(rf"""P={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; """,help="Polarization")
 
     #st.latex(rf"""M_1={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
     #st.latex(rf"""q={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
@@ -138,17 +141,13 @@ with st.expander("Estimates for the MCMC parameters", expanded=False, icon=None,
     #st.latex(rf"""P={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
 
 
-    with st.expander("Timeshift", expanded=False, icon=None, width="stretch"):
-        
-        st.write("Time shift was a parameter for the model, but has no physical meaning. I have included it here but it can more or less be disregarded at this point.")
-
-        MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Time Shift")
-        st.latex(rf"""TimeShift={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""",help="Time from event_gps('GW190521')")
-        #st.latex(rf"""TimeShift={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
+MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Time Shift")
+st.latex(rf"""TimeShift={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; """,help="Time from event_gps('GW190521')")
+#st.latex(rf"""TimeShift={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
 
 
 
-st.subheader("MAP paramter model plotted against real data")
+st.subheader("Plotting a MAP parameter model against data")
 
 MAP_params = []
 for i in range(9):
@@ -173,7 +172,7 @@ with tab1:
     add_GW_trace_subplot(fig_resampler,GW_data["L1"].times.value,GW_data["L1"].value,colors["L1"],"Livingston",row=1,col=1)
     add_GW_trace_subplot(fig_resampler,L1_white_template.times.value,L1_white_template.value,"black","Livingston MAP Model",row=1,col=1)
 
-    apply_gw_1_model_comparision_layout(fig_resampler,title='GW Model vs Data')
+    apply_gw_1_model_comparision_layout(fig_resampler,title='MAP Model vs Data')
 
     st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
 
@@ -189,7 +188,7 @@ with tab2:
     add_GW_trace_subplot(fig_resampler,GW_data["H1"].times.value,GW_data["H1"].value,colors["H1"],"Hanford",row=2,col=1)
     add_GW_trace_subplot(fig_resampler,H1_white_template.times.value,H1_white_template.value,"black","Hanford MAP Model",row=2,col=1)
 
-    apply_gw_2_model_comparision_layout(fig_resampler,title='GW Model vs Data')
+    apply_gw_2_model_comparision_layout(fig_resampler,title='MAP Model vs Data')
 
     st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
 
@@ -207,10 +206,13 @@ with tab3:
     add_GW_trace_subplot(fig_resampler,GW_data["L1"].times.value,GW_data["V1"].value,colors["V1"],"Virgo",row=3,col=1)
     add_GW_trace_subplot(fig_resampler,V1_white_template.times.value,V1_white_template.value,"black","Virgo MAP Model",row=3,col=1)
 
-    apply_gw_3_model_comparision_layout(fig_resampler,title='GW Model vs Data')
+    apply_gw_3_model_comparision_layout(fig_resampler,title='MAP Model vs Data')
 
     st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
 
+################################################################################################################################################
+
+st.header("Signal to Noise Ratio")
 
 SNRs = {}
 ifos = ['L1','H1','V1']

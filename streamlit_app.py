@@ -21,7 +21,7 @@ pg = st.navigation([st.Page("1-Welcome_page.py"),
 
                     st.Page("16-Statistical_Sampling.py"),
 
-                    st.Page("10-MCMC_display_tests.py"),
+                    st.Page("10-Posterior_Visualization.py"),
                     st.Page("11-MCMC_results.py"),
                     st.Page("12-Q_transform_testing.py"),
                     st.Page("13-Extra_plots.py"),

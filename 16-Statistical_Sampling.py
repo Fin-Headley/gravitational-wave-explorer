@@ -335,12 +335,15 @@ with mp.Pool() as pool:
 
 st.markdown(
 r"""
-After running the mcmc sampler, 35426 steps(\*24 walkers) were discarded as burnin to reduce parameter correlation. 
+**Note:** *As the Virgo Detector was less sensitive and had a low Signal to Noise Ratio, Virgo data was excluded from the MCMC sampling.
+Plots with Virgo data will be shown, but the Virgo Strain data was not used in calculating the combined likelyhood or Posterior values.*
+
+After running the MCMC sampler for 100000 steps, 35426 steps(\*24 walkers) were discarded as burnin to reduce parameter correlation. 
 Additionally the sample was thinned in order to save memory, removing every other step. 
 
 This resulted in a combined total sample size of 774,888 parameter combinations.
 
-The results of the MCMC are visualized in the :blue-background[Posterior visualization] tab. The MAP parameters, with uncertainties, are given in results.
+The results of the MCMC are visualized in the :blue-background[Posterior Visualization] tab. The MAP parameters, with uncertainties, are given in the :blue-background[MCMC results] tab.
 """)
 
 
