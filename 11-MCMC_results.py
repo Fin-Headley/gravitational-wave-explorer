@@ -35,7 +35,7 @@ st.set_page_config(page_title="results", page_icon="📈",layout="wide")
 
 st.title("Results:")
 st.write(
-    "lets take a look at my best fitting paramters!"
+    "lets take a look at my best fitting paramters."
 )
 pure_data = load_pure_data()
 raw_data = load_raw_data()
@@ -175,7 +175,7 @@ with tab1:
     apply_gw_1_model_comparision_layout(fig_resampler,title='MAP Model vs Data')
 
     st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
-
+    st.caption("Whitened MAP model compared to whitened Ligo Livingston strain data.",help=graph_help_no_buttons())
 
 
 with tab2:
@@ -191,6 +191,7 @@ with tab2:
     apply_gw_2_model_comparision_layout(fig_resampler,title='MAP Model vs Data')
 
     st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
+    st.caption("Whitened MAP model compared to whitened Ligo strain data.",help=graph_help_no_buttons())
 
 
 with tab3:
@@ -209,6 +210,8 @@ with tab3:
     apply_gw_3_model_comparision_layout(fig_resampler,title='MAP Model vs Data')
 
     st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
+    st.caption("Whitened MAP model compared to whitened Ligo/Virgo strain data.",help=graph_help_no_buttons())
+
 
 ################################################################################################################################################
 
@@ -286,16 +289,148 @@ Apply_SNR_layout(fig_resampler,"Detector Signal to Noise Ratios")
 st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=False)
 st.caption("The Signal to Noise Ratio of the MAP parameter model with each Detector's Strain data.",help=graph_help_no_buttons())
 
+st.divider()
+################################################################################################################################################
 
-#st.plotly_chart(fig_resampler,use_container_width=False)
+st.header("Time-Frequency Spectrograms")
 
-#for ifo in ifos:
-#    plt.plot(SNRs[ifo].times,SNRs[ifo],color=colours[ifo],label=labels[ifo])
-#    plt.legend()
-#    plt.show()
+st.markdown(
+r"""
+Instead of looking at the data in the time domain or the frequency domain, a Spectrogram represents both. A spectrogram represents a signal's power per frequency, over a period of time.
+
+To convert the (whitened) Strain data into a Spectrogram we use something called a Q-transform, which takes timeseries data and creates high-resolution time-frequency maps. 
+If scaled properly, Q-transform provide a great visual reference of Gravitational Wave signals.
+
+Additionally, we can use Q-transforms to preform one last test of the MAP model. We subtract the MAP model wave from the Strain data, and then Q-transform the subtracted timeseries. 
+The resulting Spectrogram shows how well the model captured the GW event, as it should hopefully showcase uniform background noise.
+""")
 
 
+best_fit_template = gen_template(MAP_params)
+data = load_raw_data()
+
+data_qspecgram = {}
+
+subtracted_qspecgram = {}
 
 
+for ifo in ifos:
+    subtracted = data[ifo] - best_fit_template[ifo]
+
+    data_qspecgram[ifo]=data[ifo].whiten(asd=np.sqrt(PSD_data[ifo])).q_transform(outseg=(time_center - .5, time_center + .5),frange=(15, 150))
+    subtracted_qspecgram[ifo]=subtracted.whiten(asd=np.sqrt(PSD_data[ifo])).q_transform(outseg=(time_center - .5, time_center + .5),frange=(15, 150))
+
+data_times = load_raw_data()
+data_times["L1"].crop(gps-.5,gps+.5)
+times = data_times["L1"].times.value
+t = Time(times, format='gps')         
+x_datetime = t.utc.datetime    # type: ignore
 
 
+def add_qtransform_subplot(fig,qspecgram,ifo='L1',showscale = False,colorbar=dict(title = "colorbar"),row=1,col=1):
+    data_times = load_raw_data()
+    data_times["L1"].crop(gps-.5,gps+.5)
+    times = data_times["L1"].times.value
+    t = Time(times, format='gps')        
+    x_datetime = t.utc.datetime    # type: ignore
+
+    zvar=0
+    if ifo=='L1':
+        zvar=150
+    elif ifo=='H1':
+        zvar=90
+    elif ifo=='V1':
+        zvar=60
+
+    fig.add_trace(go.Heatmap(
+        x = x_datetime,
+        y0 = 15,
+        dy=(150-15)/len((qspecgram[ifo][0])),
+        z = qspecgram[ifo].T,
+        zmin = 0,
+        zmax = zvar,
+        colorscale=px.colors.sequential.Viridis,    #Purples,gray_r
+        colorbar=colorbar,
+        showscale = showscale,
+        #zmin = 0,
+        #customdata = coordinate_array,
+        hovertemplate='<b>Time</b>: %{x}</br><b>Frequency</b>: %{y} Hz<br><b>Count</b>: %{z}<extra></extra>',
+        #yaxis='y',
+        #xaxis='x',
+        ),
+        row=row,
+        col=col,
+    )
+
+Q_fig = make_subplots(rows=3, cols=2, shared_xaxes="all", horizontal_spacing=.03 ,vertical_spacing=0.05,shared_yaxes="all")# type: ignore #column_titles=[labels["L1"]+" SNR",labels["H1"]+" SNR",labels["V1"]+" SNR"])
+
+add_qtransform_subplot(Q_fig,data_qspecgram,ifo='L1',row=1,col=1,showscale=True,colorbar=dict(title="Livingston", len=0.33, y=0.70,yanchor="bottom"))
+add_qtransform_subplot(Q_fig,subtracted_qspecgram,ifo='L1',row=1,col=2)
+
+add_qtransform_subplot(Q_fig,data_qspecgram,ifo='H1',row=2,col=1,showscale=True,colorbar=dict(title="Hanford", len=0.33, y=0.35,yanchor="bottom"))
+add_qtransform_subplot(Q_fig,subtracted_qspecgram,ifo='H1',row=2,col=2)
+
+add_qtransform_subplot(Q_fig,data_qspecgram,ifo='V1',row=3,col=1,showscale=True,colorbar=dict(title="Virgo", len=0.33, y=0,yanchor="bottom"))
+add_qtransform_subplot(Q_fig,subtracted_qspecgram,ifo='V1',row=3,col=2)
+
+Q_fig.update_layout(
+    #hovermode='closest',
+    #bargap=0.05,
+    width=800,
+    height=900,
+
+    title={
+        'text': "Frequency Spectrogram Plots",
+        'y': .98,
+        'x': .5,
+        'xanchor': 'center',
+        'yanchor': 'top',
+        #'automargin': True
+    },
+
+    xaxis=dict(
+    title="Strain Spectrogram",
+    side='top',
+
+    ),
+
+    xaxis2=dict(
+    title="Model Subtracted Spectrogram",
+    side='top',
+
+    ),
+
+    xaxis5=dict(
+    type="date",
+    showgrid=True,
+    title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}",
+    ),
+
+    xaxis6=dict(
+    type="date",
+    showgrid=True,
+    title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}"
+    ),
+
+    yaxis=dict(
+    title="Frequency (Hz)",
+    side='left',
+    ),
+
+    yaxis3=dict(
+    title="Frequency (Hz)",
+    side='left',
+    ),
+
+    yaxis5=dict(
+    title="Frequency (Hz)",
+    side='left',
+    ),
+)
+
+
+st.plotly_chart(Q_fig,use_container_width=True)
+st.caption("""
+           Left: Time-Frequency Spectrograms of whitened Strain for each of the three Detectors. Top to bottom: Livinston, Hanford, Virgo   
+           Right: Time-Frequency Spectrograms of whitened Strain with the MAP model Subtracted. Normalized to same scale as left-side plots.
+           """,help=graph_help_no_buttons())

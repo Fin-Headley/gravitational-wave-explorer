@@ -29,7 +29,6 @@ from data_caching import *
 from matched_filtering_functions import *
 import arviz as az
 import pandas as pd
-import corner
 
 st.set_page_config(page_title="Q_transform", page_icon="📈",layout="wide")
 
@@ -59,21 +58,16 @@ ifos = ['L1','H1','V1']
 MAP_df = pd.read_parquet("MAP_parameters.parquet")
 MAP_df.rename(inplace=True,index={"TimeShift":"Time Shift","RA":"Right Ascension","Dec":"Declination","Incl":"Inclination","Pol":"Polarization","lp":"Log Posterior","chain":"Chain","draw":"Draw"})
 
-results_df = MAP_df.copy()
+#results_df = MAP_df.copy()
 column_dec_value = {"Mass":1,"Ratio":2,"Distance":0,"Time Shift":5,"Phase":2,"Right Ascension":4,"Declination":3,"Inclination":2,"Polarization":3}
 column_titles = np.array(["Mass","Ratio","Distance","Time Shift","Phase","Right Ascension","Declination","Inclination","Polarization"])
 
-
 MAP_params = []
 for i in range(9):
-    MAP_params.append(results_df["MAP"].iloc[i])
+    MAP_params.append(MAP_df["MAP"].iloc[i])
 
 best_fit_template = gen_template(MAP_params)
 data = load_raw_data()
-#data = {}
-
-#for ifo in ifos:
-    #data[ifo] = pure_data[ifo].bandpass(flow=10).crop(gps-2,gps+2)
 
 data_qspecgram = {}
 
@@ -94,29 +88,12 @@ times = data_times["L1"].times.value
 t = Time(times, format='gps')         
 x_datetime = t.utc.datetime    # type: ignore
 
-heatmap = go.Heatmap(
-    x = x_datetime,
-    y0 = 10,
-    dy=(150-15)/len((data_qspecgram['V1'][0])),
-    z = data_qspecgram['V1'].T,
-    #zmin = 0,
-    #zmax = 180,
-    zauto=True,
-    colorscale=px.colors.sequential.Viridis,    #Purples,gray_r
-    #colorbar=dict(title = "colorbar"),
-    #zmin = 0,
-    #customdata = coordinate_array,
-    hovertemplate='<b>Time</b>: %{x}</br><b>Frequency</b>: %{y} Hz<br><b>Count</b>: %{z}<extra></extra>',
-    #yaxis='y',
-    #xaxis='x',
-)
 
-
-def add_qtransform_subplot(fig,qspecgram,ifo='L1',name="hello",row=1,col=1):
+def add_qtransform_subplot(fig,qspecgram,ifo='L1',name="hello",showscale = False,colorbar=dict(title = "colorbar"),row=1,col=1):
     data_times = load_raw_data()
     data_times["L1"].crop(gps-.5,gps+.5)
     times = data_times["L1"].times.value
-    t = Time(times, format='gps')         
+    t = Time(times, format='gps')        
     x_datetime = t.utc.datetime    # type: ignore
 
     zvar=0
@@ -135,7 +112,8 @@ def add_qtransform_subplot(fig,qspecgram,ifo='L1',name="hello",row=1,col=1):
         zmin = 0,
         zmax = zvar,
         colorscale=px.colors.sequential.Viridis,    #Purples,gray_r
-        #colorbar=dict(title = "colorbar"),
+        colorbar=colorbar,
+        showscale = showscale,
         #zmin = 0,
         #customdata = coordinate_array,
         hovertemplate='<b>Time</b>: %{x}</br><b>Frequency</b>: %{y} Hz<br><b>Count</b>: %{z}<extra></extra>',
@@ -146,32 +124,69 @@ def add_qtransform_subplot(fig,qspecgram,ifo='L1',name="hello",row=1,col=1):
         col=col,
     )
 
-fig=go.Figure()
+#Q_fig=go.Figure()
 
 #fig.add_trace(heatmap)
 
 #st.plotly_chart(fig,use_container_width=False)
 
-fig = make_subplots(rows=3, cols=2, shared_xaxes="all", horizontal_spacing=.03 ,vertical_spacing=0.05,shared_yaxes="all")# type: ignore #column_titles=[labels["L1"]+" SNR",labels["H1"]+" SNR",labels["V1"]+" SNR"])
+Q_fig = make_subplots(rows=3, cols=2, shared_xaxes="all", horizontal_spacing=.03 ,vertical_spacing=0.05,shared_yaxes="all")# type: ignore #column_titles=[labels["L1"]+" SNR",labels["H1"]+" SNR",labels["V1"]+" SNR"])
 
-add_qtransform_subplot(fig,data_qspecgram,ifo='L1',name="hello",row=1,col=1)
-add_qtransform_subplot(fig,subtracted_qspecgram,ifo='L1',name="hello",row=1,col=2)
+add_qtransform_subplot(Q_fig,data_qspecgram,ifo='L1',name="hello",row=1,col=1,showscale=True,colorbar=dict(title="Livingston", len=0.33, y=0.70,yanchor="bottom"))
+add_qtransform_subplot(Q_fig,subtracted_qspecgram,ifo='L1',name="hello",row=1,col=2)
 
-add_qtransform_subplot(fig,data_qspecgram,ifo='H1',name="hello",row=2,col=1)
-add_qtransform_subplot(fig,subtracted_qspecgram,ifo='H1',name="hello",row=2,col=2)
+add_qtransform_subplot(Q_fig,data_qspecgram,ifo='H1',name="hello",row=2,col=1,showscale=True,colorbar=dict(title="Hanford", len=0.33, y=0.35,yanchor="bottom"))
+add_qtransform_subplot(Q_fig,subtracted_qspecgram,ifo='H1',name="hello",row=2,col=2)
 
-add_qtransform_subplot(fig,data_qspecgram,ifo='V1',name="hello",row=3,col=1)
-add_qtransform_subplot(fig,subtracted_qspecgram,ifo='V1',name="hello",row=3,col=2)
+add_qtransform_subplot(Q_fig,data_qspecgram,ifo='V1',name="hello",row=3,col=1,showscale=True,colorbar=dict(title="Virgo", len=0.33, y=0,yanchor="bottom"))
+add_qtransform_subplot(Q_fig,subtracted_qspecgram,ifo='V1',name="hello",row=3,col=2)
 
-
-
-fig.update_layout(
+Q_fig.update_layout(
     #hovermode='closest',
-    bargap=0.05,
+    #bargap=0.05,
     width=800,
     height=900,
+
+    title={
+        'text': "Q transform check",
+        'y': .98,
+        'x': .5,
+        'xanchor': 'center',
+        'yanchor': 'top',
+        #'automargin': True
+    },
+
+    xaxis=dict(
+    title="Strain Spectrogram",
+    side='top',
+
+    ),
+
+    xaxis2=dict(
+    title="Model Subtracted Spectrogram",
+    side='top',
+
+    ),
+
+    xaxis3=dict(
+
+    ),
+
+    xaxis4=dict(
+
+    ),
+
+    xaxis5=dict(
+    type="date",
+    showgrid=True,
+
+    ),
+
+    xaxis6=dict(
+    type="date",
+    showgrid=True,
+    ),
+
 )
 
-
-
-st.plotly_chart(fig,use_container_width=False)
+st.plotly_chart(Q_fig,use_container_width=False)

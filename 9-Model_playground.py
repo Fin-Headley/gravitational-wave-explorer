@@ -177,7 +177,7 @@ with col2:
 
         apply_gw_1_model_comparision_layout(fig_resampler,title='CBC Model vs Data')
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
-        st.caption("Your whitened GW model compared to whitened and bandpassed Ligo-Livingston strain data.",help=graph_help_no_buttons())
+        st.caption("Your whitened GW model compared to whitened Ligo-Livingston strain data.",help=graph_help_no_buttons())
 
 
     with tab2:
@@ -194,7 +194,7 @@ with col2:
         apply_gw_2_model_comparision_layout(fig_resampler,title='CBC Model vs Data')
 
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
-        st.caption("Your whitened GW model compared to whitened and bandpassed Ligo strain data.",help=graph_help_no_buttons())
+        st.caption("Your whitened GW model compared to whitened Ligo strain data.",help=graph_help_no_buttons())
 
 
 
@@ -213,7 +213,7 @@ with col2:
         apply_gw_3_model_comparision_layout(fig_resampler,title='CBC Model vs Data')
 
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
-        st.caption("Your whitened GW model compared to whitened and bandpassed Ligo/Virgo strain data.",help=graph_help_no_buttons())
+        st.caption("Your whitened GW model compared to whitened Ligo/Virgo strain data.",help=graph_help_no_buttons())
 
 st.divider()
 
