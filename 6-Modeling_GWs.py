@@ -77,7 +77,7 @@ I will focus on showcasing how to use one such model here.
 
 st.divider()
 
-st.write("For my modeling I used the 'SEOBNRv4_opt' model, some random sample parameters are shown bellow.")
+st.write("For my modeling I used the 'SEOBNRv4_opt' model, some random parameters are shown bellow.")
 
 st.code("""
 from pycbc.waveform import get_td_waveform
