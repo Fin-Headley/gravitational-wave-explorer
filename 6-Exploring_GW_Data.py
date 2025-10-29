@@ -49,7 +49,7 @@ time_center = gps
 #ifos = ['V1', 'H1','L1']
 ifos = ['L1', 'V1','H1']
 
-datetime_center = Time(time_center, format='gps').utc.datetime
+datetime_center = Time(time_center, format='gps').utc.datetime # pyright: ignore[reportAttributeAccessIssue]
 
 ################################################################################################
 
@@ -94,8 +94,8 @@ with st.expander("Importing GW190521 Data with gwosc", expanded=False, icon=None
 
     st.write("Data type:       :green-background[",str(type(pure_data['L1'])),"]")
     st.write("Segment duration:   :green-background[",str(pure_data['L1'].duration),"]")
-    st.write("Start time: :green-background[",str(Time(pure_data['L1'].x0, format='gps').utc.datetime),"]")
-    st.write("End time: :green-background[",str(Time(pure_data['L1'].times[-1], format='gps').utc.datetime),"]")
+    st.write("Start time: :green-background[",str(Time(pure_data['L1'].x0, format='gps').utc.datetime),"]") # pyright: ignore[reportAttributeAccessIssue]
+    st.write("End time: :green-background[",str(Time(pure_data['L1'].times[-1], format='gps').utc.datetime),"]") # pyright: ignore[reportAttributeAccessIssue]
     st.write("Data Sample Rate: :green-background[",str(pure_data['L1'].sample_rate),"]")
     st.write("Data Δt:    :green-background[",str(pure_data['L1'].dt),"]")
     st.write("GW Event Time:    :green-background[",(datetime_center.strftime('%a %d %b %Y, %I:%M:%S.%f')[:-4]+datetime_center.strftime(' %p')),"]")

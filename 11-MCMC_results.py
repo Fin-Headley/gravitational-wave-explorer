@@ -50,7 +50,7 @@ PSD_data = load_PSD_data()
 #gets the time of the event and prints it
 gps = event_gps('GW190521')
 time_center = gps
-datetime_center = Time(time_center, format='gps').utc.datetime
+datetime_center = Time(time_center, format='gps').utc.datetime  # type: ignore
 
 ifos = ['L1','H1']
 ########################################################################
@@ -215,6 +215,8 @@ with tab3:
 st.header("Signal to Noise Ratio")
 
 SNRs = {}
+SNR_Peaks = {}
+
 ifos = ['L1','H1','V1']
 colours = load_colours_dict()
 
@@ -252,16 +254,28 @@ for ifo in ifos:
 
     SNRmax=SNRs[ifo].max().value
     time_max=SNRs[ifo].times[SNRs[ifo].argmax()]
-    st.write('Maximum {} SNR of {} at {}.'.format(ifo,SNRmax,time_max))
 
-    #plt.plot(SNR.times,SNR,color=colours[ifo],label=labels[ifo])
-    #plt.legend()
-    #plt.show()
+    SNR_Peaks[ifo] = round(SNRmax,3)
+    #st.write('Maximum {} SNR of {} at {}.'.format(ifo,SNRmax,time_max))
 
 
-fig = go.Figure()
-#make_subplots(rows=1, cols=3, shared_xaxes=True, vertical_spacing=0.05,shared_yaxes=True)
-fig_resampler = FigureResampler(fig)
+st.markdown(
+r"""
+Below are the Signal to Noise Ratios for the MAP parameter model for each of the three Detectors.
+""")
+
+
+st.write(":blue-background[Ligo-Livingston] had a Peak Signal to Noise Ratio of :blue[{}].".format(SNR_Peaks["L1"]))
+
+st.write(":red-background[Ligo-Hanford] had a Peak Signal to Noise Ratio of :red[{}].".format(SNR_Peaks["H1"]))
+
+st.write(":violet-background[Virgo] had a Peak Signal to Noise Ratio of :violet[{}].".format(SNR_Peaks["V1"]))
+
+#Time(SNR_values["L1"][1], format='gps').utc.datetime  # type: ignore
+
+#st.write(SNR_values["L1"])
+
+
 
 #plot_traces(fig_resampler,SNRs,ifos)
 
@@ -273,7 +287,12 @@ add_GW_trace_subplot(fig_resampler,SNRs["H1"].times.value,SNRs["H1"].value,colou
 add_GW_trace_subplot(fig_resampler,SNRs["V1"].times.value,SNRs["V1"].value,colours["V1"],labels["V1"],row=1,col=3)
 
 
-st.plotly_chart(fig_resampler,use_container_width=False)
+
+st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=False)
+st.caption(").",help=graph_help())
+
+
+#st.plotly_chart(fig_resampler,use_container_width=False)
 
 #for ifo in ifos:
 #    plt.plot(SNRs[ifo].times,SNRs[ifo],color=colours[ifo],label=labels[ifo])

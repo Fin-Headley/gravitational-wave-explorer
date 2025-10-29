@@ -51,7 +51,7 @@ PSD_data = load_PSD_data()
 #gets the time of the event and prints it
 gps = event_gps('GW190521')
 time_center = gps
-datetime_center = Time(time_center, format='gps').utc.datetime
+datetime_center = Time(time_center, format='gps').utc.datetime # type: ignore
 
 ifos = ['L1','H1','V1']
 ########################################################################
@@ -92,7 +92,7 @@ data_times = load_raw_data()
 data_times["L1"].crop(gps-.5,gps+.5)
 times = data_times["L1"].times.value
 t = Time(times, format='gps')         
-x_datetime = t.utc.datetime   
+x_datetime = t.utc.datetime    # type: ignore
 
 heatmap = go.Heatmap(
     x = x_datetime,
@@ -117,7 +117,7 @@ def add_qtransform_subplot(fig,qspecgram,ifo='L1',name="hello",row=1,col=1):
     data_times["L1"].crop(gps-.5,gps+.5)
     times = data_times["L1"].times.value
     t = Time(times, format='gps')         
-    x_datetime = t.utc.datetime   
+    x_datetime = t.utc.datetime    # type: ignore
 
     zvar=0
     if ifo=='L1':
@@ -152,7 +152,7 @@ fig=go.Figure()
 
 #st.plotly_chart(fig,use_container_width=False)
 
-fig = make_subplots(rows=3, cols=2, shared_xaxes="all", horizontal_spacing=.03 ,vertical_spacing=0.05,shared_yaxes="all")#column_titles=[labels["L1"]+" SNR",labels["H1"]+" SNR",labels["V1"]+" SNR"])
+fig = make_subplots(rows=3, cols=2, shared_xaxes="all", horizontal_spacing=.03 ,vertical_spacing=0.05,shared_yaxes="all")# type: ignore #column_titles=[labels["L1"]+" SNR",labels["H1"]+" SNR",labels["V1"]+" SNR"])
 
 add_qtransform_subplot(fig,data_qspecgram,ifo='L1',name="hello",row=1,col=1)
 add_qtransform_subplot(fig,subtracted_qspecgram,ifo='L1',name="hello",row=1,col=2)

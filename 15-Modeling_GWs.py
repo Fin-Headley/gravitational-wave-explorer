@@ -43,7 +43,7 @@ PSD_data = load_PSD_data()
 #gets the time of the event and prints it
 gps = event_gps('GW190521')
 time_center = gps
-datetime_center = Time(time_center, format='gps').utc.datetime
+datetime_center = Time(time_center, format='gps').utc.datetime # type: ignore
 
 ifos = ['L1', 'V1','H1']
 ########################################################################
@@ -352,6 +352,6 @@ example_plot = create_new_figure()
 
 plot_traces(example_plot,example_template,ifos)
 
-apply_gw_strain_layout(example_plot, title = "Example Gravitational Wave models", datetime_center = Time(1141440002., format='gps').utc.datetime, data_range = "example_model")
+apply_gw_strain_layout(example_plot, title = "Example Gravitational Wave models", datetime_center = Time(1141440002., format='gps').utc.datetime, data_range = "example_model") # type: ignore
 st.plotly_chart(example_plot, theme="streamlit",on_select="rerun",use_container_width=True)
 st.caption("An interactive plot of the example CBC model as it would be seen by Ligo and Virgo (assuming there is no noise).",help=graph_help())

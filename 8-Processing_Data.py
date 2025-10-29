@@ -52,7 +52,7 @@ gps = event_gps('GW190521')
 time_center = gps
 
 
-datetime_center = Time(time_center, format='gps').utc.datetime
+datetime_center = Time(time_center, format='gps').utc.datetime # type: ignore
 
 ifos = ['L1', 'V1','H1']
 

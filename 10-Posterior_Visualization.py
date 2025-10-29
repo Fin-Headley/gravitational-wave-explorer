@@ -47,7 +47,7 @@ st.title("Posterior Sample parameters")
 #gets the time of the event and prints it
 gps = event_gps('GW190521')
 time_center = gps
-datetime_center = Time(time_center, format='gps').utc.datetime
+datetime_center = Time(time_center, format='gps').utc.datetime # type: ignore
 
 ifos = ['L1','H1']
 ########################################################################
@@ -146,7 +146,7 @@ for i in range(len(x_bin_ticks)-1):
     x_bin_ticks[i] =  x_bin_ticks[i] + " - " + x_bin_ticks[i+1]
 x_bin_ticks = x_bin_ticks[0:-1]
 
-y_bin_ticks = np.round(yedges,decimals=column_dec_value[right_column_picker])
+y_bin_ticks = np.round(yedges,decimals=column_dec_value[right_column_picker]) # type: ignore
 y_bin_ticks = y_bin_ticks.astype(str)
 for i in range(len(y_bin_ticks)-1):
     y_bin_ticks[i] =  y_bin_ticks[i] + " - " + y_bin_ticks[i+1]
@@ -216,7 +216,7 @@ y_hist = go.Bar(
     x = y_hist_data,
     marker_color=px.colors.sequential.Purples[-1],
     customdata = y_bin_ticks,
-    hovertemplate='<b>'+right_column_picker+' Bin</b>: %{customdata}</br></br><b>Count</b>: %{x}<extra></extra>',
+    hovertemplate='<b>'+right_column_picker+' Bin</b>: %{customdata}</br></br><b>Count</b>: %{x}<extra></extra>', # type: ignore
     showlegend=False,
     xaxis='x2',
     orientation='h',
@@ -233,7 +233,7 @@ fig.update_layout(
             title=columns_labels[top_column_picker],
             showticklabels=True
                 ),
-    yaxis=dict(domain=[0, 0.85], title=columns_labels[right_column_picker]),
+    yaxis=dict(domain=[0, 0.85], title=columns_labels[right_column_picker]), # type: ignore
     xaxis2=dict(domain=[0.86, 1], showticklabels=False),
     yaxis2=dict(domain=[0.86, 1], showticklabels=False),
     title={'text': top_column_picker+" vs "+right_column_picker,

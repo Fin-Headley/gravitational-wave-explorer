@@ -66,7 +66,7 @@ st.write("Data duration:   ",str(data['L1'].duration))
 st.write("Data Sample Rate:",str(data['L1'].sample_rate))
 st.write("Data delta t:    ",str(data['L1'].dt))
 st.write("Data start time: ",str(data['L1'].x0))
-st.write("Data start time: ",str(Time(data['L1'].x0, format='gps').utc.datetime))
+st.write("Data start time: ",str(Time(data['L1'].x0, format='gps').utc.datetime)) # pyright: ignore[reportAttributeAccessIssue]
 
 st.write("new plot test")
 
@@ -101,7 +101,7 @@ for ifo in ifos:
 
     times = data[ifo].times.value          # array of GPS seconds
     t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
-    x_datetime = t.utc.datetime            # numpy array of Python datetimes in UTC     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
+    x_datetime = t.utc.datetime            # pyright: ignore[reportAttributeAccessIssue] # pyright: ignore[reportAttributeAccessIssue] # numpy array of Python datetimes in UTC     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
                                     #lets do things in numbers and put calculate date in after
     fig.add_trace(go.Scatter(
         mode='lines',
@@ -115,7 +115,7 @@ for ifo in ifos:
     max_n_samples = 30000
     )
 
-fig.add_vline(Time(time_center, format='gps').utc.datetime)
+fig.add_vline(Time(time_center, format='gps').utc.datetime) # pyright: ignore[reportAttributeAccessIssue]
 
 fig.update_layout(
 
@@ -125,20 +125,20 @@ fig.update_layout(
             x=0.1, y=1.15, xanchor="center", yanchor="bottom",
             buttons=[
                 dict(label="±0.1 s", method="relayout",
-                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center+-.1, format='gps').utc.datetime, 
-                                                                     Time(time_center+.1, format='gps').utc.datetime]}]),
+                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center+-.1, format='gps').utc.datetime,  # pyright: ignore[reportAttributeAccessIssue]
+                                                                     Time(time_center+.1, format='gps').utc.datetime]}]), # type: ignore
                 dict(label="±0.2 s", method="relayout",
-                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-.2, format='gps').utc.datetime, 
-                                                                     Time(time_center+.2, format='gps').utc.datetime]}]),
+                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-.2, format='gps').utc.datetime,  # type: ignore
+                                                                     Time(time_center+.2, format='gps').utc.datetime]}]), # type: ignore
                 dict(label="±.5 s", method="relayout",
-                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-.5, format='gps').utc.datetime, 
-                                                                     Time(time_center+.5, format='gps').utc.datetime]}]),
+                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-.5, format='gps').utc.datetime,  # type: ignore
+                                                                     Time(time_center+.5, format='gps').utc.datetime]}]), # type: ignore
                 dict(label="±1 s", method="relayout",
-                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-1, format='gps').utc.datetime, 
-                                                                     Time(time_center+1, format='gps').utc.datetime]}]),
+                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-1, format='gps').utc.datetime,  # type: ignore
+                                                                     Time(time_center+1, format='gps').utc.datetime]}]), # type: ignore
                 dict(label="All (±16 s)", method="relayout",
-                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-16, format='gps').utc.datetime, 
-                                                                     Time(time_center+16, format='gps').utc.datetime]}]),
+                    args=[{"xaxis.autorange": False, "xaxis.range": [Time(time_center-16, format='gps').utc.datetime,  # type: ignore
+                                                                     Time(time_center+16, format='gps').utc.datetime]}]), # type: ignore
             ]
         )],
 
@@ -163,7 +163,7 @@ fig.update_layout(
 
     xaxis=go.layout.XAxis(
         rangeslider=dict(visible=True),
-        title = "Time (seconds) since "+str(Time(data["L1"].t0, format='gps').utc.datetime).format("fits"),
+        title = "Time (seconds) since "+str(Time(data["L1"].t0, format='gps').utc.datetime).format("fits"), # type: ignore
         type="date",
         #range = [Time(time_center-3, format='gps').utc.datetime, Time(time_center+3, format='gps').utc.datetime]
         tickformat="%S.%f",

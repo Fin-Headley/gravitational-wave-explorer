@@ -33,7 +33,7 @@ def graph_help_no_buttons():
                         Double-click to reset axis to full graph."""
         return output_text
 
-def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(1242442967.444, format='gps').utc.datetime, data_range = "pure", theme_text_color=None, theme_bc_color=None):
+def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(1242442967.444, format='gps').utc.datetime, data_range = "pure", theme_text_color=None, theme_bc_color=None): # type: ignore
     """
     Apply a standardized layout template for gravitational wave strain data plots.
 
@@ -273,38 +273,6 @@ def add_freq_event_shading(fig, freq_start, freq_end, fillcolor="chartreuse",opa
                   ,line_width=line_width)
 
 
-# i think i can remove this as it is never used
-def setup_gw_plot(fig, title, datetime_center, event_marker_color="green", 
-                 event_offset_seconds=0, theme_text_color=None, theme_bc_color=None):
-    """
-    Complete setup for a GW strain plot with layout and event marker.
-    
-    Parameters:
-    -----------
-    fig : plotly.graph_objects.Figure or FigureResampler
-        The figure object to set up
-    title : str
-        The title for the plot
-    datetime_center : datetime
-        The center datetime for the zoom buttons and event marker
-    event_marker_color : str, optional
-        Color of the event marker line (default: "green")
-    event_offset_seconds : float, optional
-        Offset in seconds from the center time for event marker (default: 0)
-    theme_text_color : str, optional
-        Streamlit theme text color (will use st.get_option if not provided)
-    theme_bc_color : str, optional
-        Streamlit theme background color (will use st.get_option if not provided)
-    
-    Returns:
-    --------
-    None (modifies fig in place)
-    """
-    apply_gw_strain_layout(fig, title, datetime_center, theme_text_color, theme_bc_color)
-    add_event_marker(fig, datetime_center, event_marker_color, event_offset_seconds, 
-                    theme_text_color, theme_bc_color)
-    
-
 def create_new_figure():
     return FigureResampler(resampled_trace_prefix_suffix = ("",""), default_n_shown_samples = 1000, show_mean_aggregation_size= False, create_overview=True)
 
@@ -317,7 +285,7 @@ def plot_traces(fig,data_dictionary,ifos,alpha={"L1":1,"H1":1,"V1":1}):
 
         times = data_dictionary[ifo].times.value          # array of GPS seconds
         t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
-        x_datetime = t.utc.datetime            # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
+        x_datetime = t.utc.datetime            # type: ignore           # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0 
                                         #lets do things in numbers and put calculate date in after
         fig.add_trace(go.Scatter(
             mode='lines',
@@ -340,7 +308,7 @@ def plot_single_trace(fig,data_dictionary,ifo="L1"):
 
     times = data_dictionary.times.value          # array of GPS seconds
     t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
-    x_datetime = t.utc.datetime            # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
+    x_datetime = t.utc.datetime           # type: ignore                # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
                                     #lets do things in numbers and put calculate date in after
     fig.add_trace(go.Scatter(
         mode='lines',
@@ -376,7 +344,7 @@ def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
         )
 
 
-def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/HZ]"):
+def apply_gw_freq_layout(fig, title = "needs a title", yrange = [-23.7,-19.9],xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/HZ]"):
     """
     Apply a standardized frequency layout template for gravitational wave strain data plots.
     
@@ -472,7 +440,7 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = list,xrange =[1,
     )
 
 
-def apply_gw_freq_layout_no_buttons(fig, title = "needs a title", yrange = list,xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/HZ]"):
+def apply_gw_freq_layout_no_buttons(fig, title = "needs a title", yrange = [-23.7,-19.9],xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/HZ]"):
     """
     Apply a standardized frequency layout template for gravitational wave strain data plots.
     
@@ -671,7 +639,7 @@ def plot_window_psd_trace(fig,data_dictionary,ifo ='L1',color="black",name="Wind
     )
 
 
-def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
+def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None): # type: ignore
 
     fig.update_layout(
         # Hover settings
@@ -732,7 +700,7 @@ def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_c
     )
 
 ########################################################################################################################
-def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None):
+def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None): # type: ignore
 
     fig.update_layout(
         # Hover settings
@@ -818,7 +786,7 @@ def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_c
     )
 
 
-def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime):
+def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime): # type: ignore
 
     fig.update_layout(
         # Hover settings
@@ -934,7 +902,7 @@ def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1):
 
     times = x       #data_dictionary[ifo].times.value          # array of GPS seconds
     t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
-    x_datetime = t.utc.datetime            # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
+    x_datetime = t.utc.datetime            # type: ignore # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
                                     #lets do things in numbers and put calculate date in after
     fig.add_trace(go.Scatter(
         mode='lines',
@@ -952,7 +920,7 @@ def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1):
 
 
 
-def multiplot1_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.98,.9),  datetime_center = Time(1242442967.444, format='gps').utc.datetime):
+def multiplot1_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.98,.9),  datetime_center = Time(1242442967.444, format='gps').utc.datetime): # type: ignore
     fig.update_layout(        
             
             width=700,
@@ -1006,7 +974,7 @@ def multiplot1_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
         )
 
 
-def multiplot2_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.9,.45),  datetime_center = Time(1242442967.444, format='gps').utc.datetime):
+def multiplot2_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.9,.45),  datetime_center = Time(1242442967.444, format='gps').utc.datetime): # type: ignore
     fig.update_layout(        
             
             width=700,
@@ -1072,7 +1040,7 @@ def multiplot2_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
     fig.update_yaxes(showline=True, mirror=True, linecolor="black", linewidth=1) #backup to get outside lines to show
 
 
-def multiplot3_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.9,.45),  datetime_center = Time(1242442967.444, format='gps').utc.datetime):
+def multiplot3_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.9,.45),  datetime_center = Time(1242442967.444, format='gps').utc.datetime): # type: ignore
     fig.update_layout(        
             
             width=700,

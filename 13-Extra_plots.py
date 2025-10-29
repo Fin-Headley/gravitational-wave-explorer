@@ -54,7 +54,7 @@ gps = event_gps('GW190521')
 time_center = gps
 ifos = ['V1', 'H1','L1']
 
-datetime_center = Time(time_center, format='gps').utc.datetime
+datetime_center = Time(time_center, format='gps').utc.datetime # type: ignore
 
 colors = load_colours_dict()
 
@@ -267,9 +267,9 @@ plot_both_fourier_freq_traces(Fourier_phase_fig_tab2,"H1")
 plot_both_fourier_freq_traces(Fourier_phase_fig_tab3,"V1")
 
 
-apply_gw_fourier_layout(Fourier_phase_fig_tab1,title = "Livingston Raw Data FFT",yrange = [-np.pi,np.pi],xrange=[15,400],ytitle="Phase")
-apply_gw_fourier_layout(Fourier_phase_fig_tab2,title = "Hanford Raw Data FFT",yrange = [-np.pi,np.pi],xrange=[15,400],ytitle="Phase")
-apply_gw_fourier_layout(Fourier_phase_fig_tab3,title = "Virgo Raw Data FFT",yrange = [-np.pi,np.pi],xrange=[15,400],ytitle="Phase")
+apply_gw_fourier_layout(Fourier_phase_fig_tab1,title = "Livingston Raw Data FFT",yrange = [-np.pi,np.pi],xrange=[15,400],ytitle="Phase") # type: ignore
+apply_gw_fourier_layout(Fourier_phase_fig_tab2,title = "Hanford Raw Data FFT",yrange = [-np.pi,np.pi],xrange=[15,400],ytitle="Phase") # type: ignore
+apply_gw_fourier_layout(Fourier_phase_fig_tab3,title = "Virgo Raw Data FFT",yrange = [-np.pi,np.pi],xrange=[15,400],ytitle="Phase") # type: ignore
 
 
 tab1, tab2, tab3 = st.tabs(["Livingston", "Hanford", "Virgo"])
