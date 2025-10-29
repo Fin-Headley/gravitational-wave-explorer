@@ -91,7 +91,7 @@ with col1:
     event_time = st.slider("The detected time of the GW event:",
                             min_value = datetime_center-timedelta(seconds=.1)
                             ,max_value=datetime_center+timedelta(seconds=.1)
-                            ,value=datetime_center+timedelta(seconds=-.057)      #,value=datetime_center+timedelta(seconds=.027)
+                            ,value=datetime_center+timedelta(seconds=.027)      #,value=datetime_center+timedelta(seconds=.027)
                             ,step=timedelta(seconds=.001)
                             ,format = "h:mm:ss.SSS"
                             ,key="T_S_slider"
