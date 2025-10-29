@@ -908,7 +908,8 @@ def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1):
         mode='lines',
         line_color=color,
         showlegend=True,
-        name=name,
+        name=name
+            
     ),
     hf_x = x_datetime,
     hf_y = y,        #data_dictionary[ifo].value,
@@ -1143,3 +1144,88 @@ def multiplot3_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
         )
     #fig.update_yaxes(title=y_timeseries_title,showline=True, mirror=True, linecolor="black", linewidth=1) #backup to get outside lines to show
 
+
+def Apply_SNR_layout(fig, Title = "Signal to Noise Ratio",  datetime_center = Time(1242442967.4, format='gps').utc.datetime): # type: ignore
+    fig.update_layout(
+        hovermode='x unified',
+
+        title={
+                'text': Title,
+                'y': 0.9,
+                'x': .5,
+                'xanchor': 'center',
+                'yanchor': 'top',
+                'automargin': True
+            },
+
+            xaxis=dict(
+            #title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            #nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0],
+            side='bottom',
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            #domain=[0, 0.98]
+            ),
+
+            xaxis2=dict(
+            title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", 
+            type="date",
+            #nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0],
+            side='bottom',
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            ),
+
+            xaxis3=dict(
+            #title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            type="date",
+            #nticks=8,
+            showgrid=True,
+            hoverformat="Time: %H:%M:%S.%3f",
+            autotickangles = [0],
+            side='bottom',
+            linewidth=1, linecolor='black', showline=True,mirror=True,
+            ),
+
+            yaxis=dict(
+            title="Signal to Noise Ratio",
+            fixedrange=False,
+            hoverformat=".3f",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,),
+
+            yaxis2=dict(
+            #title="Signal to Noise Ratio",
+            fixedrange=False,
+            hoverformat=".3f",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,),
+
+            yaxis3=dict(
+            #title="Signal to Noise Ratio",
+            fixedrange=False,
+            hoverformat=".3f",
+            mirror=True,
+            side='left',
+            linewidth=1, linecolor="black", showline=True,
+            showgrid=True,
+            ),
+
+            legend=dict(
+                            orientation="v",
+                            #yanchor="bottom",
+                            #y=.9,
+                            #xanchor="left",
+                            #x=.5,
+                            borderwidth=1, bordercolor='black'
+                        )
+    )

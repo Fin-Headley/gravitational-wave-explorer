@@ -261,7 +261,7 @@ for ifo in ifos:
 
 st.markdown(
 r"""
-Below are the Signal to Noise Ratios for the MAP parameter model for each of the three Detectors.
+Below are the Signal to Noise Ratios for each of the detectors, using the MAP parameters to create the model.
 """)
 
 
@@ -271,15 +271,9 @@ st.write(":red-background[Ligo-Hanford] had a Peak Signal to Noise Ratio of :red
 
 st.write(":violet-background[Virgo] had a Peak Signal to Noise Ratio of :violet[{}].".format(SNR_Peaks["V1"]))
 
-#Time(SNR_values["L1"][1], format='gps').utc.datetime  # type: ignore
 
-#st.write(SNR_values["L1"])
+fig = make_subplots(rows=1, cols=3, shared_xaxes="all",shared_yaxes="all",horizontal_spacing=.03 ,vertical_spacing=0.05,) # type: ignore
 
-
-
-#plot_traces(fig_resampler,SNRs,ifos)
-
-fig = make_subplots(rows=1, cols=3, shared_xaxes=True, horizontal_spacing=.01 ,vertical_spacing=0.05,shared_yaxes=True,column_titles=[labels["L1"]+" SNR",labels["H1"]+" SNR",labels["V1"]+" SNR"])
 fig_resampler = FigureResampler(fig)
 
 add_GW_trace_subplot(fig_resampler,SNRs["L1"].times.value,SNRs["L1"].value,colours["L1"],labels["L1"],row=1,col=1)
@@ -287,9 +281,10 @@ add_GW_trace_subplot(fig_resampler,SNRs["H1"].times.value,SNRs["H1"].value,colou
 add_GW_trace_subplot(fig_resampler,SNRs["V1"].times.value,SNRs["V1"].value,colours["V1"],labels["V1"],row=1,col=3)
 
 
+Apply_SNR_layout(fig_resampler,"Detector Signal to Noise Ratios")
 
 st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=False)
-st.caption(").",help=graph_help())
+st.caption("The Signal to Noise Ratio of the MAP parameter model with each Detector's Strain data.",help=graph_help_no_buttons())
 
 
 #st.plotly_chart(fig_resampler,use_container_width=False)
