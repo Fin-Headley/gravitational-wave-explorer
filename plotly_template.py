@@ -65,12 +65,13 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
     #if theme_bc_color is None:
     theme_bc_color = st.get_option('theme.backgroundColor')
     
-                                #±0.1 y range,  #±0.2 y range, #±0.5 y range,#±0.1 y range
+                                #±0.1 y range,  #±0.2 y range, #±0.5 y range,#±1 y range
     data_range_dict = {"pure":[[-2.4e-19,2.4e-19],[-4e-19,4e-19],[-7e-19,7e-19],[-9e-19,9e-19]], 
                         "raw":[[-2.4e-19,2.4e-19],[-4e-19,4e-19],[-7e-19,7e-19],[-9e-19,9e-19]],
                         "bandpass":[[-8.1e-22,8.1e-22],[-8.1e-22,8.1e-22],[-8.1e-22,8.1e-22],[-8.1e-22,8.1e-22]],
                         "whiten":[[-4,4],[-4,4],[-4,4],[-4,4]],                       
-                        "GW_data": [[-1.2,1.2],[-1.2,1.2],[-1.2,1.2],[-1.2,1.2]]
+                        "GW_data": [[-1.2,1.2],[-1.2,1.2],[-1.2,1.2],[-1.2,1.2]],
+                        "example_model":[[-3.1e-22,3.1e-22],[-3.1e-22,3.1e-22],[-3.1e-22,3.1e-22],[-3.1e-22,3.1e-22]],
                         }
 
     full_button_name = "± 2 s"
@@ -1173,3 +1174,4 @@ def multiplot3_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
             
         )
     #fig.update_yaxes(title=y_timeseries_title,showline=True, mirror=True, linecolor="black", linewidth=1) #backup to get outside lines to show
+

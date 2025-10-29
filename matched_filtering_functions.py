@@ -47,11 +47,11 @@ for ifo in ifos:
     det[ifo]=Detector(ifo)
 
 def gen_template(param,
-                 gps_time = time_center, #added by me
-                 delta_t =  raw_data['H1'].dt.value, # Assuming all IFOs have the same dt ! (I checked this to be true)
-                 duration=  raw_data['H1'].duration.value, # Assuming all IFOs have the same duration ! (I checked this to be true)
-                 start_time=raw_data['H1'].x0.value,# Assuming all IFOs have the same start time ! (I checked this to be true)
-                 f_lower=10.): ###changed from 20 (it is 10 in the CU version)
+                 gps_time = time_center,
+                 delta_t =  raw_data['H1'].dt.value, # Assuming all detectors have the same dt(I checked this to be true)
+                 duration=  raw_data['H1'].duration.value, # Assuming all detectors have the same duration (I checked this to be true)
+                 start_time=raw_data['H1'].x0.value,# Assuming all detectors have the same start time (I checked this to be true)
+                 f_lower=10.):
     
     m1, q, distance, time_shift, phase, right_ascension, declination, inclination, polarization = param
     time = gps_time + time_shift
@@ -66,8 +66,8 @@ def gen_template(param,
                              delta_t=delta_t,
                              f_lower=f_lower) 
     
-    hp = hp*get_window(('tukey',1/4),hp.shape[0]) #### i added this in here
-    hc = hc*get_window(('tukey',1/4),hc.shape[0]) #### i added this in here
+    hp = hp*get_window(('tukey',1/4),hp.shape[0]) 
+    hc = hc*get_window(('tukey',1/4),hc.shape[0]) 
 
     # Resize the signal buffer
     hp.resize(int(duration/delta_t))

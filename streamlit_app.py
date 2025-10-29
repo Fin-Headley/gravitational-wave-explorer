@@ -15,12 +15,17 @@ pg = st.navigation([st.Page("1-Welcome_page.py"),
                     st.Page("7-Noise_correction.py"),
                     st.Page("8-Processing_Data.py"),
                     st.Page("14-My_Data.py"),
-                    st.Page("9-Modeling_GWs.py"),
+
+                    st.Page("15-Modeling_GWs.py"),
+                    st.Page("9-Model_playground.py"),
+
+                    st.Page("16-Statistical_Sampling.py"),
+
                     st.Page("10-MCMC_display_tests.py"),
                     st.Page("11-MCMC_results.py"),
                     st.Page("12-Q_transform_testing.py"),
                     st.Page("13-Extra_plots.py"),
-
+                    
 
                     ])
 

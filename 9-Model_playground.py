@@ -28,7 +28,7 @@ import time
 from data_caching import *
 from matched_filtering_functions import *
 
-st.set_page_config(page_title="Modeling Gravitational Waves", page_icon="📈",layout="wide")
+st.set_page_config(page_title="Model Playground", page_icon="📈",layout="wide")
 
 pure_data = load_pure_data()
 raw_data = load_raw_data()
@@ -49,54 +49,59 @@ ifos = ['L1', 'V1','H1']
 ########################################################################
 col1, col2 = st.columns(2)
 
-
 with col1:
 
-    st.title("Modeling Gravitational Waves")
+    st.title("Model Testing Ground")
     st.write(
-        'Try and find model parameters that line up with the GW190521 data!'    )
+        'Using the same parameters from the example model, try and find model parameters that line up with the GW190521 data!')
 
     minicol1, minicol2 = st.columns(2)
 
     with minicol1:
         mass = st.slider("The mass of the higher mass object (Solar Masses):",
-                        min_value=50.0
+                        min_value=20.0
                         ,max_value=300.0
-                        ,value=160.0
+                        ,value=135.0    #,value=160.0
+                        ,key="mass_slider"
                         )
 
         mass_ratio = st.slider("The ratio of mass between the binary objects:",
                         min_value=0.01
                         ,max_value=1.0
-                        ,value=.72
+                        ,value=.54      #,value=.72
+                        ,key="ratio_slider"
                         )
 
         
         right_ascension = st.slider("Right Ascension (Radians):",
                         min_value=0.0          
                         ,max_value= 2* np.pi
-                        ,value=2.2
+                        ,value=2.0      #,value=2.2
+                        ,key="ra_slider"
                         )
 
         phase = st.slider("Coalesence phase of the binary (radians):",
                         min_value=0.0            
                         ,max_value= 2* np.pi
-                        ,value=.01
+                        ,value=.72      #,value=.01
+                        ,key="phase_slider"
                         )
 
 
     event_time = st.slider("The detected time of the GW event:",
                             min_value = datetime_center-timedelta(seconds=.1)
                             ,max_value=datetime_center+timedelta(seconds=.1)
-                            ,value=datetime_center+timedelta(seconds=.027)
+                            ,value=datetime_center+timedelta(seconds=-.057)      #,value=datetime_center+timedelta(seconds=.027)
                             ,step=timedelta(seconds=.001)
                             ,format = "h:mm:ss.SSS"
+                            ,key="T_S_slider"
                             )
 with minicol2:
         distance = st.slider("The Luminosity distance to the GW event (Mega-Parsecs):",
                             min_value=100.0
                             ,max_value=5000.0
-                            ,value=2400.0
+                            ,value=1600.0           #,value=2400.0
+                            ,key="distance_slider"
                             )
 
 
@@ -104,20 +109,23 @@ with minicol2:
         inclination = st.slider("Inclination angle (radians):",
                         min_value=0.0
                         ,max_value= np.pi
-                        ,value=.5
+                        ,value=.82           #,value=.5
+                        ,key="incl_slider"
                         )
 
         declination = st.slider("Declination (Radians):",
                                 min_value= -np.pi/2 
                                 ,max_value= np.pi/2
-                                ,value= -1.2
+                                ,value= -.95        #,value= -1.2
+                                ,key="dec_slider"
                                 )
         
 
         polarization = st.slider("Strain Polarization (radians):",
                 min_value=0.0 
                 ,max_value= 2*np.pi
-                ,value=.01
+                ,value=1.01      #,value=.01
+                ,key="pol_slider"
                 )
 
 
@@ -169,7 +177,7 @@ with col2:
 
         apply_gw_1_model_comparision_layout(fig_resampler,title='CBC Model vs Data')
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
-        st.caption("An interactive plot of the .5 second segment that contains the GW190521 detection.",help=graph_help())
+        st.caption("Your whitened GW model compared to whitened and bandpassed Ligo-Livingston strain data.",help=graph_help_no_buttons())
 
 
     with tab2:
@@ -186,7 +194,7 @@ with col2:
         apply_gw_2_model_comparision_layout(fig_resampler,title='CBC Model vs Data')
 
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
-        st.caption("An interactive plot of the .5 second segment that contains the GW190521 detection.",help=graph_help())
+        st.caption("Your whitened GW model compared to whitened and bandpassed Ligo strain data.",help=graph_help_no_buttons())
 
 
 
@@ -205,6 +213,27 @@ with col2:
         apply_gw_3_model_comparision_layout(fig_resampler,title='CBC Model vs Data')
 
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
-        st.caption("An interactive plot of the .5 second segment that contains the GW190521 detection.",help=graph_help())
+        st.caption("Your whitened GW model compared to whitened and bandpassed Ligo/Virgo strain data.",help=graph_help_no_buttons())
 
+st.divider()
+
+
+st.write("If you are struggling to find a good set of parameters, feel free to take a look at my initial guess!")
+
+if 'model_playground_hint' not in st.session_state:
+    st.session_state.model_playground_hint = False
+
+Good_parameter_values = {"Mass":160, "Ratio":.72,"Right Ascension":2.2,
+                         "Coalesence Phase":.01,"Luminosity Distance":2400,
+                         "Inclination":.5,"Declination":-1.2,"Polarization":.01,
+                         "Time of the event":"3:02:29:427"}
+
+if st.checkbox(":blue[Show my starting parameters]",key="model_playground_hint_checkbox"):
+    st.session_state.model_playground_hint = True
+else:
+    st.session_state.model_playground_hint = False
+
+
+if st.session_state.model_playground_hint == True:        
+    st.table(Good_parameter_values)
 
