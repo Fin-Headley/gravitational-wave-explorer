@@ -5,8 +5,7 @@ st.set_page_config(page_title="Welcome Page", page_icon="👋",layout="wide")
 st.title("Welcome!")
 
 st.markdown(
-'''Hi!  
-
+'''
 This web app is designed to breakdown the process of Gravitational Wave parameter estimation.
 
 Use the tabs on the left of the screen to move to different pages.

@@ -159,34 +159,8 @@ coordinate_array = np.stack((X_bin_var.ravel(), Y_bin_var.ravel()), axis=-1).res
 x_centers = 0.5 * (xedges[:-1] + xedges[1:]) #x axis markers for ticks
 y_centers = 0.5 * (yedges[:-1] + yedges[1:]) #y axis markers for ticks
 
+
 # Create heatmap
-
-#MAP_df = pd.read_parquet("MAP_parameters.parquet")
-
-#MAP_df.rename(inplace=True,index={"TimeShift":"Time Shift","RA":"Right Ascension","Dec":"Declination","Incl":"Inclination","Pol":"Polarization","lp":"Log Posterior","chain":"Chain","draw":"Draw"})
-
-#st.write(MAP_df["MAP"].loc["Mass"])
-
-#x_axis_MAP = MAP_df["MAP"].loc[top_column_picker]
-#y_axis_MAP = MAP_df["MAP"].loc[right_column_picker]
-
-#st.write(x_axis_MAP)
-
-#AP_point_graph = (x_axis_MAP,y_axis_MAP)
-
-#MAP_point = go.Scatter(
-#    x=[x_axis_MAP],
-#    y=[y_axis_MAP],
-#)
-    #colorscale=px.colors.sequential.Viridis,    #Purples,gray_r
-    #colorbar=dict(title = "colorbar"),
-    #zmin = 0,
-    #customdata = coordinate_array,
-    #hovertemplate='<b>'+top_column_picker+' Bin</b>: %{customdata[0]}</br><b>'+right_column_picker+' Bin</b>: %{customdata[1]}<br><b>Count</b>: %{z}<extra></extra>',
-#    yaxis='y',
-#    xaxis='x',)
-
-
 
 heatmap = go.Heatmap(
     x = x_centers,

@@ -11,53 +11,31 @@ from plotly.subplots import make_subplots
 
 
 def graph_help():
-        output_text = """Use the button in the lower right to view preset ranges.   
-                        You can hide/show GW Observatories by clicking on their name in the legend.  
-                        Click to pan.    
-                        Change tools in the top right to use custom zooms.   
-                        Double-click to reset axis to full graph."""
-        return output_text
+    """
+    Standard text for graph help pop-up.
+    """
+    output_text = """Use the button in the lower right to view preset ranges.   
+                    You can hide/show GW Observatories by clicking on their name in the legend.  
+                    Click to pan.    
+                    Change tools in the top right to use custom zooms.   
+                    Double-click to reset axis to full graph."""
+    return output_text
 
 def graph_help_no_buttons():
-        output_text = """You can hide/show GW Observatories by clicking on their name in the legend.  
-                        Click to pan.    
-                        Change tools in the top right to use custom zooms.   
-                        Double-click to reset axis to full graph."""
-        return output_text
+    """
+    Standard text for graph help pop-up.
+    """
+    output_text = """You can hide/show GW Observatories by clicking on their name in the legend.  
+                    Click to pan.    
+                    Change tools in the top right to use custom zooms.   
+                    Double-click to reset axis to full graph."""
+    return output_text
 
 
-def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(1242442967.444, format='gps').utc.datetime, data_range = "pure", theme_text_color=None, theme_bc_color=None): # type: ignore
+def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(1242442967.444, format='gps').utc.datetime, data_range = "pure"): # type: ignore
     """
     Apply a standardized layout template for gravitational wave strain data plots.
-
-    ##i have changed this and it should be updated
-
-    Parameters:
-    -----------
-    fig : plotly.graph_objects.Figure or FigureResampler
-        The figure object to apply the layout to
-    title : str
-        The title for the plot (e.g., 'Observed GW Strain Data', 'Bandpassed GW Strain Data')
-    datetime_center : datetime
-        The center datetime for the zoom buttons
-    t0 : datetime
-        The reference time for the x-axis title
-    theme_text_color : str, optional
-        Streamlit theme text color (will use st.get_option if not provided)
-    theme_bc_color : str, optional
-        Streamlit theme background color (will use st.get_option if not provided)
-    
-    Returns:
-    --------
-    None (modifies fig in place)
     """
-
-    # Get theme colors if not provided
-    #if theme_text_color is None:
-    theme_text_color = st.get_option('theme.textColor')
-    #if theme_bc_color is None:
-    theme_bc_color = st.get_option('theme.backgroundColor')
-    
                                 #±0.1 y range,  #±0.2 y range, #±0.5 y range,#±1 y range
     data_range_dict = {"pure":[[-2.4e-19,2.4e-19],[-4e-19,4e-19],[-7e-19,7e-19],[-9e-19,9e-19]], 
                         "raw":[[-2.4e-19,2.4e-19],[-4e-19,4e-19],[-7e-19,7e-19],[-9e-19,9e-19]],
@@ -182,25 +160,7 @@ def add_event_marker(fig, marker_time, marker_name, line_color="green",
                     theme_text_color=None, theme_bc_color=None):
     """
     Add a vertical event marker to the plot.
-    
-    Parameters:
-    -----------
-    fig : plotly.graph_objects.Figure or FigureResampler
-        The figure object to add the marker to
-    event_time : datetime
-        The center datetime for the event marker
-    marker_name : str
-        text for event marker
-    line_color : str, optional
-        Color of the event marker line (default: "green")
-    theme_text_color : str, optional
-        Streamlit theme text color (will use st.get_option if not provided)
-    theme_bc_color : str, optional
-        Streamlit theme background color (will use st.get_option if not provided)
-    
-    Returns:
-    --------
-    None (modifies fig in place)
+
     """
     
     # Get theme colors if not provided
@@ -234,7 +194,6 @@ def add_event_marker(fig, marker_time, marker_name, line_color="green",
 def add_freq_event_marker(fig, marker_freq, line_color="green"): #unused
     """
     Add a vertical event marker to a frequency plot.
-    did have text too but that was taken out
     """
     fig.add_vline(
         x=marker_freq, 
@@ -255,10 +214,16 @@ def add_freq_event_shading(fig, freq_start, freq_end, fillcolor="chartreuse",opa
 
 
 def create_new_figure():
+    """
+    Returns a new FigureResampler figure
+    """
     return FigureResampler(resampled_trace_prefix_suffix = ("",""), default_n_shown_samples = 1000, show_mean_aggregation_size= False, create_overview=True)
 
 
 def plot_traces(fig,data_dictionary,ifos,alpha={"L1":1,"H1":1,"V1":1}):
+    """
+    Adds traces of the timeseries data from data_dictionary to fig
+    """
     colours = load_colours_dict()
     short_labels = load_short_labels_dict()
 
@@ -284,6 +249,9 @@ def plot_traces(fig,data_dictionary,ifos,alpha={"L1":1,"H1":1,"V1":1}):
 
 
 def plot_single_trace(fig,data_dictionary,ifo="L1"):
+    """
+    Adds one timeseries trace from data_dictionary to fig
+    """
     colours = load_colours_dict()
     short_labels = load_short_labels_dict()
 
@@ -306,7 +274,9 @@ def plot_single_trace(fig,data_dictionary,ifo="L1"):
 
 
 def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
-
+    """
+    Adds traces of the frequencyseries data from data_dictionary to fig
+    """
     colours = load_colours_dict()
     short_labels = load_short_labels_dict()
 
@@ -328,13 +298,6 @@ def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
 def apply_gw_freq_layout(fig, title = "needs a title", yrange = [-23.7,-19.9],xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/HZ]"):
     """
     Apply a standardized frequency layout template for gravitational wave strain data plots.
-    
-    Parameters:
-    -----------
-    
-    Returns:
-    --------
-    None (modifies fig in place)
     """
 
     # Get theme colors if not provided
@@ -424,13 +387,6 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = [-23.7,-19.9],xr
 def apply_gw_freq_layout_no_buttons(fig, title = "needs a title", yrange = [-23.7,-19.9],xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/HZ]"):
     """
     Apply a standardized frequency layout template for gravitational wave strain data plots.
-    
-    Parameters:
-    -----------
-    
-    Returns:
-    --------
-    None (modifies fig in place)
     """
 
     # Get theme colors if not provided
@@ -496,6 +452,9 @@ def apply_gw_freq_layout_no_buttons(fig, title = "needs a title", yrange = [-23.
 
 
 def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None): # type: ignore
+    """
+    Apply a standardized layout template for gravitational wave strain data plots.
+    """
 
     fig.update_layout(
         # Hover settings
@@ -557,6 +516,9 @@ def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_c
 
 
 def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None): # type: ignore
+    """
+    Apply a standardized layout template for gravitational wave strain data plots.
+    """
 
     fig.update_layout(
         # Hover settings
@@ -643,6 +605,9 @@ def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_c
 
 
 def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime): # type: ignore
+    """
+    Apply a standardized layout template for gravitational wave strain data plots.
+    """
 
     fig.update_layout(
         # Hover settings
@@ -754,7 +719,9 @@ def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_c
 
 
 def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1,alpha=1.0):
-
+    """
+    Adds timeseries trace to subplot of fig.
+    """
     times = x       #data_dictionary[ifo].times.value          # array of GPS seconds
     t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
     x_datetime = t.utc.datetime            # type: ignore # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
@@ -777,6 +744,9 @@ def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1,alpha=1.0):
 
 
 def multiplot1_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.97,.9),  datetime_center = Time(1242442967.444, format='gps').utc.datetime): # type: ignore
+    """
+    Apply a standardized layout template for gravitational wave strain data plots.
+    """
     fig.update_layout(        
             
             width=700,
@@ -831,6 +801,9 @@ def multiplot1_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
 
 
 def multiplot2_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.9,.45),  datetime_center = Time(1242442967.444, format='gps').utc.datetime): # type: ignore
+    """
+    Apply a standardized layout template for gravitational wave strain data plots.
+    """
     fig.update_layout(        
             
             width=700,
@@ -897,6 +870,9 @@ def multiplot2_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
 
 
 def multiplot3_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.9,.45),  datetime_center = Time(1242442967.444, format='gps').utc.datetime): # type: ignore
+    """
+    Apply a standardized layout template for gravitational wave strain data plots.
+    """
     fig.update_layout(        
             
             width=700,
@@ -1001,6 +977,9 @@ def multiplot3_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
 
 
 def Apply_SNR_layout(fig, Title = "Signal to Noise Ratio",  datetime_center = Time(1242442967.4, format='gps').utc.datetime): # type: ignore
+    """
+    Apply a standardized layout template for gravitational wave strain data plots.
+    """
     fig.update_layout(
         hovermode='x unified',
 

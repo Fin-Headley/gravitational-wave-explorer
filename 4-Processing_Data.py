@@ -175,7 +175,7 @@ ASD_data = load_ASD_data()
 
 plot_freq_traces(ASD_slider_bandpass,ASD_data,ifos=ifos)
 
-ASD_slider_bandpass.update_layout( #change to fig.update_layout and put in function
+ASD_slider_bandpass.update_layout( 
         # Hover settings
         hovermode='x unified',
         autosize=False,
@@ -192,10 +192,6 @@ ASD_slider_bandpass.update_layout( #change to fig.update_layout and put in funct
             hoverformat=".3e",
             type="log",
             range =  [-24,-20],
-            #linewidth=1, 
-            #linecolor='black', 
-            #mirror=True, 
-            #showline=True,
         ),
         
         # X-axis settings
@@ -206,7 +202,6 @@ ASD_slider_bandpass.update_layout( #change to fig.update_layout and put in funct
             #showgrid=True,
             hoverformat=".3",#"Time: %H:%M:%S.%3f",
             range =[1.2,2.7],
-            #linewidth=1, linecolor='black',mirror=True, showline=True
         ),
 
         # Legend settings
@@ -219,7 +214,6 @@ ASD_slider_bandpass.update_layout( #change to fig.update_layout and put in funct
                     ),
             #bordercolor = "black",
             #borderwidth =1
-
     )
 
 apply_gw_freq_layout_no_buttons(ASD_slider_bandpass,title = "Amplitude Spectral Density(ASD)", yrange = [-23.7,-19.9],xrange=[1,2.7],ytitle="Strain/√Hz")
@@ -276,11 +270,6 @@ with equal_space_answer_1:
         st.write("""
     :red[I used a used a bandass with f_low = 25 and f_high = 90.   
     This came from analyzing the ASD as well as the Power Spectral Density to try and minimize noise, as well as some prior knowlege of the GW190521 event.]""")
-    #:red-background[I was also aware of the fact that GW190521 was the most massive binary BH merger observed to date.   
-    #The masses of binary Black Holes heavily influence the frequency range of their Gravitational Wave signal, with larger 
-    #mass objects corresponding to lower freqeuency signals. With this in mind I cut out all frequencies above 90 Hz to allow for better modelling.
-    #In the case of GW190521 this is completely valid, but the majority of Black Hole mergers will contain valuable 
-    #            signal data up to much higher frequencies.]
 
 with equal_space_answer_2:
     st.markdown('###')

@@ -135,23 +135,6 @@ PSD_fig = create_new_figure()
 ASD_data = load_ASD_data()
 
 
-
-
-#plot_freq_traces(PSD_fig,PSD_data,ifos=ifos)
-#apply_gw_freq_layout(PSD_fig,title = "Power Spectral Density(PSD)", yrange = [-47.3,-40],ytitle=" (Strain^2/HZ)")
-
-#st.plotly_chart(PSD_fig, theme="streamlit",on_select="rerun",use_container_width=True)
-
-#graph_help_wth_slider = """Use the button in the lower right to view preset ranges. 
-#                        Use the slider at the bottom of the plot to manually adjust range.
-#                        You can hide/show GW Observatories by clicking on their name in the legend.  
-#                        Click to pan.    
-#                        Change tools in the top right to use custom zooms.   
-#                        Double-click to reset axis to full graph."""
-
-#st.caption("An interactive plot of the 32 second segment that contains the GW190521 event.",help=graph_help)
-
-
 ASD_data = load_ASD_data()
 ASD_fig = create_new_figure()
 

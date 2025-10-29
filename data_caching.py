@@ -13,19 +13,6 @@ import plotly.graph_objects as go
 #--------------------------------------------
 @st.cache_data
 def load_pure_data():
-    """
-    Create a dictionary of the interferometer strain data for each of the three detectors for a 32 second time segment containing the GW190521 Event.
-    Takes data that has been presaved into "GW190521_data/{ifo}_data_32s.hdf5" files.
-
-    Parameters:
-    -----------
-    
-    Returns:
-    --------
-    pure_data : dict
-        Dictionary with keys ['L1', 'V1', 'H1'] containing 32 seconds of unprocessed strain data.
-    
-    """
     pure_data = {}
     ifos = ['L1', 'V1', 'H1']
     gps =1242442967.4
