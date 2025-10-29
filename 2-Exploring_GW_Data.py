@@ -116,7 +116,7 @@ st.caption("An interactive plot of the 32 second segment that contains the GW190
 
 
 blurb3 = """This plot is almost entirely dominated by noise. The Strain amplitude waves shown above have a period of around .10 seconds,
- corresponding to ~10 Hz, most likely corresponding to seismic activity on Earth picked up by the interferometers as noise, not any 
+ corresponding to ~10 Hz, likely caused by seismic activity on Earth picked up by interferometers as noise, not any 
  astrophysical events (although there are GW mergers that occur in this frequency range).
 
 We can see this more clearly if we look at the data in a new way. Instead of plotting Strain vs time, lets use a Fourier Transform 
