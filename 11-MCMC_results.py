@@ -141,6 +141,7 @@ with results_col2:
     #st.latex(rf"""P={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
 
 
+
 MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Time Shift")
 st.latex(rf"""TimeShift={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; """,help="Time from event_gps('GW190521')")
 #st.latex(rf"""TimeShift={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
