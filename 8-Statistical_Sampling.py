@@ -260,7 +260,7 @@ def logposterior(param):                #take in input parameters
 
 st.markdown(
 r"""
-We can now maximize the posterior function to determine the *maximum a posteriori* (MAP) parameters.  
+We can now maximize the posterior function to determine the *Maximum a posteriori* (MAP) parameters.  
 
 The parameters that give a maximized posterior are a "best guess" that takes into account how well the model fits the data, 
 while also taking into account any prior knowledge we have for the parameters.

@@ -51,9 +51,9 @@ col1, col2 = st.columns(2)
 
 with col1:
 
-    st.title("Model Testing Ground")
+    st.title("Model Playground")
     st.write(
-        'Using the same parameters from the example model, try and find model parameters that line up with the GW190521 data!')
+        'Using the same parameters choices from the example model, try and find model parameters that line up with the GW190521 data!')
 
     minicol1, minicol2 = st.columns(2)
 
@@ -163,8 +163,6 @@ colors = load_colours_dict()
 
 with col2:
 
-
-
     tab1, tab2, tab3 = st.tabs(["Single Detector","Two Detectors","Three Detectors"])
 
 
@@ -173,7 +171,7 @@ with col2:
         fig_resampler = FigureResampler(fig)
 
         add_GW_trace_subplot(fig_resampler,GW_data["L1"].times.value,GW_data["L1"].value,colors["L1"],"Livingston",row=1,col=1)
-        add_GW_trace_subplot(fig_resampler,L1_white_template.times.value,L1_white_template.value,"black","Livingston Model",row=1,col=1)
+        add_GW_trace_subplot(fig_resampler,L1_white_template.times.value,L1_white_template.value,"black","Livingston Model",row=1,col=1,alpha=1)
 
         apply_gw_1_model_comparision_layout(fig_resampler,title='CBC Model vs Data')
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
@@ -195,7 +193,6 @@ with col2:
 
         st.plotly_chart(fig_resampler, theme="streamlit",on_select="rerun",use_container_width=True)
         st.caption("Your whitened GW model compared to whitened Ligo strain data.",help=graph_help_no_buttons())
-
 
 
     with tab3:

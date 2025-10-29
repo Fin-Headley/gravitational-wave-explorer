@@ -76,7 +76,7 @@ Here is the Ligo-Livingston Strain data with a suitable bandpass applied to it.
 """
 st.markdown(blurb1)
 
-col1, middle ,col2= st.columns([10,1,10],gap=None)
+col1, middle ,col2= st.columns([5,1,5],gap=None)
 
 for ifo in ifos:
     bandpass_data[ifo] = bandpass_data[ifo].crop(gps-2,gps+2)

@@ -34,7 +34,6 @@ st.set_page_config(page_title="Processing Data", page_icon="📈",layout="wide")
 st.title("Give it a try!")
 st.write(
     """Try and find the GW190521 event by applying a bandpass and whitening the data!   
-    If you want to take a look at my processed data, click on the expanding tab at the bottom of this page.
     """
 )
 
@@ -256,8 +255,8 @@ with equal_space_hint_1:
 
     if st.session_state.bandpass_hint == True:
         st.write("""
-    :blue[Toggle whitening on and drag the upper frequency slider down until you can see a strong triple peak in Livingston and Handford.]    
-    :blue[Then bring the lower frequency up until Livingston keeps similar shape when you toggle whitening on/off.]""")
+    :blue[Toggle whiten on and drag the right frequency slider to the left until you can see a strong triple peak in Livingston and Handford.]    
+    :blue[Then bring the left frequency to the right until Livingston keeps similar shape when you toggle whitening on/off.]""")
 
 with equal_space_hint_2:
     st.markdown('###')

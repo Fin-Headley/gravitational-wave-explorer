@@ -269,5 +269,5 @@ Two parameters are plotted at at time, one on the x-axis and one on the y-axis.
 The histograms along the axes plot the 1D posterior distribution for the parameter, 
 while the heatmap shows the 2D parameter space.
 
-The MCMC MAP parameters, along with their uncertainties, are given in the :blue-background[MCMC results] tab.
+The MCMC MAP parameters, along with their uncertainties, are given in the :blue-background[Results] tab.
 """)

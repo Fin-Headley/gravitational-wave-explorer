@@ -14,7 +14,7 @@ pg = st.navigation([st.Page("1-Welcome_page.py"),
                     st.Page("7-Model_playground.py"),
                     st.Page("8-Statistical_Sampling.py"),
                     st.Page("9-Posterior_Visualization.py"),
-                    st.Page("10-MCMC_results.py"),
+                    st.Page("10-Results.py"),
                     
                     ])
 
