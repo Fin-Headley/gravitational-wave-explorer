@@ -6,27 +6,16 @@ st.set_page_config(
 )
 
 pg = st.navigation([st.Page("1-Welcome_page.py"),
-                    st.Page("2-data_test.py"),
-                    st.Page("3-updated_page_test.py"),
-                    st.Page("4-working_graphs.py"),
-                    st.Page("5-psd_plotting.py"),
+                    st.Page("2-Exploring_GW_Data.py"),
+                    st.Page("3-Noise_correction.py"),
+                    st.Page("4-Processing_Data.py"),
+                    st.Page("5-My_Data.py"),
+                    st.Page("6-Modeling_GWs.py"),
+                    st.Page("7-Model_playground.py"),
+                    st.Page("8-Statistical_Sampling.py"),
+                    st.Page("9-Posterior_Visualization.py"),
+                    st.Page("10-MCMC_results.py"),
                     
-                    st.Page("6-Exploring_GW_Data.py"),
-                    st.Page("7-Noise_correction.py"),
-                    st.Page("8-Processing_Data.py"),
-                    st.Page("14-My_Data.py"),
-
-                    st.Page("15-Modeling_GWs.py"),
-                    st.Page("9-Model_playground.py"),
-
-                    st.Page("16-Statistical_Sampling.py"),
-
-                    st.Page("10-Posterior_Visualization.py"),
-                    st.Page("11-MCMC_results.py"),
-                    st.Page("12-Q_transform_testing.py"),
-                    st.Page("13-Extra_plots.py"),
-                    
-
                     ])
 
 pg.run()

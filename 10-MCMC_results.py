@@ -52,7 +52,7 @@ gps = event_gps('GW190521')
 time_center = gps
 datetime_center = Time(time_center, format='gps').utc.datetime  # type: ignore
 
-ifos = ['L1','H1']
+#ifos = ['L1','H1']
 ########################################################################
 
 #burnin = 35426 #thin = 2
@@ -72,8 +72,6 @@ column_dec_value = {"Mass":1,"Ratio":2,"Distance":0,"Time Shift":5,"Phase":2,"Ri
 column_titles = np.array(["Mass","Ratio","Distance","Time Shift","Phase","Right Ascension","Declination","Inclination","Polarization"])
 
 
-#results_df
-
 for i in column_titles:
     temp = results_df["MAP"].loc[i]
     temp = np.round(temp,column_dec_value[i])
@@ -86,8 +84,6 @@ for i in column_titles:
     temp1 =np.round(temp1,column_dec_value[i])
     temp2 =np.round(temp2,column_dec_value[i])
     results_df["twostd"].loc[i] = (temp1, temp2)
-
-#results_df
 
 
 def get_results(index="Mass"):
@@ -130,15 +126,6 @@ with results_col2:
 
     MAP, onesig_low, onesig_high, twosig_low, twosig_high = get_results("Polarization")
     st.latex(rf"""P={MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; """,help="Polarization")
-
-    #st.latex(rf"""M_1={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
-    #st.latex(rf"""q={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
-    #st.latex(rf"""D_L={int(MAP)}^{{{int(onesig_high)}}}_{{{int(onesig_low)}}} \; (\text{{1$\sigma$}}),\quad{int(MAP)}^{{{int(twosig_high)}}}_{{{int(twosig_low)}}} \; (\text{{2$\sigma$}})""")
-    #st.latex(rf"""\phi_c={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
-    #st.latex(rf"""\alpha={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
-    #st.latex(rf"""\delta={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
-    #st.latex(rf"""i={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
-    #st.latex(rf"""P={MAP}^{{{onesig_high}}}_{{{onesig_low}}} \; (\text{{1$\sigma$}}),\quad{MAP}^{{{twosig_high}}}_{{{twosig_low}}} \; (\text{{2$\sigma$}})""")
 
 
 

@@ -21,8 +21,25 @@ st.title("Analysis of GW190521")
 st.markdown(
      """ 
 
-    :blue-background[Exploring data] - I show the data taken from the Gravitational Wave Open Science Center API.
+    :blue-background[Welcome page] - I show the data taken from the Gravitational Wave Open Science Center API.
 
-    :blue-background[Data Processing] - blah blah blah
+    :blue-background[Exploring GW data] - I show the data taken from the Gravitational Wave Open Science Center API.
+
+    :blue-background[Noise Correction] - blah blah blah
+
+    :blue-background[Processing Data] - blah blah blah
+
+    :blue-background[My Data] - blah blah blah
+
+    :blue-background[Modeling GWs] - blah blah blah
+
+    :blue-background[Model playground] - blah blah blah
+
+    :blue-background[Statistical Sampling] - blah blah blah
+
+     :blue-background[Posterior Visualization] - blah blah blah
+    
+    :blue-background[MCMC results] - blah blah blah
      """ 
     )
+
