@@ -5,7 +5,7 @@ st.set_page_config(
     page_icon="",
 )
 
-pg = st.navigation([st.Page("pages/1-Welcome_page.py"),
+pg = st.navigation([st.Page("1-Welcome_page.py"),
                     st.Page("pages/2-Exploring_GW_Data.py"),
                     st.Page("pages/3-Noise_correction.py"),
                     st.Page("pages/4-Processing_Data.py"),
