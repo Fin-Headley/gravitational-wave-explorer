@@ -37,12 +37,18 @@ st.markdown(
 """ 
 )
 
-st.header("Some useful terms:")
-
-with st.expander("hello"):
+with st.expander("A few helpful definitions:"):
     st.markdown(
-'''
-This app displays public data from LIGO and Virgo collaborations, downloaded from the Gravitational Wave Open Science Center at https://gwosc.org.
+r'''
+:orange-background[Gravitational Waves:] (GWs) Ripples in the fabric of spacetime, often caused by the relative movement of massive astrophysical objects, such as Black Holes.
+
+:orange-background[Interferometer:] A scientific instrument used to detect GWs by measuring the tiny oscillations of space caused by Gravitational Waves.
+
+:orange-background[LIGO:] The "Laser Interferometer Gravitational-wave Observatory". Comprised of two separate US based Interferometers, LIGO Livingston and LIGO Hanford.
+
+:orange-background[Virgo:] European based Gravitational-wave Interferometer. Member of the LIGO-Virgo-KAGRA (LVK) collaboration.
+
+:orange-background[Strain:] A dimensionless quantity that measures the fractional change in length caused by a passing gravitational wave, defined as $h = \Delta L/L$.
 ''')
 
 
@@ -51,3 +57,25 @@ st.markdown(
 '''
 This app displays public data from LIGO and Virgo collaborations, downloaded from the Gravitational Wave Open Science Center at https://gwosc.org.
 ''')
+
+
+st.header("About me")
+st.markdown(
+'''
+My name is Fin Headley.
+
+My academic background is in physics, astronomy, and computer science. I have a Master of Science in 
+Data-Intensive Astrophysics from Cardiff University. My dissertation was on developing a 
+computational methodology to solve non-analytic equations in the field of Numerical Relativity.
+
+The full code for this app is posted as a public repo on Github.
+''')
+col1, col2, col3 = st.columns([2,2,10])
+
+with col1:
+    st.link_button("My Github","https://github.com/Fin-Headley")
+
+with col2:
+    st.link_button("My Linkedin","https://www.linkedin.com/in/fin-headley/")
+
+

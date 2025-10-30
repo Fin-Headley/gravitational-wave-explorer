@@ -122,7 +122,7 @@ blurb3 = """This plot is almost entirely dominated by noise. The Strain amplitud
 We can see this more clearly if we look at the data in a new way. Instead of plotting Strain vs time, lets use a Fourier Transform 
 and look at the Strain vs frequency. One common way of examining this relationship is plotting the Amplitude Spectral Density (ASD). 
 
-Put simply, an ASD is a measure of the of noise in the amplitude of a signal at each frequency.
+The ASD is a measure of the amount of noise in the signal for each frequency.
 """
 st.markdown(blurb3)
 
