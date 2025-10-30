@@ -23,10 +23,10 @@ import datetime
 import plotly
 from plotly_resampler import FigureResampler # type: ignore
 from datetime import timedelta
-from plotly_template import *
+from tools.plotly_templates import *
 import time
-from data_caching import *
-from matched_filtering_functions import *
+from tools.data_caching import *
+from tools.gen_template_function import *
 
 st.set_page_config(page_title="Modeling Gravitational Waves", page_icon="📈",layout="wide")
 
@@ -52,25 +52,15 @@ st.title("How to we model Gravitational waves?")
 
 st.markdown(
 '''
-This will by no means be a comprehensive guide, but I will try and give a brief overview.
-
-Black Hole Mergers take place over three distinct phases.
-
-:blue-background[Inspiral Stage]: The two Black Holes circle each other from afar. The amplitude of the emitted Gravitational Waves 
-slowly build up over time as the objects get closer together.
-
-:blue-background[Merger Stage]: The two Black Holes come together and **coalesce** into one object.
-
-:blue-background[Ringdown Stage]: The newly formed Black Hole settles into its new state, and the Gravitational Wave signal falls away.
-
-A description of the complete evolution requires solving the full equations of general relativity, 
-a task which is often impossible to do analytically. 
+A complete description of coalescing (merging) Black Holes requires solving the full equations of general relativity, 
+a task which is impossible to do analytically. 
 
 With modern techniques it is possible to model a Binary Black Hole Merger using Numerical Relativity (NR), 
 although it is prohibitively expensive to do a full NR simulation for every GW model.
 
 Using a combination of other techniques (Post-Newtonian approximations and Perturbation Theory) as well as mathematical 
-approximations, it is possible to create models that simulate the resulting Gravitational Wave Signal. 
+approximations, it is possible to create models that simulate the resulting Gravitational Wave Signal, without having to
+fully simulate the astrophysical event.
 
 I will focus on showcasing how to use one such model here.
 ''')
@@ -281,14 +271,13 @@ with st.expander("The gen_template() function:"):
         template={}     #a dictionary with the final CBC model templates
 
         # compute the detectors responses and shift to the requested time
-
         for ifo in ifos: #for each detector
         
             #calculate the detector responce
             fp, fc = det[ifo].antenna_pattern(right_ascension, declination, polarization, time) 
             ht[ifo] = fp * hp.copy() + fc * hc.copy()
             
-            #find the time delay due to geographic
+            #find the time delay due to geographic location
             time_delay = det[ifo].time_delay_from_earth_center(right_ascension, declination, time) 
             
             #shift the detector responce to the appropriate starting time
@@ -298,7 +287,7 @@ with st.expander("The gen_template() function:"):
             #save the TimeSeries in the output dictionary
             template[ifo]=TimeSeries.from_pycbc(ht[ifo])
 
-        return template #return the correct CBC model strain for each detector
+        return template #return the correct CBC model waveform for each detector
     """
     )
 
@@ -355,3 +344,13 @@ plot_traces(example_plot,example_template,ifos)
 apply_gw_strain_layout(example_plot, title = "Example Gravitational Wave models", datetime_center = Time(1141440002., format='gps').utc.datetime, data_range = "example_model") # type: ignore
 st.plotly_chart(example_plot, theme="streamlit",on_select="rerun",use_container_width=True)
 st.caption("An interactive plot of the example CBC model as it would be seen by Ligo and Virgo (assuming there is no noise).",help=graph_help())
+
+
+
+st.markdown(
+"""
+To recap, the gen_template() function has taken the two waves (for the two GW polarizations) from the model generator.
+It then applies transformations to calculate the signal Amplitude as it would be seen by each detector. 
+Finally it ensures that the model waveforms peak at the correct time, taking into account the sky location of the 
+GW event, the time period of the observed data, and the geographic location of the interferometer.
+""")

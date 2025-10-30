@@ -23,10 +23,10 @@ import datetime
 import plotly
 from plotly_resampler import FigureResampler # type: ignore
 from datetime import timedelta
-from plotly_template import *
+from tools.plotly_templates import *
 import time
-from data_caching import *
-from matched_filtering_functions import *
+from tools.data_caching import *
+from tools.gen_template_function import *
 import arviz as az
 import pandas as pd
 import corner
@@ -67,10 +67,9 @@ ifos = ['L1','H1']
 #Incl = stacked.posterior.Incl.values
 #Pol = stacked.posterior.Pol.values
 
-mcmc_df = pd.read_parquet("mcmc_df_with_log_post.parquet")
+mcmc_df = pd.read_parquet("MCMC_data/mcmc_df_with_log_post.parquet")
 
 mcmc_df.rename(inplace=True,columns={"TimeShift":"Time Shift","RA":"Right Ascension","Dec":"Declination","Incl":"Inclination","Pol":"Polarization","lp":"Log Posterior","chain":"Chain","draw":"Draw"})
-
 
 column_titles = np.array(["Mass","Ratio","Distance","Time Shift","Phase","Right Ascension","Declination","Inclination","Polarization"])
 options = column_titles
@@ -240,8 +239,11 @@ Above is the MCMC sample of 774,888 parameter combinations mentioned in the :blu
 
 Two parameters are plotted at at time, one on the x-axis and one on the y-axis.
 
-The histograms along the axes plot the 1D posterior distribution for the parameter, 
-while the heatmap shows the 2D parameter space.
+The histograms along the axes plot the 1D posterior probability distribution for each parameter.
+
+The heatmap showcases the relationship between the two parameters.
+
+**My personal favorites**: *Right Ascension vs Declination*, *Inclination vs anything*, *Phase vs Polarization*
 
 The MCMC MAP parameters, along with their uncertainties, are given in the :blue-background[Results] tab.
 """)

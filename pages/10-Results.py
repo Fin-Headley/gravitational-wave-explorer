@@ -23,10 +23,10 @@ import datetime
 import plotly
 from plotly_resampler import FigureResampler # type: ignore
 from datetime import timedelta
-from plotly_template import *
+from tools.plotly_templates import *
 import time
-from data_caching import *
-from matched_filtering_functions import *
+from tools.data_caching import *
+from tools.gen_template_function import *
 import arviz as az
 import pandas as pd
 import corner
@@ -35,7 +35,7 @@ st.set_page_config(page_title="results", page_icon="📈",layout="wide")
 
 st.title("Results:")
 st.write(
-    "lets take a look at my best fitting paramters."
+    "lets take a look at my best fitting parameters."
 )
 pure_data = load_pure_data()
 raw_data = load_raw_data()
@@ -62,7 +62,7 @@ datetime_center = Time(time_center, format='gps').utc.datetime  # type: ignore
 #mcmc_df = pd.read_parquet("mcmc_df_with_log_post.parquet")
 #mcmc_df.rename(inplace=True,columns={"TimeShift":"Time Shift","RA":"Right Ascension","Dec":"Declination","Incl":"Inclination","Pol":"Polarization","lp":"Log Posterior","chain":"Chain","draw":"Draw"})
 
-MAP_df = pd.read_parquet("MAP_parameters.parquet")
+MAP_df = pd.read_parquet("MCMC_data/MAP_parameters.parquet")
 MAP_df.rename(inplace=True,index={"TimeShift":"Time Shift","RA":"Right Ascension","Dec":"Declination","Incl":"Inclination","Pol":"Polarization","lp":"Log Posterior","chain":"Chain","draw":"Draw"})
 
 results_df = MAP_df.copy()
@@ -252,7 +252,7 @@ for ifo in ifos:
 
 st.markdown(
 r"""
-Below are the Signal to Noise Ratios for each of the detectors, using the MAP parameters to create the model.
+Below are the Signal to Noise Ratios for each of the detectors, using the MAP model as the signal.
 """)
 
 
@@ -342,7 +342,7 @@ def add_qtransform_subplot(fig,qspecgram,ifo='L1',showscale = False,colorbar=dic
         showscale = showscale,
         #zmin = 0,
         #customdata = coordinate_array,
-        hovertemplate='<b>Time</b>: %{x}</br><b>Frequency</b>: %{y} Hz<br><b>Count</b>: %{z}<extra></extra>',
+        hovertemplate='<b>Time</b>: %{x}</br><b>Frequency</b>: %{y} Hz<br><b>Normalized Energy</b>: %{z}<extra></extra>',
         #yaxis='y',
         #xaxis='x',
         ),
@@ -362,8 +362,6 @@ add_qtransform_subplot(Q_fig,data_qspecgram,ifo='V1',row=3,col=1,showscale=True,
 add_qtransform_subplot(Q_fig,subtracted_qspecgram,ifo='V1',row=3,col=2)
 
 Q_fig.update_layout(
-    #hovermode='closest',
-    #bargap=0.05,
     width=800,
     height=900,
 
@@ -419,6 +417,21 @@ Q_fig.update_layout(
 
 st.plotly_chart(Q_fig,use_container_width=True)
 st.caption("""
-           Left: Time-Frequency Spectrograms of whitened Strain for each of the three Detectors. Top to bottom: Livinston, Hanford, Virgo   
+           Left: Time-Frequency Spectrograms of whitened Strain for each of the three Detectors. (Top to bottom: Livinston, Hanford, Virgo)   
            Right: Time-Frequency Spectrograms of whitened Strain with the MAP model Subtracted. Normalized to same scale as left-side plots.
            """,help=graph_help_no_buttons())
+
+
+st.markdown(
+"""
+The clear yellow hotspots seen in the the two Ligo Spectrograms are the detected Gravitational Wave.
+ The absense of yellow hotspots and the absense of any patterns in the background of the right hand 
+ plots is a good indication that the MAP model is correctly approximating the Gravitational Wave signal, 
+ but this does not mean that the MAP parameters accurately describe the source event.
+
+ The absence of a clear yellow spot for the Virgo interferometer, even when normalized to a lower energy, confirms 
+ that Virgo did not capture a clear signal from the GW190521 event. As the MCMC samplier ran without comparing to 
+ the Vigro interferometer, this did not have any effect on the MAP parameters.  Having said that, the fact
+ that both Virgo Spectrograms look identical is once again a good indication that the MAP model is a sensible 
+ approximation, as it didn't incorrectly remove background noise from the Virgo Spectrogram.
+""")

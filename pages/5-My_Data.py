@@ -23,9 +23,9 @@ import datetime
 import plotly
 from plotly_resampler import FigureResampler # type: ignore
 from datetime import timedelta
-from plotly_template import *
+from tools.plotly_templates import *
 import time
-from data_caching import *
+from tools.data_caching import *
 
 
 
@@ -118,9 +118,7 @@ with text_col2:
     st.subheader("Using the ASD to whiten the data")
 
     blurb4 = """
-    I used the ASD to whiten and normalize the bandpassed strain data.
-    
-    This Bandpassed, Whitened, (and cropped) data was what I compare models against in later plots.
+    I used the ASD to whiten the bandpassed strain data. This Bandpassed, Whitened, (and cropped) data was what I compare models against in later plots.
     """
 
     st.markdown(blurb4)

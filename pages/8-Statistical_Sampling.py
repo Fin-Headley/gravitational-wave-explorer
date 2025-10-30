@@ -23,10 +23,10 @@ import datetime
 import plotly
 from plotly_resampler import FigureResampler # type: ignore
 from datetime import timedelta
-from plotly_template import *
+from tools.plotly_templates import *
 import time
-from data_caching import *
-from matched_filtering_functions import *
+from tools.data_caching import *
+from tools.gen_template_function import *
 
 st.set_page_config(page_title="Statistical Sampling", page_icon="📈",layout="wide")
 
