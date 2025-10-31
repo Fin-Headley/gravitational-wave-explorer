@@ -30,10 +30,7 @@ from tools.data_caching import *
 
 st.set_page_config(page_title="Exploring GW Data", page_icon="📈",layout="wide")
 
-st.title("Exploring GW Data")
-st.write(
-    "Lets import and explore some Gravitational Wave Data!"
-)
+st.title("Gravitational Wave Data")
 
 pure_data = load_pure_data()
 raw_data = load_raw_data()
@@ -53,10 +50,13 @@ datetime_center = Time(time_center, format='gps').utc.datetime # pyright: ignore
 
 ################################################################################################
 
-blurb1 = """Before we take a look at any signal processing, we first need to collect some Gravitational Wave data.   
+blurb1 = """
+Before we take a look at any signal processing, we first need to collect some Gravitational Wave data.   
 
-The Gravitational-Wave Open Science Center provides public strain data from GW Observatories that can \
+The Gravitational-Wave Open Science Center provides public data from GW Observatories that can
 be acessed with the :blue-background[gwosc] Python library. 
+
+
 """
 st.markdown(blurb1)
 
@@ -88,21 +88,36 @@ with st.expander("Importing GW190521 Data with gwosc", expanded=False, icon=None
         st.write("""The data used in this app is stored locally in hdf5 files as to not waste resources redownloading the same data over and over again.   
                 The data used can be found in the GW190521_data folder in the github repository.""")
 
-    st.divider()
+st.write('We now have data from three GW Interferometers that should include a GW event!')
 
-    st.write("Lets take a brief a look at what type information we have about our data.")
+st.write("Lets take a look at what we know about our data. The following is information about the data we pulled from LIGO Hanford:")
 
-    st.write("Data type:       :green-background[",str(type(pure_data['L1'])),"]")
-    st.write("Segment duration:   :green-background[",str(pure_data['L1'].duration),"]")
-    st.write("Start time: :green-background[",str(Time(pure_data['L1'].x0, format='gps').utc.datetime),"]") # pyright: ignore[reportAttributeAccessIssue]
-    st.write("End time: :green-background[",str(Time(pure_data['L1'].times[-1], format='gps').utc.datetime),"]") # pyright: ignore[reportAttributeAccessIssue]
-    st.write("Data Sample Rate: :green-background[",str(pure_data['L1'].sample_rate),"]")
-    st.write("Data Δt:    :green-background[",str(pure_data['L1'].dt),"]")
-    st.write("GW Event Time:    :green-background[",(datetime_center.strftime('%a %d %b %Y, %I:%M:%S.%f')[:-4]+datetime_center.strftime(' %p')),"]")
+col1, col2 = st.columns(2)
+
+with col1:
+    st.write("Type:       :red-background[",str(type(pure_data['H1'])),"]")
+    st.write("Name:       :red-background[",pure_data['H1'].name,"]")
+    st.write("Segment duration:   :red-background[",str(pure_data['H1'].duration),"]")
+    st.write("Start time: :red-background[",str(Time(pure_data['H1'].x0, format='gps').utc.datetime),"]") # pyright: ignore[reportAttributeAccessIssue]
+    st.write("Data Sample Rate: :red-background[",str(pure_data['H1'].sample_rate),"]")
+    st.write("First value:       :red-background[",(str(pure_data['H1'].value[0])),"]")
 
 
+with col2:
+    st.write("dtype:       :red-background[",str(pure_data['H1'].dtype),"]")
+    st.write("Unit:       :red-background[",((pure_data['H1'].unit)),"]")
+    st.write("GW Event Time:    :red-background[",(datetime_center.strftime('%a %d %b %Y, %I:%M:%S.%f')[:-4]+datetime_center.strftime(' %p')),"]")
+    st.write("End time: :red-background[",str(Time(pure_data['H1'].times[-1], format='gps').utc.datetime),"]") # pyright: ignore[reportAttributeAccessIssue]
+    st.write("Data Δt:    :red-background[",str(pure_data['H1'].dt),"]")
+    st.write("Array length:    :red-background[",str(len(pure_data['H1'].times)),"]")
 
 ################################################################################################
+
+blurb3 = """
+Lets plot the data from the three interferometers and see what it looks like.
+"""
+st.markdown(blurb3)
+
 
 # raw data
 Pure_fig = create_new_figure()
@@ -115,16 +130,28 @@ st.plotly_chart(Pure_fig, theme="streamlit",on_select="rerun",use_container_widt
 st.caption("An interactive plot of the 32 second segment that contains the GW190521 event.",help=graph_help())
 
 
-blurb3 = """This plot is almost entirely dominated by noise. The Strain amplitude waves shown above have a period of around .10 seconds,
- corresponding to ~10 Hz, likely caused by seismic activity on Earth picked up by interferometers as noise, not any 
- astrophysical events (although there are GW mergers that occur in this frequency range).
+st.subheader("What does this plot tell us?")
+
+blurb4 = """
+We have a trace of the Strain vs time for each of the three Interferometers. 
+
+Looking at the entire 32 seconds it is quite hard to tell what is going on, but by zooming in 
+(either using the button selector in the lower left of the plot, or by using the zoom tool), it becomes much more 
+clear that there are distinct oscillating patterns occuring over the entire length of the data. There doesnt seem
+to be any clear Gravitational Wave signal present in the data.
+
+This is because the data s almost entirely dominated by noise. The Strain amplitude waves shown above have a period of around .10 seconds,
+corresponding to ~10 Hz. This is likely caused by seismic activity on Earth picked up by interferometers as noise, not any 
+astrophysical events (although there are GW mergers that occur in this frequency range).
 
 We can see this more clearly if we look at the data in a new way. Instead of plotting Strain vs time, lets use a Fourier Transform 
-and look at the Strain vs frequency. One common way of examining this relationship is plotting the Amplitude Spectral Density (ASD). 
+and look at the Strain vs frequency. One common way of examining this relationship is the Amplitude Spectral Density (ASD). 
 
-The ASD is a measure of the amount of noise in the signal for each frequency.
+The ASD is a measure of the amount of amplitude present in the signal coming from certain frequency. As Gravitational Wave signals
+caused by merging Black Holes are transient events (lasting only for a short time), most of the signal contains only noise.
+
 """
-st.markdown(blurb3)
+st.markdown(blurb4)
 
 ########################################################################################################
 
@@ -145,13 +172,11 @@ st.plotly_chart(ASD_fig, theme="streamlit",on_select="rerun",use_container_width
 
 st.caption("An interactive plot of the Amplitude Spectral Density for the GW190521 timeseries.",help=graph_help())
 
-
-
-blurb4 = """By looking at the ASD, we can clearly see spikes corresponding to high amounts of noise occurring at certain frequncies. 
+blurb5 = """
+By looking at the ASD, we can clearly see spikes corresponding to high amounts of noise occurring at certain frequncies. 
 
 As the figure is shown in logarithmic scale, it should also clear that the amount of noise is much greater at low frequncies. In fact, the the peak amplitude
 for Ligo Livingston (occuring at roughly 10 Hz for all three detectors), corresponds to noise with an amplitude between 5000x and 36000x higher
 than the region our GW signal is in. This makes it impossible to spot the GW signal without first taking steps to remove and correct for this unwanted noise.
-
 """
-st.markdown(blurb4)
+st.markdown(blurb5)
