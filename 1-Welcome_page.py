@@ -6,7 +6,7 @@ st.title("Welcome!")
 
 st.markdown(
 '''
-This web app is designed to breakdown the process of Gravitational Wave parameter estimation.
+This web app is designed to breakdown the process of Gravitational Wave parameter estimation using the GW190521 event.
 
 Use the tabs on the left of the screen to move to different pages.
 ''')
@@ -64,11 +64,12 @@ st.markdown(
 '''
 My name is Fin Headley.
 
-My academic background is in physics, astronomy, and computer science. I have a Master of Science in 
-Data-Intensive Astrophysics from Cardiff University. My dissertation was on developing a 
-computational methodology to solve non-analytic equations in the field of Numerical Relativity.
+I have an academic background in physics, astronomy, and computer science. I studied Astronomy and
+Physics at Boston University before receiving a Master of Science in Data-Intensive Astrophysics 
+from Cardiff University. My MSC dissertation was on developing a computational methodology to solve n
+on-analytic equations in the field of Numerical Relativity.
 
-The full code for this app is posted as a public repo on Github.
+The full code for this web app can be found in a public repository on Github.
 ''')
 col1, col2, col3 = st.columns([2,2,10])
 
