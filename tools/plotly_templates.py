@@ -9,7 +9,6 @@ from tools.data_caching import *
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-
 def graph_help():
     """
     Standard text for graph help pop-up.

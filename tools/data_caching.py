@@ -1,14 +1,6 @@
 import streamlit as st
 import numpy as np
-from gwosc.datasets import find_datasets
-from gwosc.datasets import event_gps
-from gwpy.time import to_gps
-from gwpy.time import from_gps
-from pycbc.detector import Detector
 from gwpy.timeseries import TimeSeries
-from astropy.time import Time
-import datetime
-import plotly.graph_objects as go
 
 #--------------------------------------------
 @st.cache_data
