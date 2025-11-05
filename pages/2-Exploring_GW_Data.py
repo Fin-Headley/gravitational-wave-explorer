@@ -98,7 +98,6 @@ st.markdown(blurb3)
 # raw data
 Pure_fig = create_new_figure()
 plot_traces(Pure_fig,pure_data,ifos)
-#add_event_marker(fig=Pure_fig, marker_time = datetime_center, marker_name=" Rough Time of Event", line_color="green")
 apply_gw_strain_layout(Pure_fig,title='Unprocessed Gravitational Wave Strain Data',data_range="pure")
 st.plotly_chart(Pure_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 

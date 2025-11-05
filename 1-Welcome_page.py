@@ -71,7 +71,7 @@ on-analytic equations in the field of Numerical Relativity.
 
 The full code for this web app can be found in a public repository on Github.
 ''')
-col1, col2, col3 = st.columns([2,2,10])
+col1, col2, col3 = st.columns([4,4,6])
 
 with col1:
     st.link_button("My Github","https://github.com/Fin-Headley")

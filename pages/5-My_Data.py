@@ -57,7 +57,6 @@ with graph_col11:
 
     Pure_fig = create_new_figure()
     plot_traces(Pure_fig,pure_data,ifos)
-    #add_event_marker(fig=Pure_fig, marker_time = datetime_center, marker_name=" Rough Time of Event", line_color="green")
     apply_gw_strain_layout(Pure_fig,title='Unprocessed Gravitational Wave Strain Data',data_range="pure")
     st.plotly_chart(Pure_fig, theme="streamlit",on_select="rerun",use_container_width=True)
     st.caption("An interactive plot of the unprocessed 32 second segment that contains the GW190521 event.",help=graph_help())
@@ -110,7 +109,6 @@ with graph_col21:
 
     bp_fig = create_new_figure()
     plot_traces(bp_fig,bandpass_data,ifos)
-    #add_event_marker(fig=bp_fig, marker_time = datetime_center, marker_name="", line_color="green")
     apply_gw_strain_layout(bp_fig,title='Bandpassed Gravitational Wave Strain Data',data_range="bandpass")
     st.plotly_chart(bp_fig, theme="streamlit",on_select="rerun",use_container_width=True)
     st.caption("An interactive plot of the bandpassed 4 second segment that contains the GW190521 event.",help=graph_help())
@@ -121,7 +119,6 @@ with graph_col22:
     ifos = ['L1', 'H1','V1']
     GW_fig = create_new_figure()
     plot_traces(GW_fig,GW_data,ifos)
-    #add_event_marker(fig=GW_fig, marker_time = datetime_center, marker_name="", line_color="green")
     apply_gw_strain_layout(GW_fig,title='Whitened and Bandpassed GW Strain Data',data_range="GW_data")
     st.plotly_chart(GW_fig, theme="streamlit",on_select="rerun",use_container_width=True)
     st.caption("An interactive plot of the bandpassed and whitened 4 second segment that contains the GW190521 event.",help=graph_help())

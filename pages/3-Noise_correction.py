@@ -62,7 +62,6 @@ with col1:
 
     raw_fig = create_new_figure()
     plot_traces(raw_fig,raw_data,["L1"],alpha={ "L1": 1,"H1": .8,"V1": .8 })
-    #add_event_marker(fig=Pure_fig, marker_time = datetime_center, marker_name=" Rough Time of Event", line_color="green")
     apply_gw_strain_layout(raw_fig,title='Unprocessed Ligo-Livingston Strain',data_range="raw")
     st.plotly_chart(raw_fig, theme="streamlit",on_select="rerun",use_container_width=True,key="noise_correction_raw")
 
@@ -75,7 +74,6 @@ with col2:
 
     bp_fig = create_new_figure()
     plot_traces(bp_fig,bandpass_data,["L1"],alpha={ "L1": 1,"H1": .8,"V1": .8 })
-    #add_event_marker(fig=bp_fig, marker_time = datetime_center, marker_name="", line_color="green")
     apply_gw_strain_layout(bp_fig,title='Bandpassed Strain from Ligo-Livingston',data_range="bandpass")
     st.plotly_chart(bp_fig, theme="streamlit",on_select="rerun",use_container_width=True)
 

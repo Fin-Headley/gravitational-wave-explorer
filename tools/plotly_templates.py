@@ -1,5 +1,5 @@
 """
-Plotly layout template for GW strain data plots
+Plotly layout templates and helper functions for displaying GW strain data on streamlit
 """
 import streamlit as st
 from datetime import timedelta
@@ -11,7 +11,7 @@ from plotly.subplots import make_subplots
 
 def graph_help():
     """
-    Standard text for graph help pop-up.
+    Returns standard text for a help pop-up for a plot.
     """
     output_text = """Use the button in the lower right to view preset ranges.   
                     You can hide/show GW Observatories by clicking on their name in the legend.  
@@ -22,7 +22,7 @@ def graph_help():
 
 def graph_help_no_buttons():
     """
-    Standard text for graph help pop-up.
+    Returns standard text for a help pop-up for a plot with no zoom buttons.
     """
     output_text = """You can hide/show GW Observatories by clicking on their name in the legend.  
                     Click to pan.    
@@ -34,6 +34,31 @@ def graph_help_no_buttons():
 def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(1242442967.444, format='gps').utc.datetime, data_range = "pure"): # type: ignore
     """
     Apply a standardized layout template for gravitational wave strain data plots.
+        
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to apply the layout to. Can be either a 
+        standard Figure or a FigureResampler for handling large datasets.
+    title : str, optional
+        Plot title (default: "needs a title")
+    datetime_center : datetime, optional
+        Center time for the plot and zoom controls (default: slightly shifted GW190521 event time)
+    data_range : str, optional
+        Data type for appropriate y axis scaling: 'pure', 'raw', 'bandpass', 
+        'whiten', 'GW_data', or 'example_model' (default: 'pure')
+        
+    Notes
+    -----
+    The function adds:
+    - Interactive dropdown menu for time ranges (±0.1s to ±16s)
+    - Data-type-specific y-axis scaling and labels
+    - Unified hover mode with scientific notation formatting
+    - Standardized axis styling with gridlines and borders
+    - Horizontal legend positioned at top-right
+    
+    Y-axis labels and scale automatically adjust between "Strain Amplitude" for raw data
+    and "Normalized Strain Amplitude" for processed data (whitened/GW_data).
     """
                                 #±0.1 y range,  #±0.2 y range, #±0.5 y range,#±1 y range
     data_range_dict = {"pure":[[-2.4e-19,2.4e-19],[-4e-19,4e-19],[-7e-19,7e-19],[-9e-19,9e-19]], 
@@ -155,55 +180,28 @@ def apply_gw_strain_layout(fig, title = "needs a title", datetime_center = Time(
     fig.update_yaxes(showline=True, mirror=True, linecolor="black", linewidth=1) #backup to get outside lines to show
 
 
-def add_event_marker(fig, marker_time, marker_name, line_color="green", 
-                    theme_text_color=None, theme_bc_color=None):
-    """
-    Add a vertical event marker to the plot.
-
-    """
-    
-    # Get theme colors if not provided
-    if theme_text_color is None:
-        theme_text_color = st.get_option('theme.textColor')
-    if theme_bc_color is None:
-        theme_bc_color = st.get_option('theme.backgroundColor')
-    
-    fig.add_vrect(
-        x0=marker_time, 
-        x1=marker_time + timedelta(microseconds=1), 
-        line_color=line_color,
-        line_width=3,
-        annotation=dict(
-            text=marker_name,
-            font=dict(
-                size=12,
-                color=theme_text_color,
-            ),
-            bgcolor=theme_bc_color,
-            opacity=1,
-            y=.85,
-            xanchor="left", 
-            yanchor="bottom",
-            showarrow=False,
-        ),
-        annotation_position="outside top right",
-    )
-
-
-def add_freq_event_marker(fig, marker_freq, line_color="green"): #unused
-    """
-    Add a vertical event marker to a frequency plot.
-    """
-    fig.add_vline(
-        x=marker_freq, 
-        line_color=line_color,
-        line_width=3,
-    )
-
 
 def add_freq_event_shading(fig, freq_start, freq_end, fillcolor="chartreuse",opacity=0.25,line_width=0):
     """
-    Add a shading box to to a frequency plot.
+    Add a frequency band shading region to a plot.
+    
+    Creates a vertical rectangular shaded region between two frequency values.
+    
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to add the shading to
+    freq_start : float
+        Starting frequency of the shaded region in Hz
+    freq_end : float
+        Ending frequency of the shaded region in Hz
+    fillcolor : str, optional
+        Color of the shaded region (default: "chartreuse")
+    opacity : float, optional
+        Transparency of the shaded region, range 0-1 (default: 0.25)
+    line_width : int, optional
+        Width of the border line around the shaded region (default: 0)
+        
     """
     fig.add_vrect(x0=freq_start
                   ,x1=freq_end
@@ -214,25 +212,66 @@ def add_freq_event_shading(fig, freq_start, freq_end, fillcolor="chartreuse",opa
 
 def create_new_figure():
     """
-    Returns a new FigureResampler figure
+    Create a new FigureResampler figure optimized for online data visualization.
+    
+    Returns a FigureResampler object configured with settings optimized for 
+    displaying large datasets with high accuracy over a wide range of domains.
+    
+    Returns
+    -------
+    plotly_resampler.FigureResampler
+        A FigureResampler object that traces can be added to.
+        
+    Notes
+    -----
+    FigureResampler is used instead of standard Plotly figures to handle
+    the large time series datasets present in these datasets. The resampling 
+    maintains correct features while providing smooth interactive performance.
     """
     return FigureResampler(resampled_trace_prefix_suffix = ("",""), default_n_shown_samples = 1000, show_mean_aggregation_size= False, create_overview=True)
 
 
 def plot_traces(fig,data_dictionary,ifos,alpha={"L1":1,"H1":1,"V1":1}):
     """
-    Adds traces of the timeseries data from data_dictionary to fig
+    Add gravitational wave strain data traces to a plotly figure.
+    
+    Adds time series traces for specified interferometers to a timeseries 
+    Plotly figure with datetime format. Uses standard GW detector colors 
+    and labels with resampling for web performance.
+    
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to add traces to
+    data_dictionary : dict
+        Dictionary containing TimeSeries data with interferometer keys 
+    ifos : list of str
+        List of interferometer keys to plot (e.g., ['L1', 'H1', 'V1'])
+    alpha : dict, optional
+        Dictionary mapping interferometer codes to opacity values (0-1).
+        Default: {"L1":1, "H1":1, "V1":1}
+        
+    Notes
+    -----
+    The function automatically:
+    - Converts GPS times to UTC datetime objects for proper x-axis display
+    - Applies standard detector colors
+    - Uses short detector labels (Hanford, Livingston, Virgo)
+    - Limits display to 60,000 samples for optimal performance
+    - Enables view-based resampling when using FigureResampler
+    
+    Time series data is expected to be GWpy TimeSeries objects.
     """
     colours = load_colours_dict()
     short_labels = load_short_labels_dict()
 
     for ifo in ifos:
 
-        times = data_dictionary[ifo].times.value          # array of GPS seconds
-        t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
-        x_datetime = t.utc.datetime            # type: ignore           # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0 
-                                        #lets do things in numbers and put calculate date in after
-        fig.add_trace(go.Scatter(
+        times = data_dictionary[ifo].times.value     # array of GPS seconds
+        t = Time(times, format='gps')                # make an Astropy Time array (GPS scale)
+        x_datetime = t.utc.datetime # type: ignore   # numpy array of Python datetimes
+                                        
+        fig.add_trace(go.Scatter(                    #plotly.go.Figure args
             mode='lines',
             line_color=colours[ifo],
             showlegend=True,
@@ -240,41 +279,88 @@ def plot_traces(fig,data_dictionary,ifos,alpha={"L1":1,"H1":1,"V1":1}):
             opacity= alpha[ifo]
         
         ),
-        hf_x = x_datetime,
+        hf_x = x_datetime,                           #plotly_resampler.FigureResampler args
         hf_y = data_dictionary[ifo].value,
         limit_to_view=True,
-        max_n_samples = 60000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+        max_n_samples = 60000                        #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
         )
 
 
 def plot_single_trace(fig,data_dictionary,ifo="L1"):
     """
-    Adds one timeseries trace from data_dictionary to fig
+    Add single gravitational wave strain data trace to a plotly figure.
+    
+    Adds time series trace for specified interferometer to a timeseries 
+    Plotly figure with datetime format. Uses standard GW detector color 
+    and label with resampling for web performance.
+    
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to add trace to
+    data_dictionary : dict
+        Dictionary containing TimeSeries data with interferometer keys 
+    ifo : str
+        Interferometer key used to plot trace (default: "L1")
+        
+    Notes
+    -----
+    The function automatically:
+    - Converts GPS times to UTC datetime objects for proper x-axis display
+    - Applies standard detector color
+    - Uses short detector label (Hanford, Livingston, Virgo)
+    - Limits display to 60,000 samples for optimal performance
+    - Enables view-based resampling when using FigureResampler
+    
+    Time series data is expected to be GWpy TimeSeries objects.
     """
     colours = load_colours_dict()
     short_labels = load_short_labels_dict()
 
-    times = data_dictionary.times.value          # array of GPS seconds
-    t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
-    x_datetime = t.utc.datetime           # type: ignore                # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
-                                    #lets do things in numbers and put calculate date in after
-    fig.add_trace(go.Scatter(
+    times = data_dictionary.times.value             # array of GPS seconds
+    t = Time(times, format='gps')                   # make an Astropy Time array (GPS scale)
+    x_datetime = t.utc.datetime # type: ignore      # numpy array of Python datetimes
+                                    
+    fig.add_trace(go.Scatter(                       #plotly.go.Figure args
         mode='lines',
         line_color=colours[ifo],
         showlegend=True,
         name=short_labels[ifo],
     
     ),
-    hf_x = x_datetime,
+    hf_x = x_datetime,                               #FigureResampler args
     hf_y = data_dictionary.value,
     limit_to_view=True,
-    max_n_samples = 60000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+    max_n_samples = 60000                            #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
     )
 
 
 def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
     """
-    Adds traces of the frequencyseries data from data_dictionary to fig
+    Add gravitational wave strain data traces to a plotly figure.
+    
+    Adds frequency series traces for specified interferometers to a Plotly 
+    figure. Uses standard GW detector colors and labels with resampling 
+    for web performance.
+    
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to add traces to
+    data_dictionary : dict
+        Dictionary containing FrequencySeries data with interferometer keys 
+    ifos : list of str
+        List of interferometer keys to plot (e.g., ['L1', 'H1', 'V1'])
+        
+    Notes
+    -----
+    The function automatically:
+    - Applies standard detector colors
+    - Uses short detector labels (Hanford, Livingston, Virgo)
+    - Limits display to 100,000 samples for optimal performance
+    - Enables view-based resampling when using FigureResampler
+    
+    Time series data is expected to be GWpy TimeSeries objects.
     """
     colours = load_colours_dict()
     short_labels = load_short_labels_dict()
@@ -294,18 +380,39 @@ def plot_freq_traces(fig,data_dictionary,ifos = ['L1', 'V1', 'H1']):
         )
 
 
-def apply_gw_freq_layout(fig, title = "needs a title", yrange = [-23.7,-19.9],xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/HZ]"):
+def apply_gw_freq_layout(fig, title = "needs a title", yrange = [-23.7,-19.9],xrange =[1,3],ytitle="Strain Noise [1/HZ]"):
     """
-    Apply a standardized frequency layout template for gravitational wave strain data plots.
+    Apply a standardized layout template for gravitational wave strain frequency data plots.
+        
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to apply the layout to. Can be either a 
+        standard Figure or a FigureResampler for handling large datasets.
+    title : str, optional
+        Plot title (default: "needs a title")
+    yrange : list[float, float], optional
+        Log range for y-axis as [minimum, maximum] values.
+        Given for log scale plot, actual plot y-range will be [1*10^minimum,1*10^maximum] 
+        (default: [-23.7,-19.9]) -> actual range [10^-23.7,10^-19.9]
+    xrange : list[float, float], optional
+        Log range x-axis for zoomed plot as [minimum, maximum] values.
+        Given for log scale plot, actual plot x-range will be [1*10^minimum,1*10^maximum] 
+        (default: [1,3]) -> actual range [10,1000] (Hz)
+    ytitle : str, optional
+        Title for the y-axis of the plot (default: "Strain Noise [1/HZ]")
+        
+    Notes
+    -----
+    This function adds:
+    - Interactive dropdown menu for frequency ranges (Full:[.25,2048]Hz, Zoomed:[10,1000]Hz, Bandpass:[25,90]Hz)
+    - Data-specific y-axis scaling and labels
+    - Unified hover mode with scientific notation formatting
+    - Standardized axis styling with gridlines and borders
+    - Horizontal legend positioned at top-right
     """
 
-    # Get theme colors if not provided
-    if theme_text_color is None:
-        theme_text_color = st.get_option('theme.textColor')
-    if theme_bc_color is None:
-        theme_bc_color = st.get_option('theme.backgroundColor')
-    
-    fig.update_layout( #change to fig.update_layout and put in function
+    fig.update_layout( 
         # Hover settings
         hovermode='x unified',
         autosize=False,
@@ -341,8 +448,6 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = [-23.7,-19.9],xr
             ],
             active=1,
         )],
-        
-        # Title settings
 
         # Y-axis settings
         yaxis=dict(
@@ -359,12 +464,11 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = [-23.7,-19.9],xr
         
         # X-axis settings
         xaxis=dict(
-            #rangeslider=dict(visible=True, borderwidth=1), #no rangeslider
             title=f"Frequency [Hz]",
             type="log",
             #nticks=15,
             showgrid=True,
-            hoverformat=".3",#"Time: %H:%M:%S.%3f",
+            hoverformat=".2f",
             range =  xrange,
             linewidth=1, linecolor='black', mirror=True, showline=True,
             domain=[0, 0.98]
@@ -383,18 +487,38 @@ def apply_gw_freq_layout(fig, title = "needs a title", yrange = [-23.7,-19.9],xr
     )
 
 
-def apply_gw_freq_layout_no_buttons(fig, title = "needs a title", yrange = [-23.7,-19.9],xrange =[1,3], theme_text_color=None, theme_bc_color=None,ytitle="Strain Noise [1/HZ]"):
+def apply_gw_freq_layout_no_buttons(fig, title = "needs a title", yrange = [-23.7,-19.9],xrange =[1,3],ytitle="Strain Noise [1/HZ]"):
     """
-    Apply a standardized frequency layout template for gravitational wave strain data plots.
+    Apply a standardized layout template for gravitational wave strain frequency data plots with no buttons.
+        
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to apply the layout to. Can be either a 
+        standard Figure or a FigureResampler for handling large datasets.
+    title : str, optional
+        Plot title (default: "needs a title")
+    yrange : list[float, float], optional
+        Log range for y-axis as [minimum, maximum] values.
+        Given for log scale plot, actual plot y-range will be [1*10^minimum,1*10^maximum] 
+        (default: [-23.7,-19.9]) -> actual range [10^-23.7,10^-19.9]
+    xrange : list[float, float], optional
+        Log range x-axis for zoomed plot as [minimum, maximum] values.
+        Given for log scale plot, actual plot x-range will be [1*10^minimum,1*10^maximum] 
+        (default: [1,3]) -> actual range [10,1000] (Hz)
+    ytitle : str, optional
+        Title for the y-axis of the plot (default: "Strain Noise [1/HZ]")
+        
+    Notes
+    -----
+    This function adds:
+    - Data-specific y-axis scaling and labels
+    - Unified hover mode with scientific notation formatting
+    - Standardized axis styling with gridlines and borders
+    - Horizontal legend positioned at top-right
     """
 
-    # Get theme colors if not provided
-    if theme_text_color is None:
-        theme_text_color = st.get_option('theme.textColor')
-    if theme_bc_color is None:
-        theme_bc_color = st.get_option('theme.backgroundColor')
-    
-    fig.update_layout( #change to fig.update_layout and put in function
+    fig.update_layout(
         # Hover settings
         hovermode='x unified',
         autosize=False,
@@ -426,12 +550,11 @@ def apply_gw_freq_layout_no_buttons(fig, title = "needs a title", yrange = [-23.
         
         # X-axis settings
         xaxis=dict(
-            #rangeslider=dict(visible=True, borderwidth=1), #no rangeslider
             title=f"Frequency [Hz]",
             type="log",
             #nticks=15,
             showgrid=True,
-            hoverformat=".3",#"Time: %H:%M:%S.%3f",
+            hoverformat=".2",
             range =  xrange,
             linewidth=1, linecolor='black', mirror=True, showline=True,
             domain=[0, 0.98]
@@ -450,9 +573,26 @@ def apply_gw_freq_layout_no_buttons(fig, title = "needs a title", yrange = [-23.
     )
 
 
-def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None): # type: ignore
+def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime): # type: ignore
     """
-    Apply a standardized layout template for gravitational wave strain data plots.
+    Apply a standardized layout template to compare gravitational wave strain data from one detector against user generated model.
+        
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to apply the layout to. Can be either a 
+        standard Figure or a FigureResampler for handling large datasets.
+    title : str, optional
+        Plot title (default: "needs a title")
+    datetime_center : datetime, optional
+        Center time for the plot and zoom controls (default: GW190521 event time)
+        
+    Notes
+    -----
+    This function adds:
+    - Unified hover mode with scientific notation formatting
+    - Standardized axis styling with gridlines and borders
+    - Correctly positioned Horizontal legend
     """
 
     fig.update_layout(
@@ -488,7 +628,7 @@ def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_c
         
         xaxis=dict(
             #rangeslider=dict(visible=True),
-            title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
+            title=f"UTC Time on {datetime_center.strftime('%a, %dst %b, %Y')}",
             type="date",
             nticks=8,
             showgrid=True,
@@ -514,9 +654,26 @@ def apply_gw_1_model_comparision_layout(fig, title = "needs a title", datetime_c
     )
 
 
-def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime, theme_text_color=None, theme_bc_color=None): # type: ignore
+def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime): # type: ignore
     """
-    Apply a standardized layout template for gravitational wave strain data plots.
+    Apply a standardized layout template to compare gravitational wave strain data from two detectors against user generated model.
+        
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to apply the layout to. Can be either a 
+        standard Figure or a FigureResampler for handling large datasets.
+    title : str, optional
+        Plot title (default: "needs a title")
+    datetime_center : datetime, optional
+        Center time for the plot and zoom controls (default: GW190521 event time)
+        
+    Notes
+    -----
+    This function adds:
+    - Unified hover mode with scientific notation formatting
+    - Standardized axis styling with gridlines and borders
+    - Correctly positioned Horizontal legend
     """
 
     fig.update_layout(
@@ -605,7 +762,24 @@ def apply_gw_2_model_comparision_layout(fig, title = "needs a title", datetime_c
 
 def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_center = Time(1242442967.4, format='gps').utc.datetime): # type: ignore
     """
-    Apply a standardized layout template for gravitational wave strain data plots.
+    Apply a standardized layout template to compare gravitational wave strain data from three detectors against user generated model.
+        
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to apply the layout to. Can be either a 
+        standard Figure or a FigureResampler for handling large datasets.
+    title : str, optional
+        Plot title (default: "needs a title")
+    datetime_center : datetime, optional
+        Center time for the plot and zoom controls (default: GW190521 event time)
+        
+    Notes
+    -----
+    This function adds:
+    - Unified hover mode with scientific notation formatting
+    - Standardized axis styling with gridlines and borders
+    - Correctly positioned Horizontal legend
     """
 
     fig.update_layout(
@@ -719,12 +893,44 @@ def apply_gw_3_model_comparision_layout(fig, title = "needs a title", datetime_c
 
 def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1,alpha=1.0):
     """
-    Adds timeseries trace to subplot of fig.
+    Add single gravitational wave strain data trace to a plotly figure subplot.
+    
+    Adds time series trace using the provided x and y arrays to a timeseries 
+    Plotly figure with datetime format. Uses standard GW detector color 
+    and label with resampling for web performance.
+    
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to add trace to
+    x : ndarray
+        The array of times to plot (expecting: data_dictionary[ifo].times.value)
+    y : ndarray
+        The array of values to plot (expecting: data_dictionary[ifo].value)
+    color : str
+        The color used for the trace (expecting: color_dictionary[ifo])
+    name : str
+        Label used for the subplot (expecting: "Livingston", "Hanford", or "Virgo")
+    row : int, optional
+        row index of subplot where trace is added (default: 1)
+    col : int, optional
+        column index of subplot where trace is added (default: 1)
+    alpha : float, optional
+        opacity value used for trace (default: 1.0)
+        
+    Notes
+    -----
+    The function automatically:
+    - Converts GPS times to UTC datetime objects for proper x-axis display
+    - Limits display to 60,000 samples for optimal performance
+    - Enables view-based resampling when using FigureResampler
+
     """
-    times = x       #data_dictionary[ifo].times.value          # array of GPS seconds
-    t = Time(times, format='gps')          # make an Astropy Time array (GPS scale)
-    x_datetime = t.utc.datetime            # type: ignore # numpy array of Python datetimes     Something went wrong here! things are centered in wrong place and also time starts at like 13 not at 0
-                                    #lets do things in numbers and put calculate date in after
+
+    times = x                                       #(array of GPS seconds)
+    t = Time(times, format='gps')                   # make an Astropy Time array (GPS scale)
+    x_datetime = t.utc.datetime   # type: ignore    # numpy array of Python datetimes   
+                                  
     fig.add_trace(go.Scatter(
         mode='lines',
         line_color=color,
@@ -733,18 +939,39 @@ def add_GW_trace_subplot(fig,x,y,color,name,row=1,col=1,alpha=1.0):
         opacity=alpha
             
     ),
-    hf_x = x_datetime,
-    hf_y = y,        #data_dictionary[ifo].value,
+    hf_x = x_datetime,                              #FigureResampler args
+    hf_y = y,                               
     limit_to_view=True,
     row=row,
     col=col,
-    max_n_samples = 60000 #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
+    max_n_samples = 60000                           #set to 200,000 to see full data, should prob set much lower/cut data for better speeds
     )
 
 
 def multiplot1_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.97,.9),  datetime_center = Time(1242442967.444, format='gps').utc.datetime): # type: ignore
     """
-    Apply a standardized layout template for gravitational wave strain data plots.
+    Apply a standardized layout template to compare gravitational wave strain data from one detector against MAP parameter model.
+        
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to apply the layout to. Can be either a 
+        standard Figure or a FigureResampler for handling large datasets.
+    title : str, optional
+        Plot title (default: "needs a title")
+    y_timeseries_title : str, optional
+        y-axis title (default: "y needs a title")
+    legend_loc : (float,float), optional
+        coordinate location of legend on plot (default: (.97,.9))
+    datetime_center : datetime, optional
+        Center time for the plot (default: shifted GW190521 event time)
+        
+    Notes
+    -----
+    This function adds:
+    - Unified hover mode with scientific notation formatting
+    - Standardized axis styling with gridlines and borders
+    - Correctly positioned legend
     """
     fig.update_layout(        
             
@@ -801,7 +1028,28 @@ def multiplot1_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
 
 def multiplot2_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.9,.45),  datetime_center = Time(1242442967.444, format='gps').utc.datetime): # type: ignore
     """
-    Apply a standardized layout template for gravitational wave strain data plots.
+    Apply a standardized layout template to compare gravitational wave strain data from two detectors against MAP parameter model.
+        
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to apply the layout to. Can be either a 
+        standard Figure or a FigureResampler for handling large datasets.
+    title : str, optional
+        Plot title (default: "needs a title")
+    y_timeseries_title : str, optional
+        y-axis title (default: "y needs a title")
+    legend_loc : (float,float), optional
+        coordinate location of legend on plot (default: (.9,.45))
+    datetime_center : datetime, optional
+        Center time for the plot (default: shifted GW190521 event time)
+        
+    Notes
+    -----
+    This function adds:
+    - Unified hover mode with scientific notation formatting
+    - Standardized axis styling with gridlines and borders
+    - Correctly positioned legend
     """
     fig.update_layout(        
             
@@ -870,7 +1118,28 @@ def multiplot2_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
 
 def multiplot3_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_timeseries_title="y need a title",legend_loc =(.9,.45),  datetime_center = Time(1242442967.444, format='gps').utc.datetime): # type: ignore
     """
-    Apply a standardized layout template for gravitational wave strain data plots.
+    Apply a standardized layout template to compare gravitational wave strain data from three detectors against MAP parameter model.
+        
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to apply the layout to. Can be either a 
+        standard Figure or a FigureResampler for handling large datasets.
+    title : str, optional
+        Plot title (default: "needs a title")
+    y_timeseries_title : str, optional
+        y-axis title (default: "y needs a title")
+    legend_loc : (float,float), optional
+        coordinate location of legend on plot (default: (.9,.45))
+    datetime_center : datetime, optional
+        Center time for the plot (default: shifted GW190521 event time)
+        
+    Notes
+    -----
+    This function adds:
+    - Unified hover mode with scientific notation formatting
+    - Standardized axis styling with gridlines and borders
+    - Correctly positioned legend
     """
     fig.update_layout(        
             
@@ -977,7 +1246,24 @@ def multiplot3_apply_gw_strain_layout(fig, timeseries_title = "needs a title",y_
 
 def Apply_SNR_layout(fig, Title = "Signal to Noise Ratio",  datetime_center = Time(1242442967.4, format='gps').utc.datetime): # type: ignore
     """
-    Apply a standardized layout template for gravitational wave strain data plots.
+    Apply a standardized layout template to compare detected gravitational wave Signal to Noise Ratios for the three detectors
+        
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or plotly_resampler.FigureResampler
+        The Plotly figure object to apply the layout to. Can be either a 
+        standard Figure or a FigureResampler for handling large datasets.
+    Title : str, optional
+        Plot title (default: "Signal to Noise Ratio")
+    datetime_center : datetime, optional
+        Center time for the plot (default: shifted GW190521 event time)
+        
+    Notes
+    -----
+    This function adds:
+    - Unified hover mode with scientific notation formatting
+    - Standardized axis styling with gridlines and borders
+    - Correctly positioned legend
     """
     fig.update_layout(
         hovermode='x unified',
@@ -992,7 +1278,6 @@ def Apply_SNR_layout(fig, Title = "Signal to Noise Ratio",  datetime_center = Ti
             },
 
             xaxis=dict(
-            #title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
             type="date",
             #nticks=8,
             showgrid=True,
@@ -1015,7 +1300,6 @@ def Apply_SNR_layout(fig, Title = "Signal to Noise Ratio",  datetime_center = Ti
             ),
 
             xaxis3=dict(
-            #title=f"Time on {datetime_center.strftime('%a, %dst %b, %Y')}", #since {str(t0).format('fits')}",
             type="date",
             #nticks=8,
             showgrid=True,
